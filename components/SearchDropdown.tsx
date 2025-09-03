@@ -232,7 +232,7 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
               )}
 
               {/* Ver todos los resultados */}
-              <div className="bg-gray-50 p-3 border-t border-gray-100 text-center">
+              {/* <div className="bg-gray-50 p-3 border-t border-gray-100 text-center">
                 <Link 
                   href={`/buscar?q=${searchTerm}`}
                   onClick={handleItemClick}
@@ -240,7 +240,7 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
                 >
                   Ver todos los resultados
                 </Link>
-              </div>
+              </div> */}
             </div>
           ) : searchTerm.trim() !== '' && !loading ? (
             <div className="p-4 text-center text-gray-500">
