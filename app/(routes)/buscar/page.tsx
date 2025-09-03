@@ -1,17 +1,12 @@
-"use client"
-
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter} from 'next/navigation';
 import { useSearchProducts } from '@/api/searchProducts';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Loader2, Search } from 'lucide-react';
-import BreadCrumbs from '@/components/BreadCrumbs';
 
-export default function SearchPage() {
-  const searchParams = useSearchParams();
-  const query = searchParams.get('q') || '';
-  const { result, loading, error } = useSearchProducts(query);
+export default async function SearchPage({ searchParams }: { searchParams: { q?: string } }) {
+   const query = searchParams.q || '';
+  const { result, loading, error } = await useSearchProducts(query);
   const router = useRouter();
   
   // Función para crear URLs amigables sin acentos
