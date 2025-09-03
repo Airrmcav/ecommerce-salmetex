@@ -1,0 +1,7 @@
+[build]
+  command = "npm run build"
+  publish = ".next"          # Carpeta de build de Next.js
+  functions = "netlify/functions"  # Carpeta donde Netlify pone las funciones serverless
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
