@@ -20,12 +20,14 @@ export function useSearchProducts(searchTerm: string) {
       return;
     }
 
-    // Función para normalizar texto (eliminar acentos)
+    // Función para normalizar texto (eliminar acentos, espacios extras y convertir a minúsculas)
     const normalizeText = (text: string): string => {
       return text
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase();
+        .trim() // Eliminar espacios al inicio y final
+        .toLowerCase() // Convertir a minúsculas
+        .normalize('NFD') // Normalizar caracteres Unicode
+        .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos y diacríticos
+        .replace(/\s+/g, ' '); // Reemplazar múltiples espacios con uno solo
     };
 
     const fetchData = async () => {
@@ -39,52 +41,46 @@ export function useSearchProducts(searchTerm: string) {
         // Construir URLs con formato más simple para evitar problemas de codificación
         const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
         
-        // Buscar productos con el término original
+        // Buscar productos con el término normalizado (siempre usar el normalizado)
         let productsJson = { data: [] };
         try {
           // Construir la URL manualmente para asegurar compatibilidad con Strapi
-          const productsUrl = `${baseUrl}/api/products?populate=*&filters[productName][$containsi]=${encodedSearchTerm}`;
+          const productsUrl = `${baseUrl}/api/products?populate=*&filters[productName][$containsi]=${encodedNormalizedSearchTerm}`;
           const productsRes = await fetch(productsUrl);
           productsJson = await productsRes.json();
         } catch (err) {
           console.error('Error fetching products:', err);
         }
         
-        // Buscar productos adicionales con el término normalizado
-        let additionalProductsJson = { data: [] };
-        if (normalizedSearchTerm !== searchTerm.toLowerCase()) {
-          try {
-            // Construir la URL manualmente para asegurar compatibilidad con Strapi
-            const additionalProductsUrl = `${baseUrl}/api/products?populate=*&filters[productName][$containsi]=${encodedNormalizedSearchTerm}`;
-            const additionalProductsRes = await fetch(additionalProductsUrl);
-            additionalProductsJson = await additionalProductsRes.json();
-          } catch (err) {
-            console.error('Error fetching additional products:', err);
-          }
+        // Buscar productos por descripción también (usando término normalizado)
+        let productsDescriptionJson = { data: [] };
+        try {
+          const productsDescUrl = `${baseUrl}/api/products?populate=*&filters[description][$containsi]=${encodedNormalizedSearchTerm}`;
+          const productsDescRes = await fetch(productsDescUrl);
+          productsDescriptionJson = await productsDescRes.json();
+        } catch (err) {
+          console.error('Error fetching products by description:', err);
         }
 
-        // Buscar categorías con el término original
+        // Buscar categorías con el término normalizado
         let categoriesJson = { data: [] };
         try {
           // Construir la URL manualmente para asegurar compatibilidad con Strapi
-          const categoriesUrl = `${baseUrl}/api/categories?populate=*&filters[categoryName][$containsi]=${encodedSearchTerm}`;
+          const categoriesUrl = `${baseUrl}/api/categories?populate=*&filters[categoryName][$containsi]=${encodedNormalizedSearchTerm}`;
           const categoriesRes = await fetch(categoriesUrl);
           categoriesJson = await categoriesRes.json();
         } catch (err) {
           console.error('Error fetching categories:', err);
         }
         
-        // Buscar categorías adicionales con el término normalizado
-        let additionalCategoriesJson = { data: [] };
-        if (normalizedSearchTerm !== searchTerm.toLowerCase()) {
-          try {
-            // Construir la URL manualmente para asegurar compatibilidad con Strapi
-            const additionalCategoriesUrl = `${baseUrl}/api/categories?populate=*&filters[categoryName][$containsi]=${encodedNormalizedSearchTerm}`;
-            const additionalCategoriesRes = await fetch(additionalCategoriesUrl);
-            additionalCategoriesJson = await additionalCategoriesRes.json();
-          } catch (err) {
-            console.error('Error fetching additional categories:', err);
-          }
+        // Buscar categorías por descripción también
+        let categoriesDescriptionJson = { data: [] };
+        try {
+          const categoriesDescUrl = `${baseUrl}/api/categories?populate=*&filters[description][$containsi]=${encodedNormalizedSearchTerm}`;
+          const categoriesDescRes = await fetch(categoriesDescUrl);
+          categoriesDescriptionJson = await categoriesDescRes.json();
+        } catch (err) {
+          console.error('Error fetching categories by description:', err);
         }
 
         // Procesar la respuesta de Strapi que tiene una estructura específica
@@ -224,7 +220,7 @@ export function useSearchProducts(searchTerm: string) {
           }).filter(Boolean); // Filtrar elementos null
         };
         
-        // Procesar productos del término original
+        // Procesar productos por nombre
         if (productsJson && productsJson.data) {
           const processedProducts = processProducts(productsJson.data);
           processedProducts.forEach(product => {
@@ -235,10 +231,10 @@ export function useSearchProducts(searchTerm: string) {
           });
         }
         
-        // Procesar productos adicionales del término normalizado
-        if (additionalProductsJson && additionalProductsJson.data) {
-          const processedAdditionalProducts = processProducts(additionalProductsJson.data);
-          processedAdditionalProducts.forEach(product => {
+        // Procesar productos por descripción
+        if (productsDescriptionJson && productsDescriptionJson.data) {
+          const processedDescProducts = processProducts(productsDescriptionJson.data);
+          processedDescProducts.forEach(product => {
             if (!productIds.has(product.id)) {
               products.push(product);
               productIds.add(product.id);
@@ -246,7 +242,7 @@ export function useSearchProducts(searchTerm: string) {
           });
         }
         
-        // Procesar categorías del término original
+        // Procesar categorías por nombre
         if (categoriesJson && categoriesJson.data) {
           const processedCategories = processCategories(categoriesJson.data);
           processedCategories.forEach(category => {
@@ -257,10 +253,10 @@ export function useSearchProducts(searchTerm: string) {
           });
         }
         
-        // Procesar categorías adicionales del término normalizado
-        if (additionalCategoriesJson && additionalCategoriesJson.data) {
-          const processedAdditionalCategories = processCategories(additionalCategoriesJson.data);
-          processedAdditionalCategories.forEach(category => {
+        // Procesar categorías por descripción
+        if (categoriesDescriptionJson && categoriesDescriptionJson.data) {
+          const processedDescCategories = processCategories(categoriesDescriptionJson.data);
+          processedDescCategories.forEach(category => {
             if (!categoryIds.has(category.id)) {
               categories.push(category);
               categoryIds.add(category.id);

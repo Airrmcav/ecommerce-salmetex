@@ -37,13 +37,14 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
     if (!text) return 'producto';
     
     return text
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
+      .trim() // Eliminar espacios al inicio y final
+      .toLowerCase() // Convertir a minúsculas
+      .normalize('NFD') // Normalizar caracteres Unicode
+      .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos y diacríticos
+      .replace(/[^a-z0-9\s-]/g, '') // Solo permitir letras, números, espacios y guiones
+      .replace(/\s+/g, '-') // Reemplazar espacios con guiones
       .replace(/-+/g, '-') // Reemplazar múltiples guiones con uno solo
-      .trim();
+      .trim(); // Eliminar posibles espacios o guiones al inicio/final
   };
 
   // Cerrar el dropdown cuando se hace clic fuera
