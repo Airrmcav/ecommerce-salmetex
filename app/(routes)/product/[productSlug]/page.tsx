@@ -70,11 +70,12 @@ export default function Page() {
                 <div className="grid sm:grid-cols-2">
                     <div>
                         <CarouselProduct
-                            images={product.images.map(img => ({
+                            images={product.images && product.images.length > 0 ? product.images.map(img => ({
                                 id: img.id,
                                 url: img.url,
                                 alternativeText: img.alternativeText ?? undefined, // convierte null en undefined
-                            }))}
+                            })) : []}
+                            productName={product.productName}
                         />
                     </div>
                     <div className="sm:px-12">

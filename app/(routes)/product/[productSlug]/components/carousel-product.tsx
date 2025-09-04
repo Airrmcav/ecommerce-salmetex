@@ -107,7 +107,7 @@ const CarouselProduct = (props: CarouselProductProps) => {
                                     >
                                         <div className="w-20 h-20 bg-white rounded-xl border border-gray-200 overflow-hidden shadow-md">
                                             <img
-                                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${image.url}`}
+                                                src={image.url.startsWith('http') ? image.url : `${process.env.NEXT_PUBLIC_BACKEND_URL}${image.url}`}
                                                 alt={image.alternativeText || `Miniatura ${actualIndex + 1}`}
                                                 className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform duration-200 cursor-pointer"
                                             />
@@ -155,7 +155,7 @@ const CarouselProduct = (props: CarouselProductProps) => {
                 <div className="flex-1 relative group">
                     <div className="relative overflow-hidden bg-white rounded-2xl border border-gray-200 shadow-lg aspect-square">
                         <img
-                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${images[selectedImageIndex].url}`}
+                            src={images[selectedImageIndex].url.startsWith('http') ? images[selectedImageIndex].url : `${process.env.NEXT_PUBLIC_BACKEND_URL}${images[selectedImageIndex].url}`}
                             alt={images[selectedImageIndex].alternativeText || `${productName} - Imagen ${selectedImageIndex + 1}`}
                             className={`w-full h-full object-contain p-4 transition-transform duration-300 ${
                                 isZoomed ? 'scale-150 cursor-zoom-out' : 'cursor-zoom-in hover:scale-105'

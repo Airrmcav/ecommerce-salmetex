@@ -74,13 +74,19 @@ const TopProducts = () => {
                          
                           {/* Image Container */}
                           <div className="relative overflow-hidden bg-white h-48 flex items-center justify-center">
-                            <img
-                              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`}
-                              alt={`${productName} - Equipo médico profesional más vendido`}
-                              className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                              itemProp="image"
-                              loading={index < 4 ? "eager" : "lazy"}
-                            />
+                            {imageUrl ? (
+                              <img
+                                src={imageUrl.startsWith('http') ? imageUrl : `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`}
+                                alt={`${productName} - Equipo médico profesional más vendido`}
+                                className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                                itemProp="image"
+                                loading={index < 4 ? "eager" : "lazy"}
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                                <span className="text-4xl">🏥</span>
+                              </div>
+                            )}
 
                             {/* Availability Badge */}
                             <div className="absolute top-4 right-4">

@@ -28,11 +28,17 @@ const ProductCard = (props: ProductCardProps) => {
           <div className="group h-full border-0 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white rounded-2xl overflow-hidden">
             <div className="p-0 h-full flex flex-col">
               <div className="relative overflow-hidden bg-white h-52 flex items-center justify-center">
-                <img
-                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${product.images[0].url}`}
-                  alt={product.images[0].alternativeText || product.productName}
-                  className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                />
+                {product.images && product.images.length > 0 ? (
+                  <img
+                    src={product.images[0].url.startsWith('http') ? product.images[0].url : `${process.env.NEXT_PUBLIC_BACKEND_URL}${product.images[0].url}`}
+                    alt={product.images[0].alternativeText || product.productName}
+                    className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                    <span className="text-4xl">🏥</span>
+                  </div>
+                )}
 
                 {/* Availability Badge */}
                 <div className="absolute top-4 right-4">

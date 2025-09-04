@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   //  output: 'export',
   images: {
-    domains: ['localhost', 'backend-ecommerce-87y0.onrender.com'],
+    domains: ['localhost', 'backend-ecommerce-87y0.onrender.com', 'res.cloudinary.com'],
     remotePatterns: [
       {
         protocol: 'http',
@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'backend-ecommerce-87y0.onrender.com',
         pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
       },
     ],
   },

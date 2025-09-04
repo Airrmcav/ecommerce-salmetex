@@ -98,9 +98,9 @@ const ChooseCategory = () => {
 
                                                     {/* Image Container */}
                                                     <div className="relative overflow-hidden bg-white h-48 flex items-center justify-center">
-                                                        {category.mainImage ? (
+                                                        {category.mainImage && category.mainImage.url ? (
                                                             <img
-                                                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${category.mainImage.url}`}
+                                                                src={category.mainImage.url.startsWith('http') ? category.mainImage.url : `${process.env.NEXT_PUBLIC_BACKEND_URL}${category.mainImage.url}`}
                                                                 alt={category.categoryName}
                                                                 className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
                                                             />
