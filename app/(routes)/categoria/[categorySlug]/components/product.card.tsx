@@ -14,7 +14,6 @@ type ProductCardProps = {
   viewMode?: 'grid' | 'list';
 };
 
-
 const ProductCard = (props: ProductCardProps) => {
   const { product } = props;
   const router = useRouter();
@@ -62,7 +61,7 @@ const ProductCard = (props: ProductCardProps) => {
 
                 <div className="absolute bottom-3 left-3">
                   <Badge className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-xs font-medium">
-                    {product?.category.categoryName || "Categoría"}
+                    {product?.category?.categoryName || "Categoría"}
                   </Badge>
                 </div>
               </div>
@@ -89,7 +88,11 @@ const ProductCard = (props: ProductCardProps) => {
                 {/* Action Buttons */}
                 <div className="flex gap-2 mt-auto">
                   <button
-                    onClick={() => router.push(`/product/${product.slug}`)}
+                    onClick={() => {
+                      
+                        router.push(`/product/${product.slug}`);
+                    
+                    }}
                     className={`cursor-pointer flex-1 py-2.5 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${product.active
                       ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
                       : "bg-gray-100 text-gray-400 cursor-not-allowed"

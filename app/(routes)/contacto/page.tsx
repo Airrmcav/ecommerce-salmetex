@@ -111,8 +111,8 @@ export default function Page() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-slate-800">Teléfono</h3>
-                                        <p className="text-slate-600">+52 (55) 1234-5678</p>
-                                        <p className="text-slate-600">+52 (55) 8765-4321</p>
+                                        <p className="text-slate-600">+52 1 844 595 4660</p>
+                                       
                                     </div>
                                 </div>
 
@@ -122,7 +122,7 @@ export default function Page() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-slate-800">Dirección</h3>
-                                        <p className="text-slate-600">Av. Revolución 1234<br />Col. San Ángel<br />Ciudad de México, CDMX</p>
+                                        <p className="text-slate-600">Saltillo, México.</p>
                                     </div>
                                 </div>
 
@@ -132,8 +132,8 @@ export default function Page() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-slate-800">Horarios</h3>
-                                        <p className="text-slate-600">Lunes - Viernes: 9:00 - 18:00</p>
-                                        <p className="text-slate-600">Sábado: 9:00 - 14:00</p>
+                                        <p className="text-slate-600">Lunes - Viernes: 8:00 - 11:00</p>
+                                        <p className="text-slate-600">Sábado: 9:00 - 1:00</p>
                                     </div>
                                 </div>
                             </div>

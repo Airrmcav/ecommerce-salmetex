@@ -171,11 +171,10 @@ const Navbar = () => {
                                             {/* Sección principal - lado izquierdo */}
                                             <div className="space-y-3 flex items-center ">
                                                 <div>
-                                                    <NavigationMenuLink>
-                                                        <Link
-                                                            className="flex flex-col items-center text-center select-none space-y-3 rounded-md p-4 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 hover:border-blue-200 hover:shadow-md"
-                                                            href="/categoria/todos"
-                                                        >
+                                                    <NavigationMenuLink
+                                                        className="flex flex-col items-center text-center select-none space-y-3 rounded-md p-4 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 hover:border-blue-200 hover:shadow-md"
+                                                        href="/categoria/todos"
+                                                    >
                                                             {/* Icono central */}
                                                             <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl border border-blue-200">
                                                                 <Package2 className="w-6 h-6 text-blue-600" />
@@ -189,7 +188,6 @@ const Navbar = () => {
                                                                     Explora nuestra amplia gama de equipos médicos de alta calidad.
                                                                 </p>
                                                             </div>
-                                                        </Link>
                                                     </NavigationMenuLink>
 
                                                     {/* Contador de categorías */}
@@ -288,7 +286,10 @@ const Navbar = () => {
                         </button>
 
                         <button
-                            onClick={() => router.push("/productos-destacados")}
+                            onClick={() => {
+                                // Usar replace en lugar de push para evitar problemas de historial
+                                router.replace("/productos-destacados");
+                            }}
                             className="text-gray-700 hover:text-blue-600 font-medium
                        transition-colors duration-200 hover:underline
                        decoration-blue-600 underline-offset-4 text-sm lg:text-base uppercase cursor-pointer"

@@ -12,9 +12,9 @@ import { makePaymentRequest } from "@/api/payment";
 
 
 export default function Cart() {
-    const { items, removeAll } = useCart();
+    const { items, removeAll, getTotalPrice } = useCart();
     const [isProcessing, setIsProcessing] = useState(false);
-    const totalPrice = items.reduce((total, product) => total + (product.price ?? 0), 0);
+    const totalPrice = getTotalPrice();
     const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRAPI_PUBLISHABLE_KEY || '')
     
     const buyStripe = async () => {

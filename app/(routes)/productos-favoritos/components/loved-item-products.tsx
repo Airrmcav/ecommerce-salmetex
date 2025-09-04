@@ -109,7 +109,7 @@ const LovedItemsProduct = ({ product, className }: LovedItemProductProps) => {
                             </h3>
                             <div className="space-x-2 flex align-center">
                                 {/* Badge de categoría médica */}
-                                {product.category && (
+                                {product.category && product.category.categoryName && (
                                     <Badge
                                         variant="secondary"
                                         className="text-xs bg-blue-100 text-blue-800 border-blue-200 flex-shrink-0"

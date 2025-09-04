@@ -46,7 +46,7 @@ const FilterArea = (props: FiltersAreaProps) => {
             )}
 
             {/* Radio Group */}
-            {result !== null && (
+            {result !== null && result.schema && result.schema.attributes && result.schema.attributes.area && result.schema.attributes.area.enum && (
                 <div className="space-y-1">
                     <RadioGroup 
                         onValueChange={(value) => {
@@ -96,7 +96,7 @@ const FilterArea = (props: FiltersAreaProps) => {
                         <div className="flex items-center justify-between">
                             <p className="text-sm text-gray-600">
                                 <span className="font-semibold text-blue-600">
-                                    {result.schema.attributes.area.enum.length}
+                                    {result.schema && result.schema.attributes && result.schema.attributes.area && result.schema.attributes.area.enum ? result.schema.attributes.area.enum.length : 0}
                                 </span> áreas disponibles
                             </p>
                             <div className="flex items-center gap-1 text-xs text-gray-500">
@@ -109,7 +109,7 @@ const FilterArea = (props: FiltersAreaProps) => {
             )}
 
             {/* Empty State */}
-            {result !== null && result.schema.attributes.area.enum.length === 0 && (
+            {result !== null && result.schema && result.schema.attributes && result.schema.attributes.area && result.schema.attributes.area.enum && result.schema.attributes.area.enum.length === 0 && (
                 <div className="text-center py-8">
                     <div className="mb-4">
                         <div className="w-16 h-16 mx-auto bg-gray-100 rounded-2xl flex items-center justify-center">

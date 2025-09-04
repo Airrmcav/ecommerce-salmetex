@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Redireccionar rutas antiguas de productos
-  if (pathname.startsWith('/productos')) {
+  if (pathname.startsWith('/productos') && pathname !== '/productos-destacados' && pathname !== '/productos-favoritos' && pathname !== '/productos-top') {
     if (pathname === '/productos') {
       return NextResponse.redirect(new URL('/categoria/todos', request.url));
     } else {

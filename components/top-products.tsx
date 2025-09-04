@@ -116,8 +116,8 @@ const TopProducts = () => {
 
                             {/* Category Badge */}
                             <div className="absolute bottom-3 left-3">
-                              <Badge className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-xs font-medium">
-                                {category?.categoryName || "Equipos Médicos"}
+                              <Badge className="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1 rounded-full text-xs font-medium">
+                                {category && category.categoryName ? category.categoryName : "Categoría"}
                               </Badge>
                             </div>
                           </div>

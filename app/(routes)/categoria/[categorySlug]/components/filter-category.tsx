@@ -20,7 +20,7 @@ const FilterCategory = (props: FiltersCategoryProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     // Ordenar categorías alfabéticamente
-    const sortedCategories = result ? [...result].sort((a, b) => 
+    const sortedCategories = result ? [...result].filter(a => a && a.categoryName).sort((a, b) => 
         a.categoryName.localeCompare(b.categoryName)
     ) : [];
 
@@ -37,7 +37,7 @@ const FilterCategory = (props: FiltersCategoryProps) => {
     };
 
     // Encontrar la categoría seleccionada para mostrar en el header
-    const selectedCategory = sortedCategories.find(cat => cat.categoryName === filterCategory);
+    const selectedCategory = sortedCategories.find(cat => cat && cat.categoryName === filterCategory);
 
     return (
         <div className="bg-white rounded-2xl border border-blue-100 shadow-lg overflow-hidden mt-3">
