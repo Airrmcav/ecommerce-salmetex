@@ -10,11 +10,11 @@ const FiltersControlsArea = (props: FiltersConstrolsAreaProps) => {
     const { setFilterArea, filterArea, setFilterCategory } = props;
     return ( 
         <div className="sm:w-[350px] sm:mt-5 p-6">
-            <FilterArea 
+            {/* <FilterArea 
                 setFilterArea={setFilterArea}
                 filterArea={filterArea}
                 setFilterCategory={setFilterCategory}
-            />
+            /> */}
         </div>
      );
 }
