@@ -133,17 +133,7 @@ const Carousel = () => {
                                             {slide.description}
                                         </p>
 
-                                        {/* CTA Button */}
-                                        <Link 
-                                            href={slide.link}
-                                            className="inline-flex items-center gap-3 px-8 py-4 mb-5 bg-gradient-to-r from-blue-600 to-blue-700 
-                                                     text-white font-semibold rounded-xl shadow-xl hover:shadow-2xl
-                                                     hover:from-blue-700 hover:to-blue-800 transform hover:-translate-y-1 
-                                                     transition-all duration-300 border border-blue-500/50"
-                                        >
-                                            {slide.ctaText}
-                                            <ArrowRight size={20} />
-                                        </Link>
+                                        
                                     </div>
 
                                     {/* Product Image */}
