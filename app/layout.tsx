@@ -22,8 +22,8 @@ export const metadata: Metadata = {
   title: "Salmetex - Equipamiento Médico",
   description: "Líderes en equipamiento médico con más de una década de experiencia",
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
+    icon: "/logo.png",
+    shortcut: "/logo.png",
   },
 };
 
