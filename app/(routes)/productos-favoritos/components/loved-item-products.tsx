@@ -85,7 +85,7 @@ const LovedItemsProduct = ({ product, className }: LovedItemProductProps) => {
                     <div className="w-48 h-48 sm:w-32 sm:h-32 bg-white rounded-lg overflow-hidden border group-hover:shadow-md transition-shadow relative mx-auto">
                         {product.images?.[0]?.url ? (
                             <img
-                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${product.images[0].url}`}
+                                src={product.images[0].url}
                                 alt={product.productName}
                                 className="w-full h-full object-contain"
                             />

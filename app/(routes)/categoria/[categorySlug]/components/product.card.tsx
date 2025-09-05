@@ -29,7 +29,7 @@ const ProductCard = (props: ProductCardProps) => {
               <div className="relative overflow-hidden bg-white h-52 flex items-center justify-center">
                 {product.images && product.images.length > 0 ? (
                   <img
-                    src={product.images[0].url.startsWith('http') ? product.images[0].url : `${process.env.NEXT_PUBLIC_BACKEND_URL}${product.images[0].url}`}
+                    src={product.images[0].url}
                     alt={product.images[0].alternativeText || product.productName}
                     className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
                   />

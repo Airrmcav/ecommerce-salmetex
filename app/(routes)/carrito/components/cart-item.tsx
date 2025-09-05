@@ -46,7 +46,7 @@ const CartItem = (props: CartItemProps) => {
                     <div className="w-16 h-16  rounded-lg flex items-center justify-center border border-blue-200 group-hover:from-blue-100 group-hover:to-blue-200 transition-colors">
                         {product.images && product.images.length > 0 ? (
                             <img 
-                                src={product.images[0].url.startsWith('http') ? product.images[0].url : `${process.env.NEXT_PUBLIC_BACKEND_URL}${product.images[0].url}`} 
+                                src={product.images[0].url} 
                                 alt={product.productName} 
                                 className="w-12 h-12 object-contain" 
                             />

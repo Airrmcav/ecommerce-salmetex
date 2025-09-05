@@ -146,7 +146,7 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
                           {/* {category.mainImage && category.mainImage.url && (
                             <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0">
                               <img 
-                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${category.mainImage.url}`} 
+                                src={category.mainImage.url} 
                                 alt={category.mainImage.alternativeText || category.categoryName}
                                 className="w-full h-full object-cover"
                               />
@@ -193,7 +193,7 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
                         {/* <div className="w-10 h-10 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
                           {product.images && product.images.length > 0 ? (
                             <Image 
-                              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${product.images[0].url}`} 
+                              src={product.images[0].url} 
                               alt={product.productName || product.productName} 
                               width={40} 
                               height={40} 

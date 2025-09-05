@@ -76,7 +76,7 @@ const TopProducts = () => {
                           <div className="relative overflow-hidden bg-white h-48 flex items-center justify-center">
                             {imageUrl ? (
                               <img
-                                src={imageUrl.startsWith('http') ? imageUrl : `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`}
+                                src={imageUrl}
                                 alt={`${productName} - Equipo médico profesional más vendido`}
                                 className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
                                 itemProp="image"
