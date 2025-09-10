@@ -87,7 +87,7 @@ export default function Page() {
 
     const breadcrumbItems = [
         { label: "Inicio", href: "/" },
-        { label: "Categorías", href: "/categorias" },
+        { label: "Categorías", href: "/categoria/todos" },
         {
             label: categoryName || "Cargando...",
             isActive: true
