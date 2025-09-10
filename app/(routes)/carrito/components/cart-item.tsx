@@ -97,13 +97,15 @@ const CartItem = (props: CartItemProps) => {
                     {/* Control de cantidad */}
                     <div className="flex items-center bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
                         <button 
+               
                             onClick={() => {
                                 setIsUpdating(true);
                                 const newQuantity = Math.max(1, (product.quantity || 1) - 1);
                                 updateQuantity(product.id, newQuantity);
                                 setTimeout(() => setIsUpdating(false), 300);
                             }}
-                            className="p-1 bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors"
+                            className="p-1 cursor-pointer
+                             bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors"
                             disabled={isUpdating}
                         >
                             <Minus className="w-4 h-4" />
@@ -120,7 +122,7 @@ const CartItem = (props: CartItemProps) => {
                                 updateQuantity(product.id, value);
                                 setTimeout(() => setIsUpdating(false), 300);
                             }}
-                            className="w-12 text-center bg-white border-0 focus:ring-0 text-gray-700"
+                            className="cursor-pointer w-12 text-center bg-white border-0 focus:ring-0 text-gray-700"
                             disabled={isUpdating}
                         />
                         
@@ -131,7 +133,7 @@ const CartItem = (props: CartItemProps) => {
                                 updateQuantity(product.id, newQuantity);
                                 setTimeout(() => setIsUpdating(false), 300);
                             }}
-                            className="p-1 bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors"
+                            className="cursor-pointer p-1 bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors"
                             disabled={isUpdating}
                         >
                             <Plus className="w-4 h-4" />
@@ -152,7 +154,7 @@ const CartItem = (props: CartItemProps) => {
                         {/* Botón eliminar */}
                         <button
                             onClick={handleRemove}
-                            className="p-2 bg-red-400 text-white rounded-full transition-all duration-200 group/btn"
+                            className="p-2 cursor-pointer bg-red-400 text-white rounded-full transition-all duration-200 group/btn"
                             title="Eliminar del carrito"
                             disabled={isRemoving}
                         >

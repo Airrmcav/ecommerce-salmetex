@@ -191,7 +191,7 @@ const Navbar = () => {
                                                     </NavigationMenuLink>
 
                                                     {/* Contador de categorías */}
-                                                    <div className="flex items-center justify-center p-2 bg-gray-50 rounded-lg border">
+                                                    <div className="flex items-center justify-center p-2 mt-2 bg-gray-50 rounded-lg border">
                                                         {categoriesLoading ? (
                                                             <div className="flex items-center gap-2 text-xs text-gray-500">
                                                                 <Loader2 className="w-3 h-3 animate-spin" />

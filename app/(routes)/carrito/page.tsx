@@ -92,7 +92,7 @@ export default function Cart() {
                                             variant="outline"
                                             size="sm"
                                             onClick={handleRemoveAll}
-                                            className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                                            className="cursor-pointer text-red-600 border-red-200 hover:text-white hover:bg-red-500 hover:border-red-300"
                                         >
                                             <Trash2 className="w-4 h-4 mr-2" />
                                             Vaciar carrito

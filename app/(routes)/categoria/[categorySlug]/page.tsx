@@ -143,20 +143,23 @@ export default function Page() {
                                     )}
                                 </p>
 
-                                {/* Información adicional */}
+                                 {/* Información adicional */}
                                 <div className="flex items-center gap-6 mt-4">
                                     <div className="flex items-center gap-2">
                                         <Package className="w-5 h-5 text-blue-600" />
                                         <span className="text-sm font-medium text-gray-700">
-                                            {categorySlug === 'todos' ? 
-                                                (Array.isArray(filteredProducts) ? filteredProducts.length : 0) : 
-                                                (Array.isArray(categoryProducts) ? categoryProducts.length : 0)} 
-                                            producto{(categorySlug === 'todos' ? 
-                                                (Array.isArray(filteredProducts) ? filteredProducts.length : 0) : 
-                                                (Array.isArray(categoryProducts) ? categoryProducts.length : 0)) !== 1 ? 's' : ''} 
-                                            disponible{(categorySlug === 'todos' ? 
-                                                (Array.isArray(filteredProducts) ? filteredProducts.length : 0) : 
-                                                (Array.isArray(categoryProducts) ? categoryProducts.length : 0)) !== 1 ? 's' : ''}
+                                            {categorySlug === 'todos'
+                                                ? (Array.isArray(filteredProducts) ? filteredProducts.length : 0)
+                                                : (Array.isArray(categoryProducts) ? categoryProducts.length : 0)
+                                            } producto
+                                            {(categorySlug === 'todos'
+                                                ? (Array.isArray(filteredProducts) ? filteredProducts.length : 0)
+                                                : (Array.isArray(categoryProducts) ? categoryProducts.length : 0)
+                                            ) !== 1 ? 's' : ''} disponible
+                                            {(categorySlug === 'todos'
+                                                ? (Array.isArray(filteredProducts) ? filteredProducts.length : 0)
+                                                : (Array.isArray(categoryProducts) ? categoryProducts.length : 0)
+                                            ) !== 1 ? 's' : ''}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2">
@@ -277,7 +280,7 @@ export default function Page() {
                                     <span className="text-sm text-gray-600 mr-2">Vista:</span>
                                     <button
                                         onClick={() => setViewMode('grid')}
-                                        className={`p-2 rounded-lg transition-colors duration-200 ${viewMode === 'grid'
+                                        className={`cursor-pointer p-2 rounded-lg transition-colors duration-200 ${viewMode === 'grid'
                                             ? 'bg-blue-100 text-blue-600'
                                             : 'text-gray-400 hover:text-gray-600'
                                             }`}
@@ -286,7 +289,7 @@ export default function Page() {
                                     </button>
                                     <button
                                         onClick={() => setViewMode('list')}
-                                        className={`p-2 rounded-lg transition-colors duration-200 ${viewMode === 'list'
+                                        className={`cursor-pointer p-2 rounded-lg transition-colors duration-200 ${viewMode === 'list'
                                             ? 'bg-blue-100 text-blue-600'
                                             : 'text-gray-400 hover:text-gray-600'
                                             }`}
