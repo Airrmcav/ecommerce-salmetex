@@ -82,7 +82,7 @@ const PagePaymentCancelled = () => {
                     {/* Botones de acción principales */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 animate-in fade-in-0 duration-500 delay-800">
                         <Button 
-                            onClick={() => router.push("/checkout")}
+                            onClick={() => router.push("/carrito")}
                             size="lg"
                             className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
                         >
@@ -99,19 +99,6 @@ const PagePaymentCancelled = () => {
                             <ShoppingBag className="w-5 h-5 mr-2" />
                             Seguir comprando
                             <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
-                    </div>
-
-                    {/* Botones secundarios */}
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                        <Button 
-                            onClick={() => router.push("/")}
-                            variant="ghost"
-                            size="sm"
-                            className="text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                        >
-                            <Home className="w-4 h-4 mr-2" />
-                            Volver al inicio
                         </Button>
                     </div>
 
@@ -139,7 +126,7 @@ const PagePaymentCancelled = () => {
                             </div>
                         </div>
                         <p className="text-xs text-gray-400 mt-4">
-                            Horario de atención: Lunes a Viernes, 9:00 AM - 6:00 PM
+                            Horario de atención: Lunes a Viernes, 8:00 AM - 5:00 PM
                         </p>
                     </div>
                 </div>
