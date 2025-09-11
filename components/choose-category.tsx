@@ -69,14 +69,14 @@ const ChooseCategory = () => {
                                 </p>
                             </div>
                         </div>
-                        <div className="hidden md:flex items-center gap-2 text-sm text-gray-500">
+                        <div className="hidden md:flex items-center gap-2 p-2 text-sm bg-gray-800 rounded-2xl text-white">
                             <span>Navegar</span>
-                            <div className="flex gap-1">
-                                <div className="w-6 h-4 border border-gray-300 rounded flex items-center justify-center">
+                            <div className="flex items-center gap-3">
+                                <div className="border w-4 h-4 border-gray-300 rounded flex items-center justify-center">
                                     <ArrowRight className="w-3 h-3" />
                                 </div>
                                 <span>o</span>
-                                <div className="bg-gray-100 px-2 py-1 rounded text-xs">Arrastrar</div>
+                                <div className="bg-gray-700 px-2 py-1 rounded text-xs">Arrastrar</div>
                             </div>
                         </div>
                     </div>
@@ -84,7 +84,7 @@ const ChooseCategory = () => {
                     <Carousel className="w-full">
                         <CarouselContent className="-ml-2 md:-ml-4">
                             {result.map((category: CategoryType) => (
-                                <CarouselItem key={category.id} className="pl-2 md:pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 pb-10">
+                                <CarouselItem key={category.id} className="pl-2 md:pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 pb-10" role="listitem">
                                     <div className="h-full">
                                         <Link href={`/categoria/${category.slug}`}>
                                             <Card className="group h-full border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-4 bg-white rounded-3xl overflow-hidden relative cursor-pointer">

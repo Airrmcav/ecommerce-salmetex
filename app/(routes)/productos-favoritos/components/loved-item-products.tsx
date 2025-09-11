@@ -112,7 +112,7 @@ const LovedItemsProduct = ({ product, className }: LovedItemProductProps) => {
                                 {product.category && product.category.categoryName && (
                                     <Badge
                                         variant="secondary"
-                                        className="text-xs bg-blue-100 text-blue-800 border-blue-200 flex-shrink-0"
+                                        className="text-xs bg-blue-100 text-blue-800 border-blue-200 flex-shrink-0 hidden sm:flex"
                                     >
                                         <ShieldCheck size={12} className="mr-1" />
                                         {product.category.categoryName}

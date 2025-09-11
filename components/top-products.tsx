@@ -67,7 +67,7 @@ const TopProducts = () => {
                 const imageUrl = images?.[0]?.url;
 
                 return (
-                  <CarouselItem key={id} className="pl-2 md:pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 py-1">
+                  <CarouselItem key={id} className="pl-2 md:pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 py-1" role="listitem">
                     <article className="h-full" itemScope itemType="https://schema.org/Product">
                       <Card className="group h-full border-0 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white rounded-2xl overflow-hidden">
                         <CardContent className="p-0 h-full flex flex-col">

@@ -40,10 +40,10 @@ const CartItem = (props: CartItemProps) => {
             {/* Indicador visual de categoría médica */}
             <div className="absolute top-4 left-4 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-center justify-between">
                 {/* Imagen placeholder con icono médico */}
                 <div className="flex items-center space-x-4 flex-1">
-                    <div className="w-16 h-16  rounded-lg flex items-center justify-center border border-blue-200 group-hover:from-blue-100 group-hover:to-blue-200 transition-colors">
+                    <div className="w-16 h-16 rounded-lg sm:flex items-center justify-center border border-blue-200 group-hover:from-blue-100 group-hover:to-blue-200 transition-colors hidden">
                         {product.images && product.images.length > 0 ? (
                             <img 
                                 src={product.images[0].url} 
@@ -60,25 +60,25 @@ const CartItem = (props: CartItemProps) => {
 
                     {/* Información del producto */}
                     <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                        <h3 className="text-lg pt-3 sm:pt-0 font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
                             {product.productName}
                         </h3>
                         
                         {/* Precio destacado */}
-                        <div className="flex items-center space-x-2 mt-1">
+                        <div className="flex items-center space-x-2 my-3 sm:my-2">
                             <span className="text-2xl font-bold text-green-600">
                                 {formatPrice(product.price ?? 0)}
                             </span>
                             <span className="text-sm text-gray-500 bg-green-50 px-2 py-1 rounded-full">
                                 Incluye IVA
                             </span>
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-gray-500 my-2 sm:my-0">
                                 x {product.quantity || 1} = {formatPrice((product.price ?? 0) * (product.quantity || 1))}
                             </span>
                         </div>
 
                         {/* Información adicional */}
-                        <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                        <div className="flex items-center space-x-4 my-2 sm:my-0 text-sm text-gray-600">
                             <div className="flex items-center space-x-1">
                                 <Stethoscope className="w-4 h-4" />
                                 <p className="pl-1">
@@ -96,7 +96,7 @@ const CartItem = (props: CartItemProps) => {
                 {/* Control de cantidad y botones de acción */}
                 <div className="flex flex-col items-end space-y-3 ml-4">
                     {/* Control de cantidad */}
-                    <div className="flex items-center bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                    <div className="flex items-start bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
                         <button 
                             onClick={() => {
                                 setIsUpdating(true);

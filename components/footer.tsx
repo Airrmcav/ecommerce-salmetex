@@ -81,7 +81,7 @@ const Footer = () => {
                     <div>
                         <h3 className="text-lg font-semibold mb-6 text-gray-900">Enlaces Rápidos</h3>
                         <ul className="space-y-3" role="list" aria-label="Enlaces rápidos de navegación">
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -89,7 +89,7 @@ const Footer = () => {
                                     Inicio
                                 </Link>
                             </li>
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/nosotros"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -97,7 +97,7 @@ const Footer = () => {
                                     Nosotros
                                 </Link>
                             </li>
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/productos"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -105,7 +105,7 @@ const Footer = () => {
                                     Todos los Productos
                                 </Link>
                             </li>
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/productos-destacados"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -113,7 +113,7 @@ const Footer = () => {
                                     Productos Destacados
                                 </Link>
                             </li>
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/productos-top"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -121,7 +121,7 @@ const Footer = () => {
                                     Productos Top
                                 </Link>
                             </li>
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/contacto"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -136,7 +136,7 @@ const Footer = () => {
                     <div>
                         <h3 className="text-lg font-semibold mb-6 text-gray-900">Categorías</h3>
                         <ul className="space-y-3" role="list" aria-label="Categorías de productos">
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/categoria/autoclaves"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -144,7 +144,7 @@ const Footer = () => {
                                     Autoclaves
                                 </Link>
                             </li>
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/categoria/mesas-quirurgicas"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -152,7 +152,7 @@ const Footer = () => {
                                     Mesas de Cirugía
                                 </Link>
                             </li>
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/categoria/equipos-de-signos-vitales"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -160,7 +160,7 @@ const Footer = () => {
                                     Equipos de Signos Vitales
                                 </Link>
                             </li>
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/categoria/lamparas-de-cirugia"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -168,7 +168,7 @@ const Footer = () => {
                                     Lámparas de Cirugía
                                 </Link>
                             </li>
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/categoria/incubadoras"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -176,7 +176,7 @@ const Footer = () => {
                                     Incubadoras
                                 </Link>
                             </li>
-                            <li>
+                            <li role="listitem">
                                 <Link
                                     href="/categoria/camillas-portatiles"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
@@ -184,7 +184,7 @@ const Footer = () => {
                                     Camillas Portátiles
                                 </Link>
                             </li>
-                            <li className="flex justify-center mt-2">
+                            <li role="listitem" className="flex justify-center mt-2">
                                 <Link
                                     href="/categoria/todos"
                                     className="text-white p-2 inline w-100 bg-blue-600 rounded-2xl transition-colors duration-200 text-sm hover:underline underline-offset-4 text-center"

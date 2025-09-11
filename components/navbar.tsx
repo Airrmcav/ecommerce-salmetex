@@ -169,9 +169,10 @@ const Navbar = () => {
                 <div className="flex items-center justify-between px-4 py-1 mx-auto max-w-7xl ">
                     <div className="flex items-center">
                         <NavigationMenu>
-                            <NavigationMenuItem className="list-none">
-                                <NavigationMenuTrigger className="uppercase cursor-pointer bg-transparent">Productos</NavigationMenuTrigger>
-                                <NavigationMenuContent>
+                            <NavigationMenuList>
+                                <NavigationMenuItem>
+                                    <NavigationMenuTrigger className="uppercase cursor-pointer bg-transparent">Productos</NavigationMenuTrigger>
+                                    <NavigationMenuContent>
                                     <div className="w-[400px] lg:w-[500px] xl:w-[600px]">
                                         <div className="grid lg:grid-cols-[.75fr_1fr] gap-4 p-4">
                                             {/* Sección principal - lado izquierdo */}
@@ -269,6 +270,7 @@ const Navbar = () => {
                                     </div>
                                 </NavigationMenuContent>
                             </NavigationMenuItem>
+                            </NavigationMenuList>
                         </NavigationMenu>
                     </div>
 
