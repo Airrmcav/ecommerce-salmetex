@@ -28,7 +28,7 @@ const socialLinks = [
 
 const Footer = () => {
     return (
-        <footer className="bg-white text-white">
+        <footer className="bg-white">
             {/* Main Footer Content */}
             <div className="max-w-7xl mx-auto px-4 py-16">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
@@ -40,6 +40,7 @@ const Footer = () => {
                                 src="/logo/logo-letras.webp"
                                 alt="SALMETEXMED"
                                 className="h-22 w-auto object-contain mb-4"
+                                loading="lazy"
                             />
                             <p className="text-gray-500 text-sm leading-relaxed">
                                 Equipos médicos de alta calidad para profesionales de la salud.
@@ -53,6 +54,7 @@ const Footer = () => {
                                 href="https://www.facebook.com/salmetexmed?locale=es_LA"
                                 target="_blank"
                                 className="p-2 bg-gray-800 hover:bg-blue-600 rounded-lg transition-all duration-300 hover:scale-110"
+                                aria-label="Síguenos en Facebook"
                             >
                                 <Facebook size={18} />
                             </Link>
@@ -60,6 +62,7 @@ const Footer = () => {
                                 href="https://www.instagram.com/salmetexmed/"
                                 target="_blank"
                                 className="p-2 bg-gray-800 hover:bg-pink-600 rounded-lg transition-all duration-300 hover:scale-110"
+                                aria-label="Síguenos en Instagram"
                             >
                                 <Instagram size={18} />
                             </Link>
@@ -67,6 +70,7 @@ const Footer = () => {
                                 href="https://www.tiktok.com/@salmetexmed"
                                 target="_blank"
                                 className="p-2 bg-gray-800 hover:bg-blue-400 rounded-lg transition-all duration-300 hover:scale-110"
+                                aria-label="Síguenos en TikTok"
                             >
                                 <TikTokIcon className="w-5 h-5 text-white" />
                             </Link>
@@ -209,6 +213,7 @@ const Footer = () => {
                                 <Link
                                     href="tel:+5218445954660"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm"
+                                    aria-label="Llamar al teléfono +52 1 844 595 4660"
                                 >
                                     +52 1 844 595 4660
                                 </Link>
@@ -219,6 +224,7 @@ const Footer = () => {
                                 <Link
                                     href="mailto:contacto@salmetex.com.mx"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm"
+                                    aria-label="Enviar correo a contacto@salmetex.com.mx"
                                 >
                                     contacto@salmetex.com.mx
                                 </Link>
@@ -256,6 +262,7 @@ const Footer = () => {
                                 href={"https://www.facebook.com/groups/723178883718883"}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                aria-label="Suscribirse al grupo de Facebook para recibir promociones"
                                 className="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-700 
                                              text-white font-medium rounded-2xl hover:from-blue-700 
                                              hover:to-blue-800 transition-all duration-200 text-sm">
@@ -271,7 +278,7 @@ const Footer = () => {
                 <div className="max-w-7xl mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <div className="text-center md:text-left">
-                            <p className="text-gray-400 text-sm">
+                            <p className="text-gray-700 text-sm">
                                 © 2025 SALMETEXMED. Todos los derechos reservados.
                             </p>
                         </div>

@@ -94,6 +94,7 @@ const Banner = () => {
                         <div className="flex flex-col sm:flex-row gap-4">
                             <button
                                 onClick={() => router.push('/categoria/todos')}
+                                aria-label="Ver catálogo completo de productos médicos"
                                 className="cursor-pointer group bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold py-4 px-8 rounded-xl shadow-2xl hover:shadow-cyan-500/25 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
                                 Ver Catálogo Completo
                                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -101,6 +102,7 @@ const Banner = () => {
 
                             <button
                                 onClick={() => (window.location.href = "tel:+5218445954660")}
+                                aria-label="Llamar para consulta especializada al +52 1 844 595 4660"
                                 className="cursor-pointer group bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-semibold py-4 px-8 rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 flex items-center justify-center gap-3"
                             >
                                 <Phone className="w-5 h-5" />
@@ -110,14 +112,14 @@ const Banner = () => {
 
                         {/* Contact Info */}
                         <div className="flex flex-wrap gap-6 text-sm text-blue-200">
-                            <div className="flex items-center gap-2">
+                            <a href="tel:+5218445954660" aria-label="Llamar al teléfono +52 1 844 595 4660" className="flex items-center gap-2">
                                 <Phone className="w-4 h-4" />
                                 <span>+52 1 844 595 4660</span>
-                            </div>
-                            <div className="flex items-center gap-2">
+                            </a>
+                            <a href="mailto:ventas@salmetexmed.com.mx" aria-label="Enviar correo a ventas@salmetexmed.com.mx" className="flex items-center gap-2">
                                 <Mail className="w-4 h-4" />
                                 <span>ventas@salmetexmed.com.mx</span>
-                            </div>
+                            </a>
                             <div className="flex items-center gap-2">
                                 <MapPin className="w-4 h-4" />
                                 <span>Ciudad de México | Estado de México | Saltillo</span>
@@ -126,12 +128,12 @@ const Banner = () => {
                     </div>
 
                     {/* Right Visual Content */}
-                    <div className="relative">
+                    <div className="relative hidden md:block">
                         {/* Main Image Container */}
                         <div className="relative z-10">
                             <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl">
                                 {/* Medical Equipment Visualization */}
-                                <div className="aspect-square bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-2xl flex items-center justify-center relative overflow-hidden">
+                                <div className="aspect-square bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-2xl flex items-center justify-center relative overflow-hidden" role="img" aria-label="Visualización de equipos médicos disponibles">
                                     <div className="text-center space-y-6">
                                         {/* Equipment Icons */}
                                         <div className="grid grid-cols-3 gap-6 mb-8">

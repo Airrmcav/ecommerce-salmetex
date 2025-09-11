@@ -32,6 +32,7 @@ const ProductCard = (props: ProductCardProps) => {
                     src={product.images[0].url}
                     alt={product.images[0].alternativeText || product.productName}
                     className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-100">
@@ -57,7 +58,7 @@ const ProductCard = (props: ProductCardProps) => {
                   </Badge>
                 </div>
 
-                <IconButton  onClick={() => addLoveItems(product)} icon={<Heart className="w-4 h-4 text-gray-800 hover:text-red-500 transition-colors" />} className="absolute top-3 left-3 p-2 rounded-full bg-gray-300/5 backdrop-blur-sm hover:bg-white transition-all duration-200 group-hover:opacity-100" />
+                <IconButton onClick={() => addLoveItems(product)} icon={<Heart className="w-4 h-4 text-gray-800 hover:text-red-500 transition-colors" />} className="absolute top-3 left-3 p-2 rounded-full bg-gray-300/5 backdrop-blur-sm hover:bg-white transition-all duration-200 group-hover:opacity-100" aria-label="Agregar a favoritos" title="Agregar a favoritos" />
 
                 <div className="absolute bottom-3 left-3">
                   <Badge className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-xs font-medium">
@@ -98,6 +99,7 @@ const ProductCard = (props: ProductCardProps) => {
                       : "bg-gray-100 text-gray-400 cursor-not-allowed"
                       }`}
                     disabled={!product.active}
+                    aria-label={`Ver detalles de ${product.productName}`}
                   >
                     Ver Detalles
                   </button>
@@ -107,6 +109,7 @@ const ProductCard = (props: ProductCardProps) => {
                     className={`${(!product.price || product.price <= 0) ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white shadow-md hover:shadow-lg`} 
                     disabled={!product.price || product.price <= 0}
                     title={!product.price || product.price <= 0 ? "Este producto no tiene precio definido" : "Agregar al carrito"}
+                    aria-label={!product.price || product.price <= 0 ? "Este producto no tiene precio definido" : `Agregar ${product.productName} al carrito`}
                   />
                 </div>
               </div>

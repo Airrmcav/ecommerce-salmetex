@@ -73,7 +73,7 @@ export default function Page() {
                             images={product.images && product.images.length > 0 ? product.images.map(img => ({
                                 id: img.id,
                                 url: img.url,
-                                alternativeText: img.alternativeText ?? undefined, // convierte null en undefined
+                                alternativeText: img.alternativeText ?? undefined,
                             })) : []}
                             productName={product.productName}
                         />
@@ -113,7 +113,6 @@ export default function Page() {
                     {/* Sección dinámica de características */}
                     {parsedCharacteristics && Object.keys(parsedCharacteristics).length > 0 ? (
                         <div className="mt-3 p-5">
-
                             {renderCharacteristics(parsedCharacteristics)}
                         </div>
                     ) : (

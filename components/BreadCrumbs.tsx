@@ -40,6 +40,7 @@ export default function Breadcrumb({
           <button 
             onClick={handleBackClick}
             className="group inline-flex cursor-pointer items-center gap-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-2 rounded-lg transition-all duration-200 mb-3 font-medium"
+            aria-label={`${backButton.label} a la página anterior`}
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-200" />
             <span className="text-sm">{backButton.label}</span>
@@ -47,7 +48,7 @@ export default function Breadcrumb({
         )}
         
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center" aria-label="Breadcrumb">
+        <nav className="flex items-center" aria-label="Navegación de migas de pan">
           <div className="flex items-center space-x-1">
             {items.map((item, index) => (
               <div key={index} className="flex items-center">
@@ -66,6 +67,7 @@ export default function Breadcrumb({
                   <a 
                     href={item.href}
                     className="text-sm text-gray-600  hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-all duration-200 font-medium"
+                    aria-label={`Ir a ${item.label}`}
                   >
                     {item.label}
                   </a>

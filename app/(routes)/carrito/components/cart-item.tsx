@@ -49,6 +49,7 @@ const CartItem = (props: CartItemProps) => {
                                 src={product.images[0].url} 
                                 alt={product.productName} 
                                 className="w-12 h-12 object-contain" 
+                                loading="lazy"
                             />
                         ) : (
                             <div className="w-12 h-12 flex items-center justify-center bg-blue-50 rounded-md">
@@ -97,7 +98,6 @@ const CartItem = (props: CartItemProps) => {
                     {/* Control de cantidad */}
                     <div className="flex items-center bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
                         <button 
-               
                             onClick={() => {
                                 setIsUpdating(true);
                                 const newQuantity = Math.max(1, (product.quantity || 1) - 1);
@@ -107,6 +107,7 @@ const CartItem = (props: CartItemProps) => {
                             className="p-1 cursor-pointer
                              bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors"
                             disabled={isUpdating}
+                            aria-label="Disminuir cantidad"
                         >
                             <Minus className="w-4 h-4" />
                         </button>
@@ -124,6 +125,7 @@ const CartItem = (props: CartItemProps) => {
                             }}
                             className="cursor-pointer w-12 text-center bg-white border-0 focus:ring-0 text-gray-700"
                             disabled={isUpdating}
+                            aria-label={`Cantidad de ${product.productName}`}
                         />
                         
                         <button 
@@ -135,6 +137,7 @@ const CartItem = (props: CartItemProps) => {
                             }}
                             className="cursor-pointer p-1 bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors"
                             disabled={isUpdating}
+                            aria-label="Aumentar cantidad"
                         >
                             <Plus className="w-4 h-4" />
                         </button>
@@ -147,6 +150,7 @@ const CartItem = (props: CartItemProps) => {
                             onClick={handleViewProduct}
                             className="p-2 cursor-pointer bg-blue-400 text-white rounded-full transition-all duration-200 group/btn"
                             title="Ver producto"
+                            aria-label={`Ver detalles de ${product.productName}`}
                         >
                             <Eye className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                         </button>
@@ -156,6 +160,7 @@ const CartItem = (props: CartItemProps) => {
                             onClick={handleRemove}
                             className="p-2 cursor-pointer bg-red-400 text-white rounded-full transition-all duration-200 group/btn"
                             title="Eliminar del carrito"
+                            aria-label={`Eliminar ${product.productName} del carrito`}
                             disabled={isRemoving}
                         >
                             <X className={cn(

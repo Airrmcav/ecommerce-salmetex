@@ -62,6 +62,7 @@ const FeaturedProducts = () => {
                                 src={imageUrl}
                                 alt={productName}
                                 className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                                loading="lazy"
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-gray-100">
@@ -91,7 +92,7 @@ const FeaturedProducts = () => {
                             {/* <button className="absolute top-3 left-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 group-hover:opacity-100">
                                                             <Heart className="w-4 h-4 text-gray-600 hover:text-red-500 transition-colors" />
                                                         </button> */}
-                            <IconButton onClick={() => addLoveItems(product)} icon={<Heart className="w-4 h-4 text-gray-800 hover:text-red-500 transition-colors" />} className="absolute top-3 left-3 p-2 rounded-full bg-gray-300/5 backdrop-blur-sm hover:bg-white transition-all duration-200 group-hover:opacity-100" />
+                            <IconButton onClick={() => addLoveItems(product)} icon={<Heart className="w-4 h-4 text-gray-800 hover:text-red-500 transition-colors" />} className="absolute top-3 left-3 p-2 rounded-full bg-gray-300/5 backdrop-blur-sm hover:bg-white transition-all duration-200 group-hover:opacity-100" aria-label="Agregar a favoritos" title="Agregar a favoritos" />
 
                             {/* Category Badge */}
                             <div className="absolute bottom-3 left-3">
@@ -137,6 +138,7 @@ const FeaturedProducts = () => {
                                   : "bg-gray-100 text-gray-400 cursor-not-allowed"
                                   }`}
                                 disabled={!active}
+                                aria-label={`Ver detalles de ${productName}`}
                               >
                                 Ver Detalles
                               </button>
@@ -149,6 +151,7 @@ const FeaturedProducts = () => {
                                 className={`${(!product.price || product.price <= 0) ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white shadow-md hover:shadow-lg`} 
                                 disabled={!product.price || product.price <= 0}
                                 title={!product.price || product.price <= 0 ? "Este producto no tiene precio definido" : "Agregar al carrito"}
+                                aria-label={!product.price || product.price <= 0 ? "Este producto no tiene precio definido" : `Agregar ${productName} al carrito`}
                               />
                             </div>
                           </div>
@@ -171,7 +174,8 @@ const FeaturedProducts = () => {
       <div className="text-center mt-1">
         <button
         onClick={() => router.push('/categoria/todos')}
-         className="inline-flex cursor-pointer items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+        aria-label="Ver catálogo completo de productos médicos"
+        className="inline-flex cursor-pointer items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
           Ver Todos los Productos
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

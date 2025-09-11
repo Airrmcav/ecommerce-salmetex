@@ -110,7 +110,7 @@ export default function Page() {
                 {((categoryProducts !== null && !categoryLoading) || (categorySlug === 'todos' && allProducts !== null && !allProductsLoading)) && (
                     <header className="mb-8">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl">
+                            <div className="p-3 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl hidden md:block">
                                 <Stethoscope className="w-8 h-8 text-blue-600" />
                             </div>
                             <div className="flex-1">

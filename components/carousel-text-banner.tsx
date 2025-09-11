@@ -145,6 +145,7 @@ const Carousel = () => {
                                                 className="w-full max-w-md lg:max-w-lg h-auto max-h-[350px] object-contain 
                                                          filter drop-shadow-2xl transform hover:scale-105 
                                                          transition-transform duration-500"
+                                                loading={index === 0 ? "eager" : "lazy"}
                                             />
                                             {/* Decorative Elements */}
                                             <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 
@@ -161,7 +162,7 @@ const Carousel = () => {
             {/* Navigation Arrows */}
             <button
                 onClick={prevSlide}
-                className="absolute left-15 top-1/2 transform -translate-y-1/2 z-20
+                className="hidden md:block absolute left-15 top-1/2 transform -translate-y-1/2 z-20
                          p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full
                          text-white hover:text-blue-200 transition-all duration-300
                          border border-white/30 hover:scale-110"
@@ -172,7 +173,7 @@ const Carousel = () => {
 
             <button
                 onClick={nextSlide}
-                className="absolute right-15 top-1/2 transform -translate-y-1/2 z-20
+                className="hidden md:block absolute right-15 top-1/2 transform -translate-y-1/2 z-20
                          p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full
                          text-white hover:text-blue-200 transition-all duration-300
                          border border-white/30 hover:scale-110"
@@ -193,7 +194,7 @@ const Carousel = () => {
             </button>
 
             {/* Dots Indicator - Ajustado para estar sobre el degradado */}
-            <div className="absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20">
+            <div className="absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
                 <div className="flex items-center space-x-3">
                     {dataCarouselTop.map((_, index) => (
                         <button
@@ -221,7 +222,7 @@ const Carousel = () => {
             </div>
 
             {/* Slide Counter - Ajustado para estar sobre el degradado */}
-            <div className="absolute bottom-40 right-8 z-20">
+            <div className="absolute bottom-40 right-8 z-20 hidden md:block">
                 <div className="px-4 py-2 bg-white backdrop-blur-sm rounded-full text-gray-700 text-sm font-medium border border-gray-300">
                     {String(currentSlide + 1).padStart(2, '0')} / {String(dataCarouselTop.length).padStart(2, '0')}
                 </div>
