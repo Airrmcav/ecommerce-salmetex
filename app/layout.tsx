@@ -22,17 +22,17 @@ const geistMono = Inter({
 
 export const metadata: Metadata = {
   title: "Salmetexmed - Equipamiento Médico",
-   description: "Venta de equipamiento médico con más de una década de experiencia. Suministros médicos, instrumental quirúrgico y tecnología hospitalaria de alta calidad en México.",
-    keywords: [
+  description: "Venta de equipamiento médico con más de una década de experiencia. Suministros médicos, instrumental quirúrgico y tecnología hospitalaria de alta calidad en México.",
+  keywords: [
     "equipamiento médico",
-    "instrumental quirúrgico", 
+    "instrumental quirúrgico",
     "suministros médicos",
     "tecnología hospitalaria",
     "equipo médico México",
     "dispositivos médicos",
     "material médico"
   ],
-   authors: [{ name: "Salmetexmed" }],
+  authors: [{ name: "Salmetexmed" }],
   creator: "Salmetexmed",
   publisher: "Salmetexmed",
   robots: {
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'es_MX',
-    url: 'https://salmetexmed.com.mx', 
+    url: 'https://salmetexmed.com.mx',
     siteName: 'Salmetexmed',
     title: 'Salmetexmed - Equipamiento Médico',
     description: 'Líderes en equipamiento médico con más de una década de experiencia. Suministros médicos, instrumental quirúrgico y tecnología hospitalaria.',
@@ -84,13 +84,13 @@ export default function RootLayout({
         {/* Preconnect para mejorar velocidad */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
+
         {/* DNS Prefetch para recursos externos */}
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-        
+
         {/* Canonical URL (agregar en cada página específica) */}
         <link rel="canonical" href="https://salmetex.com" />
-        
+
         {/* Structured Data - Organización */}
         <script
           type="application/ld+json"
@@ -111,9 +111,11 @@ export default function RootLayout({
               },
               "address": {
                 "@type": "PostalAddress",
-                "addressCountry": "MX",
+                "streetAddress": "Av. Sor Juana Inés de la Cruz s/n, Ricardo Flores Magón",
+                "postalCode": "54607",
                 "addressLocality": "Tepotzotlán",
-                "addressRegion": "Estado de México"
+                "addressRegion": "Estado de México",
+                "addressCountry": "MX"
               },
               "sameAs": [
                 "https://facebook.com/salmetexmed",
@@ -122,7 +124,7 @@ export default function RootLayout({
             })
           }}
         />
-        
+
         {/* Structured Data - Website */}
         <script
           type="application/ld+json"
