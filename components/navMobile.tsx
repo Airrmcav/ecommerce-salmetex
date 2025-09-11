@@ -43,6 +43,7 @@ const NavMobile = ({ isMenuOpen, toggleMenu }: NavMobileProps) => {
                         className="w-full text-left px-4 py-3 text-gray-700 hover:text-blue-600 font-medium
                        hover:bg-blue-50 rounded-lg transition-all duration-200
                        border border-transparent hover:border-blue-100"
+                        aria-label="Ver todos los productos"
                     >
                         Productos
                     </button>
@@ -122,6 +123,7 @@ const NavMobile = ({ isMenuOpen, toggleMenu }: NavMobileProps) => {
                      text-white font-medium rounded-xl shadow-md text-sm
                      hover:shadow-lg hover:from-blue-700 hover:to-blue-800 
                      transition-all duration-200 border border-blue-600/20"
+                        aria-label="Suscríbete a nuestras promociones"
                     >
                         Suscríbete a promociones
                     </button>

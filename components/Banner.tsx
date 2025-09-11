@@ -45,12 +45,12 @@ const Banner = () => {
 
                         {/* Main Headlines */}
                         <div className="space-y-4">
-                            <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                            <h2 className="text-5xl lg:text-6xl font-bold leading-tight">
                                 Equipos Médicos de
                                 <span className="block bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
                                     Última Generación
                                 </span>
-                            </h1>
+                            </h2>
                             <p className="text-xl text-blue-100 leading-relaxed max-w-lg">
                                 Tecnología avanzada para profesionales de la salud. Calidad certificada,
                                 soporte especializado y envío inmediato.

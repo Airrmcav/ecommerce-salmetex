@@ -124,9 +124,9 @@ const Carousel = () => {
                                         </div>
 
                                         {/* Title */}
-                                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+                                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
                                             {slide.title}
-                                        </h1>
+                                        </h2>
 
                                         {/* Description */}
                                         <p className="text-lg sm:text-xl text-gray-200 mb-8 leading-relaxed">

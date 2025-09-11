@@ -53,7 +53,7 @@ const Footer = () => {
                             <Link
                                 href="https://www.facebook.com/salmetexmed?locale=es_LA"
                                 target="_blank"
-                                className="p-2 bg-gray-800 hover:bg-blue-600 rounded-lg transition-all duration-300 hover:scale-110"
+                                className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-all duration-300 hover:scale-110 text-white"
                                 aria-label="Síguenos en Facebook"
                             >
                                 <Facebook size={18} />
@@ -61,7 +61,7 @@ const Footer = () => {
                             <Link
                                 href="https://www.instagram.com/salmetexmed/"
                                 target="_blank"
-                                className="p-2 bg-gray-800 hover:bg-pink-600 rounded-lg transition-all duration-300 hover:scale-110"
+                                className="p-2 bg-pink-600 hover:bg-pink-700 rounded-lg transition-all duration-300 hover:scale-110 text-white"
                                 aria-label="Síguenos en Instagram"
                             >
                                 <Instagram size={18} />
@@ -69,7 +69,7 @@ const Footer = () => {
                             <Link
                                 href="https://www.tiktok.com/@salmetexmed"
                                 target="_blank"
-                                className="p-2 bg-gray-800 hover:bg-blue-400 rounded-lg transition-all duration-300 hover:scale-110"
+                                className="p-2 bg-black hover:bg-gray-800 rounded-lg transition-all duration-300 hover:scale-110 text-white"
                                 aria-label="Síguenos en TikTok"
                             >
                                 <TikTokIcon className="w-5 h-5 text-white" />
@@ -80,7 +80,7 @@ const Footer = () => {
                     {/* Quick Links */}
                     <div>
                         <h3 className="text-lg font-semibold mb-6 text-gray-900">Enlaces Rápidos</h3>
-                        <ul className="space-y-3">
+                        <ul className="space-y-3" role="list" aria-label="Enlaces rápidos de navegación">
                             <li>
                                 <Link
                                     href="/"
@@ -135,7 +135,7 @@ const Footer = () => {
                     {/* Products Categories */}
                     <div>
                         <h3 className="text-lg font-semibold mb-6 text-gray-900">Categorías</h3>
-                        <ul className="space-y-3">
+                        <ul className="space-y-3" role="list" aria-label="Categorías de productos">
                             <li>
                                 <Link
                                     href="/categoria/autoclaves"
@@ -188,6 +188,7 @@ const Footer = () => {
                                 <Link
                                     href="/categoria/todos"
                                     className="text-white p-2 inline w-100 bg-blue-600 rounded-2xl transition-colors duration-200 text-sm hover:underline underline-offset-4 text-center"
+                                    aria-label="Ver más categorías de productos"
                                 >
                                     Más Productos
                                 </Link>

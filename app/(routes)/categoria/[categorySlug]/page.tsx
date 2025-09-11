@@ -126,7 +126,7 @@ export default function Page() {
                                         <>
                                             <span className="block">Equipos Médicos de</span>
                                             <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                                                {categoryProducts[0].category.categoryName}
+                                                {categoryProducts[0]?.category?.categoryName}
                                             </span>
                                         </>
                                     )}

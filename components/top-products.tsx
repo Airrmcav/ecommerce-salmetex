@@ -30,9 +30,9 @@ const TopProducts = () => {
           <Award className="w-4 h-4 text-amber-600" />
           <span className="text-sm font-semibold text-amber-800">Productos TOP</span>
         </div>
-        <h1 id="top-products-heading" className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+        <h2 id="top-products-heading" className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
           Equipos Médicos en México
-        </h1>
+        </h2>
         <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
           Los productos más <strong> recomendados y certificados</strong> por especialistas del sector médico. Calidad garantizada y respaldo de nuestra trayectoria en el cuidado de la salud.
         </p>

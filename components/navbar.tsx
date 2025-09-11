@@ -79,6 +79,7 @@ const Navbar = () => {
              hover:shadow-lg hover:from-blue-700 hover:to-blue-800 
              transform hover:-translate-y-0.5 transition-all duration-200
              border border-blue-600/20"
+             aria-label="Suscríbete a nuestro grupo de promociones"
                     >
                         Suscríbete a nuestro grupo de <br /> promociones
                     </button>
@@ -89,6 +90,7 @@ const Navbar = () => {
              bg-gray-50/80 hover:bg-blue-50 rounded-xl
              shadow-sm hover:shadow-md transition-all duration-200
              border border-gray-200/50 hover:border-blue-200"
+             aria-label="Productos Favoritos"
                     >
 
                         <Heart strokeWidth="1" className={`cursor-pointer ${lovedItems.length > 0 && 'fill-red-300 '}`} />
@@ -100,6 +102,7 @@ const Navbar = () => {
              bg-gray-50/80 hover:bg-blue-50 rounded-xl
              shadow-sm hover:shadow-md transition-all duration-200
              border border-gray-200/50 hover:border-blue-200 cursor-pointer"
+             aria-label="Carrito de Compras"
                     >
                         {cart.items.length === 0 ? (
                             <ShoppingCart size={24} strokeWidth={1.5} />
@@ -120,6 +123,7 @@ const Navbar = () => {
              bg-gray-50/80 hover:bg-blue-50 rounded-xl
              shadow-sm hover:shadow-md transition-all duration-200
              border border-gray-200/50 hover:border-blue-200 cursor-pointer"
+             aria-label="Carrito de Compras"
                     >
                         {cart.items.length === 0 ? (
                             <ShoppingCart size={24} strokeWidth={1.5} />
@@ -137,6 +141,7 @@ const Navbar = () => {
              bg-gray-50/80 hover:bg-blue-50 rounded-xl
              shadow-sm hover:shadow-md transition-all duration-200
              border border-gray-200/50 hover:border-blue-200"
+             aria-label="Productos Favoritos"
                     >
 
                         <Heart strokeWidth="1" className={`cursor-pointer ${lovedItems.length > 0 && 'fill-red-300 '}`} />
@@ -147,6 +152,7 @@ const Navbar = () => {
                         className="p-3 text-gray-600 hover:text-blue-600 
                      bg-gray-50/80 hover:bg-blue-50 rounded-xl
                      shadow-sm transition-all duration-200"
+                     aria-label="Menú de Navegación"
                     >
                         {isMenuOpen ? <X /> : <Menu />}
                     </button>
@@ -272,6 +278,7 @@ const Navbar = () => {
                             className="text-gray-700 hover:text-blue-600 font-medium
                        transition-colors duration-200 hover:underline
                        decoration-blue-600 underline-offset-4 text-sm lg:text-base uppercase cursor-pointer"
+                       aria-label="Ir a la página de Inicio"
                         >
                             Inicio
                         </button>
@@ -281,6 +288,7 @@ const Navbar = () => {
                             className="text-gray-700 hover:text-blue-600 font-medium
                        transition-colors duration-200 hover:underline
                        decoration-blue-600 underline-offset-4 text-sm lg:text-base uppercase cursor-pointer"
+                       aria-label="Ir a la página de Nosotros"
                         >
                             Nosotros
                         </button>
@@ -293,6 +301,7 @@ const Navbar = () => {
                             className="text-gray-700 hover:text-blue-600 font-medium
                        transition-colors duration-200 hover:underline
                        decoration-blue-600 underline-offset-4 text-sm lg:text-base uppercase cursor-pointer"
+                       aria-label="Ir a la página de Productos Destacados"
                         >
                             Productos Destacados
                         </button>
@@ -302,6 +311,7 @@ const Navbar = () => {
                             className="text-gray-700 hover:text-blue-600 font-medium
                        transition-colors duration-200 hover:underline
                        decoration-blue-600 underline-offset-4 text-sm lg:text-base uppercase cursor-pointer"
+                       aria-label="Ir a la página de Productos Top"
                         >
                             Productos Top
                         </button>
@@ -310,6 +320,7 @@ const Navbar = () => {
                             className="text-gray-700 hover:text-blue-600 font-medium
                        transition-colors duration-200 hover:underline
                        decoration-blue-600 underline-offset-4 text-sm lg:text-base uppercase cursor-pointer"
+                       aria-label="Ir a la página de Blog"
                         >
                             Blog
                         </button>
@@ -319,6 +330,7 @@ const Navbar = () => {
                             className="text-gray-700 hover:text-blue-600 font-medium
                        transition-colors duration-200 hover:underline
                        decoration-blue-600 underline-offset-4 text-sm lg:text-base uppercase cursor-pointer"
+                       aria-label="Ir a la página de Contacto"
                         >
                             Contacto
                         </button>

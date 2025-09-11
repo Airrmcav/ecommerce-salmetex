@@ -123,6 +123,8 @@ function Carousel({
         className={cn("relative", className)}
         role="region"
         aria-roledescription="carousel"
+        aria-label="Carrusel de imágenes"
+        tabIndex={0}
         data-slot="carousel"
         {...props}
       >
@@ -140,6 +142,7 @@ function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
       ref={carouselRef}
       className="overflow-hidden"
       data-slot="carousel-content"
+      aria-live="polite"
     >
       <div
         className={cn(
@@ -147,6 +150,7 @@ function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
           orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
           className
         )}
+        role="list"
         {...props}
       />
     </div>
@@ -193,10 +197,11 @@ function CarouselPrevious({
       )}
       disabled={!canScrollPrev}
       onClick={scrollPrev}
+      aria-label="Diapositiva anterior"
       {...props}
     >
-      <ArrowLeft />
-      <span className="sr-only">Previous slide</span>
+      <ArrowLeft aria-hidden="true" />
+      <span className="sr-only">Diapositiva anterior</span>
     </Button>
   )
 }
@@ -223,10 +228,11 @@ function CarouselNext({
       )}
       disabled={!canScrollNext}
       onClick={scrollNext}
+      aria-label="Siguiente diapositiva"
       {...props}
     >
-      <ArrowRight />
-      <span className="sr-only">Next slide</span>
+      <ArrowRight aria-hidden="true" />
+      <span className="sr-only">Siguiente diapositiva</span>
     </Button>
   )
 }

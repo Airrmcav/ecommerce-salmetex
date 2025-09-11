@@ -84,26 +84,30 @@ const CarouselProduct = (props: CarouselProductProps) => {
                             <button
                                 onClick={scrollThumbnailsUp}
                                 disabled={!canScrollUp}
+                                aria-label="Ver miniaturas anteriores"
                                 className={`mb-2 p-1.5 sm:p-2 rounded-lg transition-all duration-200 ${
                                     canScrollUp 
                                         ? 'bg-white hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md text-gray-700' 
                                         : 'bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed'
                                 }`}
                             >
-                                <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" aria-hidden="true" />
                             </button>
 
                             {/* Thumbnails Container */}
-                            <div className="flex flex-col gap-2 overflow-hidden p-1 sm:p-2 lg:p-3">
+                            <div className="flex flex-col gap-2 overflow-hidden p-1 sm:p-2 lg:p-3" role="list" aria-label="Miniaturas de imágenes del producto">
                                 {images.slice(thumbnailStartIndex, thumbnailStartIndex + visibleThumbnails).map((image, relativeIndex) => {
                                     const actualIndex = thumbnailStartIndex + relativeIndex;
                                     return (
                                         <button
                                             key={image.id}
                                             onClick={() => handleImageSelect(actualIndex)}
+                                            aria-label={`Ver imagen ${actualIndex + 1}${image.alternativeText ? `: ${image.alternativeText}` : ''}`}
+                                            aria-current={selectedImageIndex === actualIndex ? "true" : "false"}
                                             className={`relative group transition-all duration-300 ${
                                                 selectedImageIndex === actualIndex
                                             }`}
+                                            role="listitem"
                                         >
                                             <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-white rounded-xl border border-gray-200 overflow-hidden shadow-md">
                                                 <img
@@ -134,13 +138,14 @@ const CarouselProduct = (props: CarouselProductProps) => {
                             <button
                                 onClick={scrollThumbnailsDown}
                                 disabled={!canScrollDown}
+                                aria-label="Ver más miniaturas"
                                 className={`mt-2 p-1.5 sm:p-2 rounded-lg transition-all duration-200 ${
                                     canScrollDown 
                                     ? 'bg-white hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md text-gray-700' 
                                     : 'bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed'
                                 }`}
                             >
-                                <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" aria-hidden="true" />
                             </button>
 
                             {/* Thumbnail Counter */}
@@ -186,15 +191,17 @@ const CarouselProduct = (props: CarouselProductProps) => {
                                 <>
                                     <button
                                         onClick={handlePrevImage}
-                                        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 sm:p-3 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100"
+                                        aria-label="Imagen anterior"
+                                        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 sm:p-3 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100"
                                     >
-                                        <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
+                                        <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" aria-hidden="true" />
                                     </button>
                                     <button
                                         onClick={handleNextImage}
-                                        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 sm:p-3 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100"
+                                        aria-label="Imagen siguiente"
+                                        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 sm:p-3 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100"
                                     >
-                                        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
+                                        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" aria-hidden="true" />
                                     </button>
                                 </>
                             )}

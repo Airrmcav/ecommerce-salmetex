@@ -30,9 +30,9 @@ const FeaturedProducts = () => {
           <Star className="w-4 h-4 text-blue-600" />
           <span className="text-sm font-medium text-blue-800">Productos Destacados</span>
         </div>
-        <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
           Equipos Médicos de Alta Calidad
-        </h2>
+        </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Descubre nuestra selección de equipos médicos certificados, diseñados para brindar la mejor atención sanitaria
         </p>

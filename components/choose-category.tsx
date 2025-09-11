@@ -23,12 +23,12 @@ const ChooseCategory = () => {
                     <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
                     <span className="text-sm font-medium text-blue-800">Especialidades Médicas</span>
                 </div>
-                <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
                     Encuentra el Equipo
                     <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                         Que Necesitas
                     </span>
-                </h2>
+                </h1>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                     Explora nuestra amplia gama de equipos médicos organizados por especialidad.
                     Cada categoría cuenta con tecnología de vanguardia certificada.
