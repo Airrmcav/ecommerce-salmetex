@@ -11,19 +11,65 @@ import NextTopLoader from "nextjs-toploader";
 const geistSans = Inter({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Inter({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Salmetex - Equipamiento Médico",
-  description: "Líderes en equipamiento médico con más de una década de experiencia",
+  title: "Salmetexmed - Equipamiento Médico",
+   description: "Venta de equipamiento médico con más de una década de experiencia. Suministros médicos, instrumental quirúrgico y tecnología hospitalaria de alta calidad en México.",
+    keywords: [
+    "equipamiento médico",
+    "instrumental quirúrgico", 
+    "suministros médicos",
+    "tecnología hospitalaria",
+    "equipo médico México",
+    "dispositivos médicos",
+    "material médico"
+  ],
+   authors: [{ name: "Salmetexmed" }],
+  creator: "Salmetexmed",
+  publisher: "Salmetexmed",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",
+  },
+  manifest: "/site.webmanifest",
+  openGraph: {
+    type: 'website',
+    locale: 'es_MX',
+    url: 'https://salmetexmed.com.mx', 
+    siteName: 'Salmetexmed',
+    title: 'Salmetexmed - Equipamiento Médico',
+    description: 'Líderes en equipamiento médico con más de una década de experiencia. Suministros médicos, instrumental quirúrgico y tecnología hospitalaria.',
+  },
+  category: 'healthcare',
+  classification: 'Medical Equipment',
+  other: {
+    'contact:phone_number': '+52 1 844 595 4660',
+    'contact:country_name': 'México',
+    'DC.title': 'Salmetexmed - Equipamiento Médico',
+    'DC.creator': 'Salmetexmed',
+    'DC.subject': 'Equipamiento Médico, Instrumental Quirúrgico',
+    'DC.description': 'Equipamiento médico profesional y suministros hospitalarios',
+    'geo.region': 'MX',
+    'geo.placename': 'México',
   },
 };
 
@@ -33,7 +79,68 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es-MX">
+      <head>
+        {/* Preconnect para mejorar velocidad */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        
+        {/* DNS Prefetch para recursos externos */}
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        
+        {/* Canonical URL (agregar en cada página específica) */}
+        <link rel="canonical" href="https://salmetex.com" />
+        
+        {/* Structured Data - Organización */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "Salmetexmed",
+              "description": "Líderes en equipamiento médico con más de una década de experiencia",
+              "url": "https://salmetex.com.mx",
+              "logo": "https://salmetexmed.com.mx/logo.png",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+52 1 844 595 4660",
+                "contactType": "customer service",
+                "areaServed": "MX",
+                "availableLanguage": "Spanish"
+              },
+              "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "MX",
+                "addressLocality": "Tepotzotlán",
+                "addressRegion": "Estado de México"
+              },
+              "sameAs": [
+                "https://facebook.com/salmetexmed",
+                "https://instagram.com/salmetexmed",
+              ]
+            })
+          }}
+        />
+        
+        {/* Structured Data - Website */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Salmetexmed",
+              "url": "https://salmetexmed.com.mx",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://salmetexmed.com.mx/buscar?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            })
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
