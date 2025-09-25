@@ -21,7 +21,7 @@ const geistMono = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Salmetexmed - Equipamiento Médico",
+  title: "Venta y Distribución de Equipamiento Médico en México", 
   description: "Venta de equipamiento médico con más de una década de experiencia. Suministros médicos, instrumental quirúrgico y tecnología hospitalaria de alta calidad en México.",
   keywords: [
     "equipamiento médico",

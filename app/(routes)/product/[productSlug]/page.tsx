@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const product = productData[0];
     
     return {
-      title: `${product.productName} | Venta de Equipo Medico `,
+      title: `${product.productName} | Venta de Equipo Médico`,
       description: product.description || "Producto médico de alta calidad disponible en Salmetexmed",
       openGraph: {
         title: product.productName,
