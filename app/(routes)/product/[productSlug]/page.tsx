@@ -3,14 +3,15 @@ import { Metadata } from "next";
 import ProductClient from "./components/product-client";
 
 interface Props {
-  params: {
+  params: Promise<{
     productSlug: string;
-  };
+  }>;
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { productSlug } = await params;
+  const resolvedParams = await params;
+  const productSlug = resolvedParams.productSlug;
   
   try {
     const productData = await getProductBySlug(productSlug);
@@ -43,6 +44,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params }: Props) {
-  await params; // Esperamos los params aunque no los usemos directamente
+  await params; // Esperamos a que se resuelva la promesa de params
   return <ProductClient />;
 }
