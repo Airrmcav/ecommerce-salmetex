@@ -2,14 +2,15 @@ import { getProductBySlug } from "@/api/getProductBySlug";
 import { Metadata } from "next";
 import ProductClient from "./components/product-client";
 
-type Props = {
+interface Props {
   params: {
     productSlug: string;
   };
-};
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const productSlug = params.productSlug;
+  const { productSlug } = await params;
   
   try {
     const productData = await getProductBySlug(productSlug);
@@ -41,6 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default function Page({ params }: Props) {
+export default async function Page({ params }: Props) {
+  await params; // Esperamos los params aunque no los usemos directamente
   return <ProductClient />;
 }
