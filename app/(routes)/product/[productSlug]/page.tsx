@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const product = productData[0];
     
     return {
-      title: `${product.productName} | Salmetexmed`,
+      title: `${product.productName} | Venta de Equipo Medico `,
       description: product.description || "Producto médico de alta calidad disponible en Salmetexmed",
       openGraph: {
         title: product.productName,
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params, searchParams }: Props) {
-  await params; // Esperamos a que se resuelva la promesa de params
-  if (searchParams) await searchParams; // También esperamos searchParams si existe
+  await params;
+  if (searchParams) await searchParams; 
   return <ProductClient />;
 }
