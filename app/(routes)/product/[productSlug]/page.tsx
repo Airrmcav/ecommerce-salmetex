@@ -6,7 +6,7 @@ interface Props {
   params: Promise<{
     productSlug: string;
   }>;
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -43,7 +43,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function Page({ params }: Props) {
+export default async function Page({ params, searchParams }: Props) {
   await params; // Esperamos a que se resuelva la promesa de params
+  if (searchParams) await searchParams; // También esperamos searchParams si existe
   return <ProductClient />;
 }
