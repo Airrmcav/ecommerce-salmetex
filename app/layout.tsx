@@ -81,7 +81,7 @@ export default function RootLayout({
   return (
     <html lang="es-MX">
       <head>
-        <!-- Google tag (gtag.js) -->
+         {/* Google tag (gtag.js) */}
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16830523296"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
