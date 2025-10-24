@@ -83,19 +83,16 @@ export default function RootLayout({
   return (
     <html lang="es-MX">
       <head>
-        {/* ✅ Google tag (gtag.js) usando Script de Next.js */}
-        <Script
-          strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=AW-16830523296"
-        />
-        <Script id="gtag-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'AW-16830523296');
-          `}
-        </Script>
+ 
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-16830523296">
+</script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-16830523296');
+</script>
 
         {/* Preconnect para mejorar velocidad */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
