@@ -16,7 +16,8 @@ import {
     Shield,
     CreditCard,
     Plus,
-    Minus
+    Minus,
+    PhoneCall
 } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { useLovedProducts } from "@/hooks/use-loved-products";
@@ -124,6 +125,30 @@ const InfoProduct = (props: InfoProductProps) => {
                     <Heart className="w-5 h-5 group-hover:fill-red-400 group-hover:text-red-400 transition-all" />
                 </Button>
             </div>
+
+            {/* Botón Cotizar por WhatsApp */}
+            <div className="my-4">
+                <Button
+                    className="w-full cursor-pointer bg-green-500 hover:bg-green-600 text-white py-4 px-6 text-lg font-medium rounded-lg flex items-center justify-center gap-3"
+                    onClick={() => {
+                        const phoneNumber = "8445954660"; // 🔹 Cambia este número al tuyo (sin +)
+                        const message = `Hola , quiero *cotizar ahora* el producto: ${product.productName}.`;
+                        const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+                        // 🔹 Enviar evento de conversión a Google Ads
+                        if (typeof window !== "undefined" && (window as any).gtag_report_conversion) {
+                            (window as any).gtag_report_conversion("https://tusitio.com/gracias");
+                        }
+
+                        // 🔹 Abrir WhatsApp
+                        window.open(url, "_blank");
+                    }}
+                >
+                    <PhoneCall/>
+                    Cotizar por WhatsApp
+                </Button>
+            </div>
+
 
             {/* Sección Compartir */}
             <div className="mb-6 max-w-[350px] sm:max-w-none">
