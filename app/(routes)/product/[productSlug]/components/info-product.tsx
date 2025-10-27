@@ -137,7 +137,7 @@ const InfoProduct = (props: InfoProductProps) => {
 
                         // 🔹 Enviar evento de conversión a Google Ads
                         if (typeof window !== "undefined" && (window as any).gtag_report_conversion) {
-                            (window as any).gtag_report_conversion("https://tusitio.com/gracias");
+                            (window as any).gtag_report_conversion();
                         }
 
                         // 🔹 Abrir WhatsApp
