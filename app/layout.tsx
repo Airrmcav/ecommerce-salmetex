@@ -96,6 +96,24 @@ export default function RootLayout({
           `}
         </Script>
 
+        <Script id="google-ads-conversion">
+  {`
+    function gtag_report_conversion(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'conversion', {
+        'send_to': 'AW-16830523296/PbBNCOqpj6kaEKDPtdk-',
+        'event_callback': callback
+      });
+      return false;
+    }
+  `}
+</Script>
+
+
         {/* Preconnect para mejorar velocidad */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
