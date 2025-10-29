@@ -132,7 +132,7 @@ const InfoProduct = (props: InfoProductProps) => {
                     className="w-full cursor-pointer bg-green-500 hover:bg-green-600 text-white py-4 px-6 text-lg font-medium rounded-lg flex items-center justify-center gap-3"
                     onClick={() => {
                         const phoneNumber = "8445954660"; // 🔹 Cambia este número al tuyo (sin +)
-                        const message = `Hola , quiero *cotizar ahora* el producto: ${product.productName}.`;
+                        const message = `Hola, quiero *cotizar ahora* el producto: ${product.productName}. Cotización de la página web.`;
                         const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
                         // 🔹 Enviar evento de conversión a Google Ads
