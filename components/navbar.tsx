@@ -307,6 +307,18 @@ const Navbar = () => {
                         >
                             Productos Destacados
                         </button>
+                        <button
+                            onClick={() => {
+                                // Usar replace en lugar de push para evitar problemas de historial
+                                router.replace("/insumos-medicos");
+                            }}
+                            className="text-gray-700 hover:text-blue-600 font-medium
+                       transition-colors duration-200 hover:underline
+                       decoration-blue-600 underline-offset-4 text-sm lg:text-base uppercase cursor-pointer"
+                       aria-label="Ir a la página de Productos Destacados"
+                        >
+                            Insumos Médicos
+                        </button>
 
                         <button
                             onClick={() => router.push("/productos-top")}
