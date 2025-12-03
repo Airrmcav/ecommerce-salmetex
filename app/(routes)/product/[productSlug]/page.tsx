@@ -2,16 +2,10 @@ import { getProductBySlug } from "@/api/getProductBySlug";
 import { Metadata } from "next";
 import ProductClient from "./components/product-client";
 
-interface Props {
-  params: Promise<{
-    productSlug: string;
-  }>;
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
-}
+type Params = { productSlug: string }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const resolvedParams = await params;
-  const productSlug = resolvedParams.productSlug;
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const productSlug = params.productSlug;
   
   try {
     const productData = await getProductBySlug(productSlug);
@@ -43,8 +37,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function Page({ params, searchParams }: Props) {
-  await params;
-  if (searchParams) await searchParams; 
+export default function Page({ params }: { params: Params }) {
   return <ProductClient />;
 }
