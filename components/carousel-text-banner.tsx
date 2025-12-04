@@ -66,38 +66,33 @@ export const dataCarouselTop = [
 const quickLinks = [
     {
         id: 1,
-        icon: Bed,
         title: "Mesas de cirugía",
         link: "/categoria/mesas-quirurgicas",
-        color: "from-sky-500 to-sky-700"
+        image: "/carousel/mesa.png" 
     },
     {
         id: 2,
-        icon: LampCeiling,
         title: "Lámparas de cirugía",
         link: "/categoria/lamparas-de-cirugia",
-        color: "from-amber-400 to-amber-600"
+        image: "/carousel/lampara.png"
     },
     {
         id: 3,
-        icon: Activity,
         title: "Monitores",
         link: "/categoria/equipos-de-signos-vitales",
-        color: "from-emerald-500 to-green-700"
+        image: "/carousel/monitor.jpg"
     },
     {
         id: 4,
-        icon: Microwave,
         title: "Autoclaves",
         link: "/categoria/autoclaves",
-        color: "from-orange-500 to-orange-700"
+        image: "/carousel/autoclave.png"
     },
     {
         id: 5,
-        icon: Package,
         title: "Insumos médicos",
         link: "/insumos-medicos",
-        color: "from-cyan-500 to-cyan-700"
+        image: "/carousel/insumos2.png"
     }
 ];
 
@@ -193,20 +188,25 @@ const Carousel = () => {
                 <div className="max-w-[1400px] mx-auto">
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                         {quickLinks.map((link) => {
-                            const Icon = link.icon;
+                            
                             return (
                                 <a
                                     key={link.id}
                                     href={link.link}
                                     className="group relative"
                                 >
-                                    {/* Círculo principal */}
-                                    <div className={`w-20 h-20 md:w-24 md:h-24 mx-auto rounded-full bg-gradient-to-br ${link.color} 
-                                                  flex items-center justify-center shadow-2xl
-                                                  transform transition-all duration-300 
-                                                  group-hover:scale-110 group-hover:shadow-3xl
-                                                  border-4 border-white/30 backdrop-blur-sm`}>
-                                        <Icon className="w-8 h-8 md:w-10 md:h-10 text-white" strokeWidth={2} />
+                                   <div className="w-20 h-20 md:w-24 md:h-24 mx-auto rounded-full 
+                                      overflow-hidden shadow-2xl
+                                      transform transition-all duration-300 
+                                      group-hover:scale-110 group-hover:shadow-3xl
+                                      border-4 border-white/30 backdrop-blur-sm
+                                      relative">
+                                        
+                                        <img 
+                                src={link.image} 
+                                alt={link.title}
+                                className="w-full h-full object-cover"
+                            />
                                         
                                         {/* Efecto de brillo al hover */}
                                         <div className="absolute inset-0 rounded-full bg-white/0 group-hover:bg-white/20 transition-all duration-300"></div>
@@ -224,7 +224,7 @@ const Carousel = () => {
                                     {/* Efecto de pulso decorativo */}
                                     <div className={`absolute top-0 left-1/2 transform -translate-x-1/2 
                                                    w-20 h-20 md:w-24 md:h-24 rounded-full 
-                                                   bg-gradient-to-br ${link.color} opacity-0 
+                                                   bg-gradient-to-br  opacity-0 
                                                    group-hover:opacity-30 group-hover:scale-125
                                                    transition-all duration-500 -z-10 blur-xl`}>
                                     </div>
