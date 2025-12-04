@@ -173,8 +173,8 @@ const Navbar = () => {
                                 <NavigationMenuItem>
                                     <NavigationMenuTrigger className="uppercase cursor-pointer bg-transparent">Productos</NavigationMenuTrigger>
                                     <NavigationMenuContent>
-                                    <div className="w-[400px] lg:w-[500px] xl:w-[600px]">
-                                        <div className="grid lg:grid-cols-[.75fr_1fr] gap-4 p-4">
+                                    <div className="w-[400px] lg:w-[500px] xl:w-[700px] xl:h-[400px]">
+                                        <div className="grid lg:grid-cols-[.75fr_1fr] gap-4 p-4 h-full">
                                             {/* Sección principal - lado izquierdo */}
                                             <div className="space-y-3 flex items-center ">
                                                 <div>
@@ -231,13 +231,13 @@ const Navbar = () => {
                                                         <p className="text-xs text-gray-500">No hay categorías disponibles</p>
                                                     </div>
                                                 ) : (
-                                                    <div className="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-100 pr-2">
+                                                    <div className="max-h-[380px] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-100 pr-2">
                                                         <div className="space-y-1">
                                                             {sortedCategories.map((category: CategoryType) => (
                                                                 <NavigationMenuLink key={category.id} asChild>
                                                                     <Link
                                                                         href={`/categoria/${createSlug(category.categoryName)}`}
-                                                                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground hover:bg-blue-50 border border-transparent hover:border-blue-100 group"
+                                                                        className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground hover:bg-blue-50 border border-transparent hover:border-blue-100 group"
                                                                     >
                                                                         <div className="flex items-center gap-2">
                                                                             <div className="p-1 bg-blue-100 group-hover:bg-blue-200 rounded-md transition-colors">
@@ -247,7 +247,7 @@ const Navbar = () => {
                                                                                 {category.categoryName}
                                                                             </div>
                                                                         </div>
-                                                                        <p className="line-clamp-2 text-xs leading-snug text-muted-foreground group-hover:text-blue-700 ml-6">
+                                                                        <p className="line-clamp-1 text-xs leading-snug text-muted-foreground group-hover:text-blue-700 ml-6">
                                                                             Productos de {category.categoryName.toLowerCase()} disponibles para equipos médicos profesionales.
                                                                         </p>
                                                                     </Link>
