@@ -24,7 +24,7 @@ export default function Page() {
     const { addItem } = useCart()
     const { addLoveItems } = useLovedProducts()
     
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
     const [showMobileFilters, setShowMobileFilters] = useState(false)
 
     const categoryDescriptions = useMemo(() => {
@@ -54,24 +54,20 @@ export default function Page() {
 
     const filteredProducts = useMemo(() => {
         if (!Array.isArray(result)) return []
-        if (selectedCategories.length === 0) return result
+        if (!selectedCategory) return result
         
         return result.filter((p: ProductType) => {
             const categoryName = p?.category?.categoryName || "Sin categoría"
-            return selectedCategories.includes(categoryName)
+            return categoryName === selectedCategory
         })
-    }, [result, selectedCategories])
+    }, [result, selectedCategory])
 
     const toggleCategory = (categoryName: string) => {
-        setSelectedCategories(prev => 
-            prev.includes(categoryName)
-                ? prev.filter(c => c !== categoryName)
-                : [...prev, categoryName]
-        )
+        setSelectedCategory(prev => prev === categoryName ? null : categoryName)
     }
 
     const clearFilters = () => {
-        setSelectedCategories([])
+        setSelectedCategory(null)
     }
 
     const getCategoryIcon = (categoryName: string) => {
@@ -125,7 +121,7 @@ export default function Page() {
                         <Filter className="w-5 h-5 text-emerald-600" />
                         Categorías
                     </h3>
-                    {selectedCategories.length > 0 && (
+                    {selectedCategory && (
                         <button
                             onClick={clearFilters}
                             className="text-sm text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
@@ -137,7 +133,7 @@ export default function Page() {
 
                 <div className="space-y-2">
                     {categoriesWithCount.map(({ name, count }) => {
-                        const isSelected = selectedCategories.includes(name)
+                        const isSelected = selectedCategory === name
                         return (
                             <button
                                 key={name}
@@ -170,7 +166,7 @@ export default function Page() {
                     })}
                 </div>
 
-                {selectedCategories.length > 0 && (
+                {selectedCategory && (
                     <div className="mt-6 pt-4 border-t">
                         <p className="text-sm text-gray-600">
                             Mostrando <span className="font-bold text-emerald-600">{filteredProducts.length}</span> de {result?.length || 0} productos
@@ -187,10 +183,10 @@ export default function Page() {
                 items={breadcrumbItems}
                 backButton={{ show: true, label: "Regresar" }}
             />
-            <div className="max-w-7xl mx-auto px-6 py-8">
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4">
-                        <Stethoscope className="w-8 h-8 text-emerald-700" />
+            <div className="max-w-7xl mx-auto px-6 py-2 pb-3">
+                <div className="text-center mb-1">
+                    <div className="inline-flex items-center justify-center w-8 h-8 bg-emerald-100 rounded-full mb-1">
+                        <Stethoscope className="w-4 h-4 text-emerald-700" />
                     </div>
                     <h1 className="text-4xl font-bold text-gray-900">Insumos Médicos</h1>
                     <p className="text-gray-600 mt-2">Productos del área de Insumos Médicos</p>
@@ -204,9 +200,9 @@ export default function Page() {
                     >
                         <Filter className="w-5 h-5" />
                         Filtrar por categoría
-                        {selectedCategories.length > 0 && (
+                        {selectedCategory && (
                             <Badge className="bg-white text-emerald-600 ml-2">
-                                {selectedCategories.length}
+                                1
                             </Badge>
                         )}
                     </button>
@@ -237,27 +233,23 @@ export default function Page() {
 
                         {/* Grid de productos */}
                         <div className="flex-1">
-                            {selectedCategories.length > 0 && (
-                           
+                            {selectedCategory && (
                                 <div className="mb-6 flex flex-wrap gap-2 items-center">
                                     <div className="flex gap-2">
                                         <Filter className="w-5 h-5" />
-                                     Filtros Aplicados: 
+                                        Filtro Aplicado: 
                                     </div>
-                                    {selectedCategories.map(cat => (
-                                        <Badge
-                                            key={cat}
-                                            className="bg-emerald-100 text-emerald-700 px-5 py-3 text-md flex items-center gap-2"
+                                    <Badge
+                                        className="bg-emerald-100 text-emerald-700 px-5 py-3 text-md flex items-center gap-2"
+                                    >
+                                        {selectedCategory}
+                                        <button
+                                            onClick={clearFilters}
+                                            className="hover:bg-emerald-200 rounded-full cursor-pointer"
                                         >
-                                            {cat}
-                                            <button
-                                                onClick={() => toggleCategory(cat)}
-                                                className="hover:bg-emerald-200 rounded-full cursor-pointer"
-                                            >
-                                                <X className="w-5 h-5 bg-red-300 rounded-full" />
-                                            </button>
-                                        </Badge>
-                                    ))}
+                                            <X className="w-5 h-5 bg-red-300 rounded-full" />
+                                        </button>
+                                    </Badge>
                                 </div>
                             )}
 
@@ -366,12 +358,12 @@ export default function Page() {
                             ) : (
                                 <div className="text-center py-20">
                                     <Filter className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                                    <p className="text-gray-500 text-lg">No hay productos que coincidan con los filtros seleccionados</p>
+                                    <p className="text-gray-500 text-lg">No hay productos que coincidan con el filtro seleccionado</p>
                                     <button
                                         onClick={clearFilters}
                                         className="mt-4 text-blue-600 hover:text-blue-700 font-medium"
                                     >
-                                        Limpiar filtros
+                                        Limpiar filtro
                                     </button>
                                 </div>
                             )}
