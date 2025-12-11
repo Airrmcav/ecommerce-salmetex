@@ -112,6 +112,20 @@ export default function Page() {
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     const displayedProducts = sortedProducts.slice(startIndex, endIndex);
+    const compactPages = (() => {
+        if (totalPages <= 7) {
+            return Array.from({ length: totalPages }, (_, i) => i + 1);
+        }
+        const arr: (number | string)[] = [];
+        arr.push(1);
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        if (start > 2) arr.push("...");
+        for (let p = start; p <= end; p++) arr.push(p);
+        if (end < totalPages - 1) arr.push("...");
+        arr.push(totalPages);
+        return arr;
+    })();
 
     const breadcrumbItems = [
         { label: "Inicio", href: "/" },
@@ -386,14 +400,23 @@ export default function Page() {
                                 >
                                     Anterior
                                 </button>
-                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                                    <button
-                                        key={p}
-                                        onClick={() => setCurrentPage(p)}
-                                        className={`cursor-pointer px-3 py-1 rounded-lg border ${currentPage === p ? 'bg-blue-600 text-white border-blue-600' : 'bg-white hover:bg-blue-50 text-blue-700 border-blue-200'}`}
-                                    >
-                                        {p}
-                                    </button>
+                                {compactPages.map((item, idx) => (
+                                    typeof item === 'number' ? (
+                                        <button
+                                            key={`p-${item}`}
+                                            onClick={() => setCurrentPage(item)}
+                                            className={`cursor-pointer px-3 py-1 rounded-lg border ${currentPage === item ? 'bg-blue-600 text-white border-blue-600' : 'bg-white hover:bg-blue-50 text-blue-700 border-blue-200'}`}
+                                        >
+                                            {item}
+                                        </button>
+                                    ) : (
+                                        <span
+                                            key={`e-${idx}`}
+                                            className="px-2 text-gray-500"
+                                        >
+                                            …
+                                        </span>
+                                    )
                                 ))}
                                 <button
                                     onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
