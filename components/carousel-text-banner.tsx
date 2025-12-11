@@ -184,7 +184,7 @@ const Carousel = () => {
             </div>
 
             {/* Círculos de Enlaces Fijos - Posicionados en la parte superior */}
-            <div className="absolute top-6 left-1/2 -translate-x-1/2 right-0 z-30 px-4">
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 right-0 z-30 px-4 hidden lg:block">
                 <div className="max-w-[1400px] mx-auto">
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                         {quickLinks.map((link) => {
