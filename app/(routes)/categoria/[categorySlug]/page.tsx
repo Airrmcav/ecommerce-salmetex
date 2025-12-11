@@ -85,6 +85,34 @@ export default function Page() {
     // Determinar el nombre de la categoría o usar 'Todos los Productos' si es la vista general
     const categoryName = categorySlug === 'todos' ? 'Todos los Productos' : categoryProducts?.[0]?.category?.categoryName || '';
 
+    // Orden alfabético y paginación
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 12;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filterArea, filterCategory, categorySlug]);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [currentPage]);
+
+    const sortedProducts = Array.isArray(filteredProducts)
+        ? [...filteredProducts].sort((a: ProductType, b: ProductType) => {
+            const aName = a?.productName?.toLocaleLowerCase('es-MX') || '';
+            const bName = b?.productName?.toLocaleLowerCase('es-MX') || '';
+            return aName.localeCompare(bName);
+        })
+        : [];
+
+    const totalItems = sortedProducts.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const displayedProducts = sortedProducts.slice(startIndex, endIndex);
+
     const breadcrumbItems = [
         { label: "Inicio", href: "/" },
         { label: "Categorías", href: "/categoria/todos" },
@@ -269,11 +297,11 @@ export default function Page() {
                                         <h2 className="font-semibold text-gray-900">
                                             Resultados de búsqueda
                                         </h2>
-                                        <p className="text-sm text-gray-600">
-                                            {Array.isArray(filteredProducts) ? filteredProducts.length : 0} producto{Array.isArray(filteredProducts) && filteredProducts.length !== 1 ? 's' : ''} encontrado{Array.isArray(filteredProducts) && filteredProducts.length !== 1 ? 's' : ''}
-                                        </p>
-                                    </div>
-                                </div>
+                                <p className="text-sm text-gray-600">
+                                    {totalItems} producto{totalItems !== 1 ? 's' : ''} encontrado{totalItems !== 1 ? 's' : ''}
+                                </p>
+                            </div>
+                        </div>
 
                                 {/* View Mode Toggle */}
                                 <div className="flex items-center gap-2">
@@ -311,9 +339,7 @@ export default function Page() {
                                     <SkeletonSchema grid={6} />
                                 </div>
                             )}
-
-
-                            {filteredProducts !== null && !loading && Array.isArray(filteredProducts) && filteredProducts.map((product: ProductType) => (
+                            {displayedProducts !== null && !loading && Array.isArray(displayedProducts) && displayedProducts.map((product: ProductType) => (
                                 <ProductCard
                                     key={product.id}
                                     product={product}
@@ -322,7 +348,7 @@ export default function Page() {
                             ))}
 
                             {/* Empty State */}
-                            {filteredProducts !== null && !loading && filteredProducts.length === 0 && (
+                            {displayedProducts !== null && !loading && displayedProducts.length === 0 && (
                                 <div className="col-span-full text-center py-12">
                                     <div className="w-24 h-24 mx-auto bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
                                         <Package className="w-12 h-12 text-gray-400" />
@@ -349,6 +375,35 @@ export default function Page() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Pagination */}
+                        {!loading && totalPages > 1 && (
+                            <div className="flex items-center justify-center gap-2 mt-8">
+                                <button
+                                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                    disabled={currentPage === 1}
+                                    className={`cursor-pointer px-3 py-1 rounded-lg border ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white hover:bg-blue-50 text-blue-700 border-blue-200'}`}
+                                >
+                                    Anterior
+                                </button>
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                                    <button
+                                        key={p}
+                                        onClick={() => setCurrentPage(p)}
+                                        className={`cursor-pointer px-3 py-1 rounded-lg border ${currentPage === p ? 'bg-blue-600 text-white border-blue-600' : 'bg-white hover:bg-blue-50 text-blue-700 border-blue-200'}`}
+                                    >
+                                        {p}
+                                    </button>
+                                ))}
+                                <button
+                                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className={`cursor-pointer px-3 py-1 rounded-lg border ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-white hover:bg-blue-50 text-blue-700 border-blue-200'}`}
+                                >
+                                    Siguiente
+                                </button>
+                            </div>
+                        )}
                     </main>
                 </div>
             </div>

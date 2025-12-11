@@ -83,6 +83,17 @@ const NavMobile = ({ isMenuOpen, toggleMenu }: NavMobileProps) => {
 
                     <button
                         onClick={() => {
+                            router.push("/insumos-medicos");
+                            toggleMenu();
+                        }}
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:text-blue-600 
+                       hover:bg-blue-50 rounded-lg transition-all duration-200"
+                    >
+                        Insumos Médicos
+                    </button>
+
+                    <button
+                        onClick={() => {
                             router.push("/productos-top");
                             toggleMenu();
                         }}
