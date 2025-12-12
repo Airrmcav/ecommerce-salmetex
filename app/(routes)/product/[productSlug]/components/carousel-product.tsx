@@ -76,7 +76,7 @@ const CarouselProduct = (props: CarouselProductProps) => {
     return (
         <div className="lg:sticky top-35 z-10 lg:top-35 px-4 sm:px-0">
             <div className="w-full max-w-7xl mx-auto">
-                <div className="flex gap-2 sm:gap-4">
+                <div className="flex gap-2 sm:gap-4 justify-center md:justify-start">
                     {/* Thumbnails Column - Left Side - Only visible on desktop */}
                     {images.length > 1 && (
                         <div className="flex-col w-16 sm:w-20 lg:w-24 flex-shrink-0 hidden md:flex">
@@ -217,30 +217,37 @@ const CarouselProduct = (props: CarouselProductProps) => {
                 {/* Mobile Thumbnails (horizontal scroll below main image for small screens) */}
                 {images.length > 1 && (
                     <div className="md:hidden mt-4 space-y-3">
-                        <h4 className="text-base sm:text-lg font-semibold text-gray-800 text-center">Galería de imágenes</h4>
-                        <div className="flex gap-2 justify-start overflow-x-auto pb-2 px-1">
+                        <div className="flex items-center justify-between px-2">
+                            <h4 className="text-base sm:text-lg font-semibold text-gray-800">Galería de imágenes</h4>
+                            <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                {images.length} fotos
+                            </div>
+                        </div>
+                        
+                        {/* Grid de miniaturas */}
+                        <div className="grid grid-cols-4 gap-2 px-1">
                             {images.map((image, index) => (
                                 <button
                                     key={image.id}
                                     onClick={() => setSelectedImageIndex(index)}
-                                    className={`relative flex-shrink-0 group transition-all duration-300 ${
+                                    className={`relative group transition-all duration-300 ${
                                         selectedImageIndex === index
-                                            ? 'ring-2 sm:ring-4 ring-blue-500 ring-offset-1 sm:ring-offset-2'
+                                            ? 'ring-2 ring-blue-500 ring-offset-1 scale-105'
                                             : 'hover:ring-2 hover:ring-blue-300 hover:ring-offset-1'
                                     }`}
                                 >
-                                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-xl border border-gray-200 overflow-hidden shadow-md">
+                                    <div className="w-full aspect-square bg-white rounded-xl border border-gray-200 overflow-hidden shadow-md">
                                         <img
                                             src={image.url}
                                             alt={image.alternativeText || `Miniatura ${index + 1}`}
-                                            className="w-full h-full object-contain p-0.5 sm:p-1 group-hover:scale-110 transition-transform duration-200"
+                                            className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform duration-200"
                                         />
                                     </div>
                                     
                                     {/* Active indicator */}
                                     {selectedImageIndex === index && (
-                                        <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-3 h-3 sm:w-4 sm:h-4 bg-blue-600 rounded-full flex items-center justify-center">
-                                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full"></div>
+                                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center shadow-md">
+                                            <div className="w-2 h-2 bg-white rounded-full"></div>
                                         </div>
                                     )}
                                     
