@@ -7,7 +7,7 @@ import SkeletonSchema from "./skeletonSchema";
 import { ProductType } from "@/types/product";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { CheckCircle, XCircle, Star, Heart, ShoppingCart } from "lucide-react";
+import { CheckCircle, XCircle, Star, Heart, ShoppingCart, ChevronRight, ChevronLeft } from "lucide-react";
 import IconButton from "./icon-button";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
@@ -17,10 +17,7 @@ const FeaturedProducts = () => {
   const { loading, result }: ResponseType = useGetFeaturedProducts();
   const router = useRouter();
   const {addItem, items} = useCart();
-   const { addLoveItems } = useLovedProducts();
-  // console.log(items);
-
-  // console.log(result);
+  const { addLoveItems } = useLovedProducts();
 
   return (
     <div className="max-w-7xl mb-20 mx-auto sm:py-0 sm:px-6 lg:px-8">
@@ -40,6 +37,24 @@ const FeaturedProducts = () => {
 
       {/* Carousel Section */}
       <div className="relative">
+        {/* Mobile swipe hint - Mejorado */}
+        <div className="md:hidden mb-4 flex justify-center items-center gap-2">
+          <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full border border-blue-200 shadow-sm">
+            <ChevronLeft className="w-4 h-4 text-blue-600 animate-pulse" />
+            <span className="text-sm font-medium text-blue-800">Desliza para ver más</span>
+            <ChevronRight className="w-4 h-4 text-blue-600 animate-pulse" />
+          </div>
+        </div>
+
+        {/* Desktop hint - Nuevo */}
+        <div className="hidden md:block mb-4 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-100">
+            <ChevronLeft className="w-4 h-4 text-blue-600" />
+            <span className="text-sm text-blue-700">Usa las flechas o desliza para navegar</span>
+            <ChevronRight className="w-4 h-4 text-blue-600" />
+          </div>
+        </div>
+
         <Carousel className="w-full">
           <CarouselContent className="-ml-2 md:-ml-4">
             {loading && (
@@ -89,10 +104,13 @@ const FeaturedProducts = () => {
                             </div>
 
                             {/* Favorite Button */}
-                            {/* <button className="absolute top-3 left-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 group-hover:opacity-100">
-                                                            <Heart className="w-4 h-4 text-gray-600 hover:text-red-500 transition-colors" />
-                                                        </button> */}
-                            <IconButton onClick={() => addLoveItems(product)} icon={<Heart className="w-4 h-4 text-gray-800 hover:text-red-500 transition-colors" />} className="absolute top-3 left-3 p-2 rounded-full bg-gray-300/5 backdrop-blur-sm hover:bg-white transition-all duration-200 group-hover:opacity-100" aria-label="Agregar a favoritos" title="Agregar a favoritos" />
+                            <IconButton 
+                              onClick={() => addLoveItems(product)} 
+                              icon={<Heart className="w-4 h-4 text-gray-800 hover:text-red-500 transition-colors" />} 
+                              className="absolute top-3 left-3 p-2 rounded-full bg-gray-300/5 backdrop-blur-sm hover:bg-white transition-all duration-200 group-hover:opacity-100" 
+                              aria-label="Agregar a favoritos" 
+                              title="Agregar a favoritos" 
+                            />
 
                             {/* Category Badge */}
                             <div className="absolute bottom-3 left-3">
@@ -126,7 +144,6 @@ const FeaturedProducts = () => {
                             <div className="flex gap-2 mt-auto">
                               <button
                                 onClick={() => {
-                                  // Verificar si el slug es "productos-destacados" y redirigir a la ruta correcta
                                   if (product.slug === "productos-destacados") {
                                     router.push(`/productos-destacados`);
                                   } else {
@@ -164,18 +181,35 @@ const FeaturedProducts = () => {
             )}
           </CarouselContent>
 
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows - Desktop */}
           <CarouselPrevious className="cursor-pointer hidden md:flex -left-12 bg-white shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600" />
           <CarouselNext className="cursor-pointer hidden md:flex -right-12 bg-white shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600" />
+          
+          {/* Navigation Arrows - Mobile - NUEVO */}
+          <CarouselPrevious className="cursor-pointer md:hidden left-2 bg-white/90 backdrop-blur-sm shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600 w-10 h-10" />
+          <CarouselNext className="cursor-pointer md:hidden right-2 bg-white/90 backdrop-blur-sm shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600 w-10 h-10" />
         </Carousel>
+
+        {/* Indicadores de deslizamiento lateral - NUEVO */}
+        <div className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 pointer-events-none">
+          <div className="w-8 h-32 bg-gradient-to-r from-blue-500/20 to-transparent rounded-r-lg flex items-center justify-center">
+            <ChevronLeft className="w-5 h-5 text-blue-600/60 animate-bounce" style={{ animationDuration: '2s' }} />
+          </div>
+        </div>
+        <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none">
+          <div className="w-8 h-32 bg-gradient-to-l from-blue-500/20 to-transparent rounded-l-lg flex items-center justify-center">
+            <ChevronRight className="w-5 h-5 text-blue-600/60 animate-bounce" style={{ animationDuration: '2s' }} />
+          </div>
+        </div>
       </div>
 
       {/* CTA Section */}
       <div className="text-center mt-1">
         <button
-        onClick={() => router.push('/categoria/todos')}
-        aria-label="Ver catálogo completo de productos médicos"
-        className="inline-flex cursor-pointer items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          onClick={() => router.push('/categoria/todos')}
+          aria-label="Ver catálogo completo de productos médicos"
+          className="inline-flex cursor-pointer items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+        >
           Ver Todos los Productos
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
