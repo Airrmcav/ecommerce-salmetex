@@ -69,7 +69,7 @@ const FeaturedProducts = () => {
                   <CarouselItem key={id} className="pl-2 md:pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 py-10">
                     <div className="h-full">
                       <Card className="group h-full border-0 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white rounded-2xl overflow-hidden">
-                        <CardContent className="p-0 h-full flex flex-col">
+                        <CardContent className="p-0 h-full flex flex-col px-10 md:px-0">
                           {/* Image Container */}
                           <div className="relative overflow-hidden bg-white h-48 flex items-center justify-center">
                             {imageUrl ? (
