@@ -190,17 +190,7 @@ const FeaturedProducts = () => {
           <CarouselNext className="cursor-pointer md:hidden right-2 bg-white/90 backdrop-blur-sm shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600 w-10 h-10" />
         </Carousel>
 
-        {/* Indicadores de deslizamiento lateral - NUEVO */}
-        <div className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 pointer-events-none">
-          <div className="w-8 h-32 bg-gradient-to-r from-blue-500/20 to-transparent rounded-r-lg flex items-center justify-center">
-            <ChevronLeft className="w-5 h-5 text-blue-600/60 animate-bounce" style={{ animationDuration: '2s' }} />
-          </div>
-        </div>
-        <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none">
-          <div className="w-8 h-32 bg-gradient-to-l from-blue-500/20 to-transparent rounded-l-lg flex items-center justify-center">
-            <ChevronRight className="w-5 h-5 text-blue-600/60 animate-bounce" style={{ animationDuration: '2s' }} />
-          </div>
-        </div>
+       
       </div>
 
       {/* CTA Section */}
