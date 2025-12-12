@@ -6,7 +6,7 @@ import SkeletonSchema from "./skeletonSchema";
 import { ProductType } from "@/types/product";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { CheckCircle, XCircle, Star, Heart, ShoppingCart, Award, TrendingUp } from "lucide-react";
+import { CheckCircle, XCircle, Star, Heart, ShoppingCart, Award, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import IconButton from "./icon-button";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
@@ -56,6 +56,24 @@ const TopProducts = () => {
 
       {/* Carousel Section */}
       <div className="relative" role="region" aria-label="Carrusel de productos más vendidos">
+        {/* Mobile swipe hint */}
+        <div className="md:hidden mb-4 flex justify-center items-center gap-2">
+          <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full border border-blue-200 shadow-sm">
+            <ChevronLeft className="w-4 h-4 text-blue-600 animate-pulse" />
+            <span className="text-sm font-medium text-blue-800">Desliza para ver más</span>
+            <ChevronRight className="w-4 h-4 text-blue-600 animate-pulse" />
+          </div>
+        </div>
+
+        {/* Desktop hint */}
+        <div className="hidden md:block mb-4 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-100">
+            <ChevronLeft className="w-4 h-4 text-blue-600" />
+            <span className="text-sm text-blue-700">Usa las flechas o desliza para navegar</span>
+            <ChevronRight className="w-4 h-4 text-blue-600" />
+          </div>
+        </div>
+
         <Carousel className="w-full">
           <CarouselContent className="-ml-2 md:-ml-4">
             {loading && (
@@ -187,7 +205,7 @@ const TopProducts = () => {
             )}
           </CarouselContent>
 
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows - Desktop */}
           <CarouselPrevious 
             className="cursor-pointer hidden md:flex -left-12 bg-white shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600" 
             aria-label="Ver productos anteriores"
@@ -196,6 +214,10 @@ const TopProducts = () => {
             className="cursor-pointer hidden md:flex -right-12 bg-white shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600" 
             aria-label="Ver productos siguientes"
           />
+          
+          {/* Navigation Arrows - Mobile */}
+          <CarouselPrevious className="cursor-pointer md:hidden left-2 bg-white/90 backdrop-blur-sm shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600 w-10 h-10" />
+          <CarouselNext className="cursor-pointer md:hidden right-2 bg-white/90 backdrop-blur-sm shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600 w-10 h-10" />
         </Carousel>
       </div>
 
