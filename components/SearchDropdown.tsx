@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useSearchProducts } from '@/api/searchProducts';
 import { ProductType } from '@/types/product';
 import { CategoryType } from '@/types/category';
@@ -143,7 +142,7 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
                         className="block px-3 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-150"
                       >
                         <div className="flex items-center gap-2">
-                          {/* {category.mainImage && category.mainImage.url && (
+                          {category.mainImage && category.mainImage.url && (
                             <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0">
                               <img 
                                 src={category.mainImage.url} 
@@ -151,7 +150,7 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
                                 className="w-full h-full object-cover"
                               />
                             </div>
-                          )} */}
+                          )}
                           <div>
                             <div className="font-medium text-gray-800">{category.categoryName}</div>
                             {category.description && (
@@ -185,26 +184,25 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
                   <div className="space-y-2">
                     {Array.isArray(result.products) && result.products.slice(0, 5).map((product: ProductType) => (
                       <Link 
-                        href={`/product/${createSlug(product.productName || product.productName)}`} 
+                        href={`/product/${product.slug}`} 
                         key={product.id}
                         onClick={handleItemClick}
                         className="flex items-center gap-3 px-3 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-150"
                       >
-                        {/* <div className="w-10 h-10 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
-                          {product.images && product.images.length > 0 ? (
-                            <Image 
+                        <div className="w-10 h-10 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                          {product.images && product.images.length > 0 && product.images[0].url ? (
+                            <img 
                               src={product.images[0].url} 
-                              alt={product.productName || product.productName} 
-                              width={40} 
-                              height={40} 
+                              alt={product.productName || ''} 
                               className="w-full h-full object-cover"
+                              loading="lazy"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
                               Sin img
                             </div>
                           )}
-                        </div> */}
+                        </div>
                         <div>
                           <div className="font-medium text-gray-800 text-sm">
                             {product.productName || product.productName}
