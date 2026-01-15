@@ -201,7 +201,7 @@ const Footer = () => {
                         <h3 className="text-lg font-semibold mb-6 text-gray-900">Contacto</h3>
                         <div className="space-y-4">
                             <div className="flex items-start space-x-3">
-                                <MapPin size={18} className="text-blue-400 mt-0.5 flex-shrink-0" />
+                                <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
                                 <div>
                                     <p className="text-gray-800 text-sm">
                                         Saltillo, México.
@@ -210,7 +210,7 @@ const Footer = () => {
                             </div>
 
                             <div className="flex items-center space-x-3">
-                                <Phone size={18} className="text-blue-400 flex-shrink-0" />
+                                <Phone size={18} className="text-blue-400 shrink-0" />
                                 <Link
                                     href="tel:+5218445954660"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm"
@@ -221,18 +221,18 @@ const Footer = () => {
                             </div>
 
                             <div className="flex items-center space-x-3">
-                                <Mail size={18} className="text-blue-400 flex-shrink-0" />
+                                <Mail size={18} className="text-blue-400 shrink-0" />
                                 <Link
                                     href="mailto:contacto@salmetex.com.mx"
                                     className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm"
                                     aria-label="Enviar correo a contacto@salmetex.com.mx"
                                 >
-                                    contacto@salmetex.com.mx
+                                    contacto@salmetexmed.com.mx
                                 </Link>
                             </div>
 
                             <div className="flex items-start space-x-3">
-                                <Clock size={18} className="text-blue-400 mt-0.5 flex-shrink-0" />
+                                <Clock size={18} className="text-blue-400 mt-0.5 shrink-0" />
                                 <div>
                                     <p className="text-gray-800 text-sm">
                                         Lun - Vie: 8:00 AM - 6:00 PM<br />
@@ -264,7 +264,7 @@ const Footer = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label="Suscribirse al grupo de Facebook para recibir promociones"
-                                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-700 
+                                className="px-6 py-2 bg-linear-to-r from-blue-600 to-blue-700 
                                              text-white font-medium rounded-2xl hover:from-blue-700 
                                              hover:to-blue-800 transition-all duration-200 text-sm">
                                 Suscribirse a grupo de Promociones

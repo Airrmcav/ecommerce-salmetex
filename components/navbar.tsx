@@ -173,17 +173,17 @@ const Navbar = () => {
                                 <NavigationMenuItem>
                                     <NavigationMenuTrigger className="uppercase cursor-pointer bg-transparent">Productos</NavigationMenuTrigger>
                                     <NavigationMenuContent>
-                                    <div className="w-[400px] lg:w-[500px] xl:w-[700px] xl:h-[400px]">
+                                    <div className="w-[400px] lg:w-[500px] xl:w-[700px] xl:h-[300px]">
                                         <div className="grid lg:grid-cols-[.75fr_1fr] gap-4 p-4 h-full">
                                             {/* Sección principal - lado izquierdo */}
                                             <div className="space-y-3 flex items-center ">
                                                 <div>
                                                     <NavigationMenuLink
-                                                        className="flex flex-col items-center text-center select-none space-y-3 rounded-md p-4 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 hover:border-blue-200 hover:shadow-md"
+                                                        className="flex flex-col items-center text-center select-none space-y-3 rounded-md p-4 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-100 hover:border-blue-200 hover:shadow-md"
                                                         href="/categoria/todos"
                                                     >
                                                             {/* Icono central */}
-                                                            <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl border border-blue-200">
+                                                            <div className="p-3 bg-linear-to-br from-blue-100 to-indigo-100 rounded-xl border border-blue-200">
                                                                 <Package2 className="w-6 h-6 text-blue-600" />
                                                             </div>
 
@@ -215,7 +215,7 @@ const Navbar = () => {
 
                                             {/* Lista de categorías - lado derecho, scrollable */}
                                             <div className="space-y-1">
-                                                {categoriesLoading ? (
+                                                {/* {categoriesLoading ? (
                                                     <div className="flex items-center justify-center p-8">
                                                         <div className="flex flex-col items-center gap-2">
                                                             <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
@@ -230,13 +230,13 @@ const Navbar = () => {
                                                     <div className="text-center p-4">
                                                         <p className="text-xs text-gray-500">No hay categorías disponibles</p>
                                                     </div>
-                                                ) : (
-                                                    <div className="max-h-[380px] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-100 pr-2">
+                                                ) : ( */}
+                                                    <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-100 pr-2">
                                                         <div className="space-y-1">
-                                                            {sortedCategories.map((category: CategoryType) => (
-                                                                <NavigationMenuLink key={category.id} asChild>
-                                                                    <Link
-                                                                        href={`/categoria/${createSlug(category.categoryName)}`}
+                                                          
+                                                                <NavigationMenuLink asChild className="flex flex-col grow">
+                                                                    <Link 
+                                                                        href={`/categoria/todos?area=Insumos+médicos`}
                                                                         className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground hover:bg-blue-50 border border-transparent hover:border-blue-100 group"
                                                                     >
                                                                         <div className="flex items-center gap-2">
@@ -244,15 +244,51 @@ const Navbar = () => {
                                                                                 <Package2 className="w-3 h-3 text-blue-600" />
                                                                             </div>
                                                                             <div className="text-sm font-medium leading-none group-hover:text-blue-900">
-                                                                                {category.categoryName}
+                                                                                Insumos médicos
                                                                             </div>
                                                                         </div>
                                                                         <p className="line-clamp-1 text-xs leading-snug text-muted-foreground group-hover:text-blue-700 ml-6">
-                                                                            Productos de {category.categoryName.toLowerCase()} disponibles para equipos médicos profesionales.
+                                                                            Productos de insumos médicos disponibles para equipos médicos profesionales.
                                                                         </p>
                                                                     </Link>
                                                                 </NavigationMenuLink>
-                                                            ))}
+                                                                <NavigationMenuLink asChild>
+                                                                    <Link 
+                                                                        href={`/categoria/todos?area=Equipo+Médico`}
+                                                                        className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground hover:bg-blue-50 border border-transparent hover:border-blue-100 group"
+                                                                    >
+                                                                        <div className="flex items-center gap-2">
+                                                                            <div className="p-1 bg-blue-100 group-hover:bg-blue-200 rounded-md transition-colors">
+                                                                                <Package2 className="w-3 h-3 text-blue-600" />
+                                                                            </div>
+                                                                            <div className="text-sm font-medium leading-none group-hover:text-blue-900">
+                                                                                Equipo Médico
+                                                                            </div>
+                                                                        </div>
+                                                                        <p className="line-clamp-1 text-xs leading-snug text-muted-foreground group-hover:text-blue-700 ml-6">
+                                                                            Productos de equipo médico disponibles para profesionales de la salud.
+                                                                        </p>
+                                                                    </Link>
+                                                                </NavigationMenuLink>
+                                                                <NavigationMenuLink asChild>
+                                                                    <Link 
+                                                                        href={`/categoria/todos?area=Mobiliario+médico`}
+                                                                        className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground hover:bg-blue-50 border border-transparent hover:border-blue-100 group"
+                                                                    >
+                                                                        <div className="flex items-center gap-2">
+                                                                            <div className="p-1 bg-blue-100 group-hover:bg-blue-200 rounded-md transition-colors">
+                                                                                <Package2 className="w-3 h-3 text-blue-600" />
+                                                                            </div>
+                                                                            <div className="text-sm font-medium leading-none group-hover:text-blue-900">
+                                                                                Mobiliario Médico
+                                                                            </div>
+                                                                        </div>
+                                                                        <p className="line-clamp-1 text-xs leading-snug text-muted-foreground group-hover:text-blue-700 ml-6">
+                                                                            Productos de mobiliario médico disponibles para profesionales de la salud.
+                                                                        </p>
+                                                                    </Link>
+                                                                </NavigationMenuLink>
+                                                           
                                                         </div>
 
                                                         {/* Indicador de scroll si hay muchas categorías */}
@@ -264,7 +300,7 @@ const Navbar = () => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                )}
+                                                {/* )} */}
                                             </div>
                                         </div>
                                     </div>
@@ -308,26 +344,32 @@ const Navbar = () => {
                             Productos Destacados
                         </button>
                         <button
-                            onClick={() => {
-                                // Usar replace en lugar de push para evitar problemas de historial
-                                router.replace("/insumos-medicos");
-                            }}
+                           onClick={() => router.push("/categoria/todos?area=Insumos+médicos")}
                             className="text-gray-700 hover:text-blue-600 font-medium
                        transition-colors duration-200 hover:underline
                        decoration-blue-600 underline-offset-4 text-sm lg:text-base uppercase cursor-pointer"
-                       aria-label="Ir a la página de Productos Destacados"
+                       aria-label="Ir a la página de Insumos médicos"
                         >
                             Insumos Médicos
                         </button>
 
                         <button
-                            onClick={() => router.push("/productos-top")}
+                            onClick={() => router.push("/categoria/todos?area=Equipo+Médico")}
                             className="text-gray-700 hover:text-blue-600 font-medium
                        transition-colors duration-200 hover:underline
                        decoration-blue-600 underline-offset-4 text-sm lg:text-base uppercase cursor-pointer"
-                       aria-label="Ir a la página de Productos Top"
+                       aria-label="Ir a la página de Equipo Médico"
                         >
-                            Productos Top
+                            Equipo Médico
+                        </button>
+                        <button
+                            onClick={() => router.push("/categoria/todos?area=Mobiliario+médico")}
+                            className="text-gray-700 hover:text-blue-600 font-medium
+                       transition-colors duration-200 hover:underline
+                       decoration-blue-600 underline-offset-4 text-sm lg:text-base uppercase cursor-pointer"
+                       aria-label="Ir a la página de Mobiliario Médico"
+                        >
+                            Mobiliario Médico
                         </button>
                         <button
                             onClick={() => router.push("/blog")}

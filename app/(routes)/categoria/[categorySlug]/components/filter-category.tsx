@@ -1,33 +1,70 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useGetCategories } from "@/api/getProducts";
+import { useGetProductsByArea } from "@/api/getProductsByArea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ResponseType } from "@/types/response";
 import { CategoryType } from "@/types/category";
+import { ProductType } from "@/types/product";
 import { ChevronDown, Loader2, Package2, Grid3X3 } from "lucide-react";
 
 type FiltersCategoryProps = {
     setFilterCategory: (category: string) => void;
     filterCategory: string;
     setFilterArea: (area: string) => void;
+    filterArea: string;
 }
 
 const FilterCategory = (props: FiltersCategoryProps) => {
-    const { setFilterCategory, filterCategory, setFilterArea } = props;
+    const { setFilterCategory, filterCategory, setFilterArea, filterArea } = props;
     const { result, loading, error }: ResponseType = useGetCategories();
+    const { result: areaProducts, loading: areaLoading }: ResponseType = useGetProductsByArea(filterArea);
     const [isExpanded, setIsExpanded] = useState(false);
 
-    // Ordenar categorías alfabéticamente
-    const sortedCategories = result ? [...result].filter(a => a && a.categoryName).sort((a, b) => 
-        a.categoryName.localeCompare(b.categoryName)
-    ) : [];
+    // Auto-expandir cuando hay área seleccionada (excepto Mobiliario médico)
+    useEffect(() => {
+        if (filterArea && filterArea !== 'Mobiliario médico') {
+            setIsExpanded(true);
+        }
+        // No cerramos cuando filterArea está vacío para mantener abierto si el usuario seleccionó una categoría
+    }, [filterArea]);
+
+    // Obtener las categorías únicas de los productos del área seleccionada
+    const categoriesFromArea = useMemo(() => {
+        if (!areaProducts || !Array.isArray(areaProducts)) return [];
+        const categoryNames = new Set<string>();
+        areaProducts.forEach((product: ProductType) => {
+            if (product.category?.categoryName) {
+                categoryNames.add(product.category.categoryName);
+            }
+        });
+        return Array.from(categoryNames);
+    }, [areaProducts]);
+
+    // Filtrar y ordenar categorías
+    const sortedCategories = useMemo(() => {
+        if (!result) return [];
+        let categories = [...result].filter(a => a && a.categoryName);
+        
+        // Si hay un área seleccionada (y no es Mobiliario médico), filtrar por categorías del área
+        if (filterArea && filterArea !== 'Mobiliario médico' && categoriesFromArea.length > 0) {
+            categories = categories.filter(cat => categoriesFromArea.includes(cat.categoryName));
+        }
+        
+        return categories.sort((a, b) => a.categoryName.localeCompare(b.categoryName));
+    }, [result, filterArea, categoriesFromArea]);
+
+    // No mostrar el filtro si el área es "Mobiliario médico"
+    if (filterArea === 'Mobiliario médico') {
+        return null;
+    }
 
     const handleCategorySelect = (value: string) => {
-        setFilterArea('');
+        // No limpiamos el área para mantener el filtro activo
         setFilterCategory(value);
-        setIsExpanded(false); // Cerrar dropdown al seleccionar
+        setIsExpanded(true); // Mantener dropdown abierto al seleccionar
     };
 
     const toggleExpanded = () => {
@@ -45,9 +82,9 @@ const FilterCategory = (props: FiltersCategoryProps) => {
             <div 
                 onClick={toggleExpanded}
                 className={`flex items-center gap-3 p-4 cursor-pointer transition-all duration-200 
-                    ${isExpanded ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100' : 'hover:bg-gray-50'}`}
+                    ${isExpanded ? 'bg-linar-to-r from-blue-50 to-indigo-50 border-b border-gray-100' : 'hover:bg-gray-50'}`}
             >
-                <div className="p-1.5 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg">
+                <div className="p-1.5 bg-linear-to-r from-blue-100 to-indigo-100 rounded-lg">
                     <Grid3X3 className="w-4 h-4 text-blue-600" />
                 </div>
                 
@@ -109,7 +146,7 @@ const FilterCategory = (props: FiltersCategoryProps) => {
 
                     {/* Lista de Categorías - Scrollable */}
                     {result && result.length > 0 && (
-                        <div className="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-100">
+                        <div className="max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-100">
                             <div className="p-4 space-y-1">
                                 <RadioGroup 
                                     onValueChange={handleCategorySelect}

@@ -5,7 +5,7 @@ import { useGetProductsByCategory } from "@/api/getProductsByCategory"
 import { useGetAllProducts } from "@/api/getAllProducts"
 import { Separator } from "@/components/ui/separator";
 import { ResponseType } from "@/types/response";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import FiltersControlsCategory from "./components/filters-controls-area";
 import SkeletonSchema from "@/components/skeletonSchema";
 import ProductCard from "./components/product.card";
@@ -18,6 +18,7 @@ import FilterArea from "./components/filter-area";
 
 export default function Page() {
     const params = useParams();
+    const searchParams = useSearchParams();
     const { categorySlug } = params;
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -29,6 +30,14 @@ export default function Page() {
     const { result: categoryFilterProducts, loading: categoryFilterLoading, error: categoryFilterError }: ResponseType = useGetProductsByCategory(filterCategory);
     
     const router = useRouter();
+
+    // Inicializar filtro de área desde query parameter
+    useEffect(() => {
+        const areaParam = searchParams.get('area');
+        if (areaParam) {
+            setFilterArea(areaParam);
+        }
+    }, [searchParams]);
     
     let loading = categoryLoading;
     let error = categoryError;
@@ -180,7 +189,7 @@ export default function Page() {
                                         <>Descubre nuestra completa selección de equipos médicos de alta calidad. Tecnología certificada, calidad garantizada y soporte técnico especializado.</>
                                     ) : (
                                         <>Descubre nuestra selección de equipos médicos especializados en{' '}
-                                        <strong>{categoryProducts[0].category.categoryName.toLowerCase()}</strong>.
+                                        <strong>{categoryProducts?.[0]?.category?.categoryName?.toLowerCase() || 'esta categoría'}</strong>.
                                         Tecnología certificada, calidad garantizada y soporte técnico especializado.</>
                                     )}
                                 </p>
@@ -239,7 +248,7 @@ export default function Page() {
                 {/* Main Content Layout */}
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Sidebar - Filters */}
-                    <aside className="lg:w-80 flex-shrink-0">
+                    <aside className="lg:w-80 shrink-0">
                         <div className="">
                             <FilterArea 
                                 setFilterArea={setFilterArea} 
@@ -252,6 +261,7 @@ export default function Page() {
                                 setFilterCategory={setFilterCategory}
                                 filterCategory={filterCategory}
                                 setFilterArea={setFilterArea}
+                                filterArea={filterArea}
                             />
                         </div>
                     </aside>
