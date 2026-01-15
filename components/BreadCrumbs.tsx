@@ -33,23 +33,23 @@ export default function Breadcrumb({
   };
 
   return (
-    <div className={`bg-gradient-to-r from-white to-gray-50/50  ${className}`}>
+    <div className={`bg-linear-to-r from-white to-gray-50/50  ${className}`}>
       <div className="max-w-7xl mx-auto px-6 py-2">
         {/* Back Button */}
-        {backButton.show && (
-          <button 
-            onClick={handleBackClick}
-            className="group inline-flex cursor-pointer items-center gap-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-2 rounded-lg transition-all duration-200 mb-3 font-medium"
-            aria-label={`${backButton.label} a la página anterior`}
-          >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-200" />
-            <span className="text-sm">{backButton.label}</span>
-          </button>
-        )}
+        
         
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center" aria-label="Navegación de migas de pan">
           <div className="flex items-center space-x-1">
+            {backButton.show && (
+          <button 
+            onClick={handleBackClick}
+            className="group inline-flex cursor-pointer items-center justify-center text-blue-600 hover:text-blue-700 hover:bg-blue-50 p-2 rounded-lg transition-all duration-200"
+            aria-label="Volver a la página anterior"
+          >
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform duration-200" />
+          </button>
+        )}
             {items.map((item, index) => (
               <div key={index} className="flex items-center">
                 {/* Home icon for first item */}
@@ -59,7 +59,7 @@ export default function Breadcrumb({
                 
                 {/* Separator */}
                 {index > 0 && (
-                  <ChevronRight className="w-4 h-4 text-gray-400 mx-2 flex-shrink-0" />
+                  <ChevronRight className="w-4 h-4 text-gray-400 mx-2 shrink-0" />
                 )}
                 
                 {/* Breadcrumb Item */}
@@ -80,7 +80,7 @@ export default function Breadcrumb({
                     <span className={item.isActive ? "relative" : ""}>
                       {item.label}
                       {item.isActive && (
-                        <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+                        <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-linear-to-r from-blue-500 to-indigo-500 rounded-full"></div>
                       )}
                     </span>
                   </div>
