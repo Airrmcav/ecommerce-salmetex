@@ -146,7 +146,7 @@ export default function Page() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50/30">
             {/* Breadcrumbs */}
             <Breadcrumb
                 items={breadcrumbItems}
@@ -155,13 +155,12 @@ export default function Page() {
                     label: "Regresar"
                 }} />
 
-
-            <div className="max-w-7xl py-8 mx-auto px-6 lg:px-8">
+            <div className="max-w-7xl py-2 mx-auto px-6 lg:px-8">
                 {/* Header Section - SEO Optimized */}
                 {((categoryProducts !== null && !categoryLoading) || (categorySlug === 'todos' && allProducts !== null && !allProductsLoading)) && (
-                    <header className="mb-8">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl hidden md:block">
+                    <header className="mb-3">
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="p-3 bg-linear-to-r from-blue-100 to-indigo-100 rounded-2xl hidden md:block">
                                 <Stethoscope className="w-8 h-8 text-blue-600" />
                             </div>
                             <div className="flex-1">
@@ -169,14 +168,14 @@ export default function Page() {
                                 <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
                                     {categorySlug === 'todos' ? (
                                         <>
-                                            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                            <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                                                 Todos los Equipos Médicos
                                             </span>
                                         </>
                                     ) : (
                                         <>
                                             <span className="block">Equipos Médicos de</span>
-                                            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                            <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                                                 {categoryProducts[0]?.category?.categoryName}
                                             </span>
                                         </>
@@ -195,7 +194,7 @@ export default function Page() {
                                 </p>
 
                                  {/* Información adicional */}
-                                <div className="flex items-center gap-6 mt-4">
+                                <div className="flex items-center gap-6 mt-2">
                                     <div className="flex items-center gap-2">
                                         <Package className="w-5 h-5 text-blue-600" />
                                         <span className="text-sm font-medium text-gray-700">
@@ -226,7 +225,7 @@ export default function Page() {
                         </div>
 
                         {/* Decorative separator */}
-                        <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full mt-[45px]"></div>
+                        <div className="w-24 h-1 bg-linear-to-r from-blue-500 to-indigo-500 rounded-full mt-[15px]"></div>
                     </header>
                 )}
 
@@ -243,7 +242,7 @@ export default function Page() {
                     </header>
                 )}
 
-                <Separator className="my-6" />
+                <Separator className="my-2" />
 
                 {/* Main Content Layout */}
                 <div className="flex flex-col lg:flex-row gap-8">
