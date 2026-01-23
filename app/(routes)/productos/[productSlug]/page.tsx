@@ -11,7 +11,7 @@ export default function ProductoRedirect() {
   useEffect(() => {
     // Redirigir a la ruta correcta de producto
     if (productSlug) {
-      router.replace(`/product/${productSlug}`);
+      router.replace(`/${productSlug}`);
     } else {
       router.replace('/categoria/todos');
     }

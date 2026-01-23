@@ -29,7 +29,7 @@ const CartItem = (props: CartItemProps) => {
     };
 
     const handleViewProduct = () => {
-        router.push(`/product/${product.slug}`);
+        router.push(`/${product.slug}`);
     };
 
     return (
