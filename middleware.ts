@@ -27,7 +27,7 @@ export function middleware(request: NextRequest) {
     } else {
       // Extraer el slug del producto
       const productSlug = pathname.replace('/productos/', '');
-      return NextResponse.redirect(new URL(`/product/${productSlug}`, request.url));
+      return NextResponse.redirect(new URL(`/${productSlug}`, request.url));
     }
   }
 

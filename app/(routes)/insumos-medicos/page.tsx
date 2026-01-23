@@ -325,7 +325,7 @@ export default function Page() {
                                                                     if (slug === "productos-destacados") {
                                                                         router.push(`/productos-destacados`)
                                                                     } else {
-                                                                        router.push(`/product/${slug}`)
+                                                                        router.push(`/${slug}`)
                                                                     }
                                                                 }}
                                                                 className={`cursor-pointer flex-1 py-2.5 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${active

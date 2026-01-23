@@ -184,12 +184,12 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
                   <div className="space-y-2">
                     {Array.isArray(result.products) && result.products.slice(0, 5).map((product: ProductType) => (
                       <Link 
-                        href={`/product/${product.slug}`} 
+                        href={`/${product.slug}`} 
                         key={product.id}
                         onClick={handleItemClick}
                         className="flex items-center gap-3 px-3 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-150"
                       >
-                        <div className="w-10 h-10 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                        <div className="w-10 h-10 bg-gray-100 rounded-md overflow-hidden shrink-0">
                           {product.images && product.images.length > 0 && product.images[0].url ? (
                             <img 
                               src={product.images[0].url} 
