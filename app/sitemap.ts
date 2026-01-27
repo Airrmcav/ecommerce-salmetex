@@ -78,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       typeof slug === "string" && slug.length > 0
     )
     .map((slug: string) => ({
-      url: `${baseUrl}/product/${slug}`,
+      url: `${baseUrl}/${slug}`,
       lastModified: new Date(),
       priority: 0.7,
     }));
