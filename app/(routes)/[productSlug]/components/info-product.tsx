@@ -57,7 +57,7 @@ const InfoProduct = (props: InfoProductProps) => {
             </h1>
 
             {/* Categoría */}
-            <div className="space-y-3 mb-3">
+            <div className="space-y-3 mb-3 flex justify-between gap-2">
                 <div>
                     <Badge variant="outline" className="px-4 py-2 text-base font-medium bg-blue-50 text-blue-700 border-blue-200">
                         {product.category.categoryName}

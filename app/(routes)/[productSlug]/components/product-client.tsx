@@ -14,13 +14,6 @@ export default function ProductClient() {
     const productSlug = params?.productSlug;
     const category = params?.categorySlug || '';
 
-    const breadcrumbItems = [
-        { label: "Inicio", href: "/" },
-        { label: "Categorías", href: "/categoria/todos" },
-        {
-            label: "Productos"
-        }
-    ];
 
     if (typeof productSlug === "undefined") {
         return <SkeletonProduct />
@@ -31,16 +24,31 @@ export default function ProductClient() {
     if (result == null || loading) {
         return <SkeletonProduct />
     }
-
-    // Hacer type assertion para asegurar que es ProductType
     const product = result[0] as ProductType;
-
-    // Verificar que el producto existe y tiene las propiedades necesarias
     if (!product) {
         return <SkeletonProduct />
     }
+    const area = product.area ?? "";
 
-    // Parsear las características si vienen como string JSON
+    const breadcrumbItems = [
+        { label: "Inicio", href: "/" },
+        {
+            label: area,
+            href: `/categoria/todos?area=${area.replace(/\s+/g, "+")}`,
+        },
+        {
+            label: `${product.category.categoryName}`, href: `/categoria/${product.category.categoryName
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/\s+/g, "-")
+                }`
+        },
+        {
+            label: `${product.productName}`
+        }
+    ];
+
     let parsedCharacteristics: any = {};
     try {
         if (product.characteristics) {
@@ -54,7 +62,7 @@ export default function ProductClient() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50/30">
             <Breadcrumb
                 items={breadcrumbItems}
                 backButton={{
@@ -62,7 +70,13 @@ export default function ProductClient() {
                     label: "Regresar"
                 }} />
 
-            <div className="max-w-7xl mx-auto py-10">
+            <div className="max-w-7xl mx-auto">
+                {product.textSeo && (
+                    <p className="text-center py-5 text-3xl text-gray-500">
+                        {product.textSeo}
+                    </p>
+                )}
+
                 <div className="grid sm:grid-cols-2">
                     <div>
                         <CarouselProduct
@@ -80,9 +94,9 @@ export default function ProductClient() {
                 </div>
 
                 {/* Sección de Características */}
-                <div className="mt-12 bg-gradient-to-br from-white to-slate-50/50 rounded-3xl shadow-xl border border-slate-200/50 overflow-hidden">
-                    {/* Header con gradiente */}
-                    <div className="bg-gradient-to-r from-slate-800 via-blue-900 to-indigo-900 p-8 text-white relative overflow-hidden">
+                <div className="mt-12 bg-linear-to-br from-white to-slate-50/50 rounded-3xl shadow-xl border border-slate-200/50 overflow-hidden">
+                    {/* Header con lineare */}
+                    <div className="bg-linear-to-r from-slate-800 via-blue-900 to-indigo-900 p-8 text-white relative overflow-hidden">
                         <div className="absolute inset-0 bg-black/10"></div>
                         <div className="relative z-10">
                             <div className="flex items-center gap-4 mb-3">

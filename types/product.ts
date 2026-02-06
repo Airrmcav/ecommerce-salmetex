@@ -4,6 +4,7 @@ export type ProductType = {
   productName: string;
   slug: string;
   description: string;
+  textSeo:string;
   price?: number; // si lo manejas
   quantity?: number; // cantidad de productos en el carrito
   isFeatured: boolean;
