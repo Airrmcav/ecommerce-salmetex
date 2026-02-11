@@ -1,0 +1,3 @@
+# https:localhost:3000/api/products?filters[slug][$eq]=set-instrumental-para-curacion&populate=*
+
+https://backend-ecommerce-production-fb02.up.railway.app/api/products?populate=*&filters%5Bprograma%5D%5Bslug%5D%5B%24eq%5D=imss-bienestar

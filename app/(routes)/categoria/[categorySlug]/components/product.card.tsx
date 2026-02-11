@@ -8,17 +8,16 @@ import { formatPrice } from "@/lib/formatPrice";
 import { useCart } from "@/hooks/use-cart";
 import { useLovedProducts } from "@/hooks/use-loved-products";
 
-
 type ProductCardProps = {
   product: ProductType;
-  viewMode?: 'grid' | 'list';
+  viewMode?: "grid" | "list";
 };
 
 const ProductCard = (props: ProductCardProps) => {
   const { product } = props;
   const router = useRouter();
   const { addItem, items } = useCart();
-   const { addLoveItems } = useLovedProducts();
+  const { addLoveItems } = useLovedProducts();
 
   return (
     <div className="relative p-0 transition-all">
@@ -30,7 +29,9 @@ const ProductCard = (props: ProductCardProps) => {
                 {product.images && product.images.length > 0 ? (
                   <img
                     src={product.images[0].url}
-                    alt={product.images[0].alternativeText || product.productName}
+                    alt={
+                      product.images[0].alternativeText || product.productName
+                    }
                     className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
@@ -44,10 +45,11 @@ const ProductCard = (props: ProductCardProps) => {
                 <div className="absolute top-4 right-4">
                   <Badge
                     variant={product.active ? "default" : "secondary"}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-full font-medium ${product.active
-                      ? "bg-green-100 text-green-800 border-green-200"
-                      : "bg-red-100 text-red-800 border-red-200"
-                      }`}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full font-medium ${
+                      product.active
+                        ? "bg-green-100 text-green-800 border-green-200"
+                        : "bg-red-100 text-red-800 border-red-200"
+                    }`}
                   >
                     {product.active ? (
                       <CheckCircle className="w-3 h-3" />
@@ -58,7 +60,15 @@ const ProductCard = (props: ProductCardProps) => {
                   </Badge>
                 </div>
 
-                <IconButton onClick={() => addLoveItems(product)} icon={<Heart className="w-4 h-4 text-gray-800 hover:text-red-500 transition-colors" />} className="absolute top-3 left-3 p-2 rounded-full bg-gray-300/5 backdrop-blur-sm hover:bg-white transition-all duration-200 group-hover:opacity-100" aria-label="Agregar a favoritos" title="Agregar a favoritos" />
+                <IconButton
+                  onClick={() => addLoveItems(product)}
+                  icon={
+                    <Heart className="w-4 h-4 text-gray-800 hover:text-red-500 transition-colors" />
+                  }
+                  className="absolute top-3 left-3 p-2 rounded-full bg-gray-300/5 backdrop-blur-sm hover:bg-white transition-all duration-200 group-hover:opacity-100"
+                  aria-label="Agregar a favoritos"
+                  title="Agregar a favoritos"
+                />
 
                 <div className="absolute bottom-3 left-3">
                   <Badge className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-xs font-medium">
@@ -73,11 +83,12 @@ const ProductCard = (props: ProductCardProps) => {
                 </h2>
 
                 <p className="text-gray-600 text-sm leading-relaxed mb-3 flex-1 line-clamp-2 min-h-[40px]">
-                  {product.description || "Equipo médico de alta calidad diseñado para proporcionar resultados precisos y confiables en entornos clínicos profesionales."}
+                  {product.description ||
+                    "Equipo médico de alta calidad diseñado para proporcionar resultados precisos y confiables en entornos clínicos profesionales."}
                 </p>
 
                 {/* Price */}
-                {product.price && product.price > 0.00 && (
+                {product.price && product.price > 0.0 && (
                   <div className="mb-4">
                     <span className="text-2xl font-bold text-blue-600">
                       {formatPrice(product.price)}
@@ -90,26 +101,33 @@ const ProductCard = (props: ProductCardProps) => {
                 <div className="flex gap-2 mt-auto">
                   <button
                     onClick={() => {
-                      
-                        router.push(`/${product.slug}`);
-                    
+                      router.push(`/${product.slug}`);
                     }}
-                    className={`cursor-pointer flex-1 py-2.5 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${product.active
-                      ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
-                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      }`}
+                    className={`cursor-pointer flex-1 py-2.5 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${
+                      product.active
+                        ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
+                        : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    }`}
                     disabled={!product.active}
                     aria-label={`Ver detalles de ${product.productName}`}
                   >
                     Ver Detalles
                   </button>
-                  <IconButton 
-                    onClick={() => addItem(product)} 
-                    icon={<ShoppingCart size={20} />} 
-                    className={`${(!product.price || product.price <= 0) ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white shadow-md hover:shadow-lg`} 
+                  <IconButton
+                    onClick={() => addItem(product)}
+                    icon={<ShoppingCart size={20} />}
+                    className={`${!product.price || product.price <= 0 ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"} text-white shadow-md hover:shadow-lg`}
                     disabled={!product.price || product.price <= 0}
-                    title={!product.price || product.price <= 0 ? "Este producto no tiene precio definido" : "Agregar al carrito"}
-                    aria-label={!product.price || product.price <= 0 ? "Este producto no tiene precio definido" : `Agregar ${product.productName} al carrito`}
+                    title={
+                      !product.price || product.price <= 0
+                        ? "Este producto no tiene precio definido"
+                        : "Agregar al carrito"
+                    }
+                    aria-label={
+                      !product.price || product.price <= 0
+                        ? "Este producto no tiene precio definido"
+                        : `Agregar ${product.productName} al carrito`
+                    }
                   />
                 </div>
               </div>
@@ -119,6 +137,6 @@ const ProductCard = (props: ProductCardProps) => {
       </div>
     </div>
   );
-}
+};
 
 export default ProductCard;
