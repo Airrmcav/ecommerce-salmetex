@@ -4,9 +4,22 @@ export type ProductType = {
   productName: string;
   slug: string;
   description: string;
-  textSeo:string;
-  price?: number; // si lo manejas
-  quantity?: number; // cantidad de productos en el carrito
+  textSeo: string;
+  programa: {
+    id: number;
+    slug: string;
+    description: string;
+    namePrograma: string;
+    mainImage: {
+      id: number;
+      url: string;
+      alternativeText?: string | null;
+      caption?: string | null;
+    };
+  };
+
+  price?: number;
+  quantity?: number;
   isFeatured: boolean;
   active: boolean;
   topProduct?: boolean;
@@ -23,11 +36,13 @@ export type ProductType = {
     slug: string;
     categoryName: string;
   };
-  characteristics: string | {
-    nombre?: string;
-    categorias?: string[];
-    caracteristicas?: {
-      [key: string]: string | number | boolean;
-    };
-  };
+  characteristics:
+    | string
+    | {
+        nombre?: string;
+        categorias?: string[];
+        caracteristicas?: {
+          [key: string]: string | number | boolean;
+        };
+      };
 };
