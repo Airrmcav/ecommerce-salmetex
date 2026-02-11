@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
 import { useLovedProducts } from "@/hooks/use-loved-products";
 import { Activity, ShieldPlus } from "lucide-react";
+import Header from "./header";
 
 export default function IMSSClient() {
   const PROGRAMA_SLUG = "imss-bienestar";
@@ -167,19 +168,7 @@ export default function IMSSClient() {
         backButton={{ show: true, label: "Regresar" }}
       />
       <div className="max-w-7xl mx-auto px-6 py-2 pb-3">
-        <div className="text-center mb-1 pb-3 border-b border-b-gray-400">
-          <div className="inline-flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full mb-1">
-            <ShieldPlus className="w-4 h-4 text-blue-700" />
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900">
-            Proveedor de Equipamiento Médico para IMSS Bienestar
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Suministramos equipo médico, mobiliario hospitalario e insumos para
-            unidades médicas del programa IMSS Bienestar en todo México.
-          </p>
-        </div>
-
+        <Header />
         {/* Botón de filtros móvil */}
         <div className="lg:hidden mb-6">
           <button
@@ -231,7 +220,7 @@ export default function IMSSClient() {
                       onClick={clearFilters}
                       className="hover:bg-blue-200 rounded-full cursor-pointer"
                     >
-                      <X className="w-5 h-5 bg-red-300 rounded-full" />
+                      <X className="w-5 h-5 bg-white rounded-full p-0.5" />
                     </button>
                   </Badge>
                 </div>
