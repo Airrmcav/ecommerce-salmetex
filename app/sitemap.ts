@@ -162,7 +162,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
 //   console.log(`Categorías válidas para sitemap: ${categories.length}`);
 
-  // URLs estáticas de marcas principales
+    // URLs estáticas principales
   const staticMarcas = [
     {
       url: `${baseUrl}/productos-destacados`,
@@ -174,8 +174,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       priority: 0.8,
     },
-    
+    {
+      url: `${baseUrl}/imss-bienestar`,
+      lastModified: new Date(),
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/la-clinica-es-nuestra`,
+      lastModified: new Date(),
+      priority: 0.9,
+    },
   ];
+
 
   return [
     {
