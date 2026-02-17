@@ -89,7 +89,7 @@ export default function Page() {
     }
   };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-6 py-8">
@@ -116,7 +116,7 @@ export default function Page() {
 
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
                     <Mail className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
@@ -128,7 +128,7 @@ export default function Page() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
                     <Phone className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
@@ -138,7 +138,7 @@ export default function Page() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
                     <MapPin className="w-5 h-5 text-purple-600" />
                   </div>
                   <div>
@@ -149,9 +149,18 @@ export default function Page() {
                     </p>
                   </div>
                 </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+                    <MapPin className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-800">Dirección</h3>
+                    <p className="text-slate-600">Saltillo, Coahuila, México</p>
+                  </div>
+                </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
                     <Clock className="w-5 h-5 text-orange-600" />
                   </div>
                   <div>

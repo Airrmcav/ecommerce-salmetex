@@ -231,6 +231,14 @@ const Footer = () => {
                   </p>
                 </div>
               </div>
+              <div className="flex items-start space-x-3">
+                <MapPin size={18} className="text-blue-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-gray-800 text-sm">
+                    Saltillo, Coahuila, México.
+                  </p>
+                </div>
+              </div>
 
               <div className="flex items-center space-x-3">
                 <Phone size={18} className="text-blue-400 shrink-0" />
