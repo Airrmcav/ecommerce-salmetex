@@ -43,7 +43,7 @@ export default function Cart() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50/30">
             <div className="max-w-7xl px-4 py-8 mx-auto sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="mb-8">
@@ -61,7 +61,7 @@ export default function Cart() {
                 {items.length === 0 ? (
                     /* Estado vacío mejorado */
                     <div className="flex flex-col items-center justify-center py-20 text-center">
-                        <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-6">
+                        <div className="w-32 h-32 bg-linear-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-6">
                             <Package className="w-16 h-16 text-blue-500" />
                         </div>
                         <h2 className="text-2xl font-bold text-gray-800 mb-3">Tu carrito está vacío</h2>

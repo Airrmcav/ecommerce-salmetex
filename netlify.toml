@@ -19,8 +19,3 @@
   status = 301
   force = true
 
-# Redirección para manejar rutas no encontradas
-[[redirects]]
-  from = "/*"
-  to = "/404"
-  status = 404

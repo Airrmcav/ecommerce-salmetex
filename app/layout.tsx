@@ -100,6 +100,7 @@ export default function RootLayout({
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=AW-16830523296"
+          strategy="afterInteractive"
         />
         <Script id="google-analytics">
           {`
@@ -126,21 +127,13 @@ export default function RootLayout({
     }
   `}
         </Script>
-
-        {/* Preconnect para mejorar velocidad */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
-
-        {/* DNS Prefetch para recursos externos */}
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-
-        {/* Canonical URL */}
-        <link rel="canonical" href="https://salmetexmed.com.mx" />
-
         {/* Structured Data - Organización */}
         <script
           type="application/ld+json"

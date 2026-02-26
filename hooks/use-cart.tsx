@@ -234,7 +234,7 @@ export const useCartNotifications = () => {
             action: {
                 label: "💳 Ir a checkout",
                 onClick: () => {
-                    console.log("Ir al checkout");
+                    // console.log("Ir al checkout");
                 },
             },
         });

@@ -1,5 +1,6 @@
 import { getProductBySlug } from "@/api/getProductBySlug";
 import { Metadata } from "next";
+import { cache } from "react";
 import ProductClient from "./components/product-client";
 import { ProductType } from "@/types/product";
 
@@ -9,15 +10,19 @@ interface Props {
   }>;
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
+const getProduct = cache(async (slug: string): Promise<ProductType | null> => {
+  const data = await getProductBySlug(slug);
+  return data?.[0] ?? null;
+});
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const productSlug = resolvedParams.productSlug;
 
   try {
-    const productData = await getProductBySlug(productSlug);
+    const product = await getProduct(productSlug);
 
-    if (!productData || productData.length === 0) {
+    if (!product) {
       return {
         title: "Producto no encontrado | Salmetexmed",
         description: "El producto que buscas no está disponible en Salmetexmed.",
@@ -25,14 +30,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
 
-    const product: ProductType = productData[0];
-
     const fallbackDescription = `Compra ${product.productName} en Salmetexmed. Equipo médico de alta calidad con envío a todo México. Distribuidor autorizado con más de una década de experiencia.`;
 
     const rawDescription = product.textSeo || product.description || fallbackDescription;
-    const description = rawDescription.length > 160
-  ? rawDescription.slice(0, rawDescription.lastIndexOf(" ", 155)) + "..."
-  : rawDescription;
+    const description =
+      rawDescription.length > 160
+        ? rawDescription.slice(0, rawDescription.lastIndexOf(" ", 155)) + "..."
+        : rawDescription;
 
     const keywords = [
       product.productName,
@@ -48,9 +52,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ].filter(Boolean) as string[];
 
     return {
-     title: `${product.productName} | ${product.category?.categoryName} - Salmetexmed`,
+      title: `${product.productName} | ${product.category?.categoryName} - Salmetexmed`,
       description,
       keywords,
+      // No indexar productos inactivos
+      robots: {
+        index: product.active,
+        follow: true,
+      },
       alternates: {
         canonical: `https://salmetexmed.com.mx/productos/${productSlug}`,
       },
@@ -103,17 +112,20 @@ export default async function Page({ params, searchParams }: Props) {
   const resolvedParams = await params;
   if (searchParams) await searchParams;
 
-  let jsonLd = null;
+  let productJsonLd = null;
+  let breadcrumbJsonLd = null;
 
   try {
-    const productData = await getProductBySlug(resolvedParams.productSlug);
-    const product: ProductType | undefined = productData?.[0];
+    // Gracias al cache, no hace una segunda llamada a la API
+    const product = await getProduct(resolvedParams.productSlug);
 
     if (product) {
-      jsonLd = {
+      // Schema de Producto
+      productJsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",
         name: product.productName,
+        sku: product.documentId,
         description:
           product.textSeo ||
           product.description ||
@@ -136,7 +148,6 @@ export default async function Page({ params, searchParams }: Props) {
             url: "https://salmetexmed.com.mx",
           },
         },
-        // Si el producto pertenece a un programa (ej. IMSS Bienestar), lo incluimos
         ...(product.programa && {
           isRelatedTo: {
             "@type": "Thing",
@@ -145,6 +156,33 @@ export default async function Page({ params, searchParams }: Props) {
           },
         }),
       };
+
+      // Schema de Breadcrumb — aparece en Google como:
+      // salmetexmed.com.mx > [Categoría] > [Producto]
+      breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Inicio",
+            item: "https://salmetexmed.com.mx",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: product.category?.categoryName || "Productos",
+            item: `https://salmetexmed.com.mx/categorias/${product.category?.slug}`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: product.productName,
+            item: `https://salmetexmed.com.mx/productos/${resolvedParams.productSlug}`,
+          },
+        ],
+      };
     }
   } catch (error) {
     console.error("Error al generar JSON-LD:", error);
@@ -152,10 +190,16 @@ export default async function Page({ params, searchParams }: Props) {
 
   return (
     <>
-      {jsonLd && (
+      {productJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        />
+      )}
+      {breadcrumbJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
         />
       )}
       <ProductClient />

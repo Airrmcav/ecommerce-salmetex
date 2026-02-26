@@ -1,444 +1,139 @@
-"use client"
-import { useGetCategoryProduct } from "@/api/getCategoryProduct"
-import { useGetProductsByArea } from "@/api/getProductsByArea"
-import { useGetProductsByCategory } from "@/api/getProductsByCategory"
-import { useGetAllProducts } from "@/api/getAllProducts"
-import { Separator } from "@/components/ui/separator";
-import { ResponseType } from "@/types/response";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import FiltersControlsCategory from "./components/filters-controls-area";
-import SkeletonSchema from "@/components/skeletonSchema";
-import ProductCard from "./components/product.card";
+import { Metadata } from "next";
+import CategoryClient from "./components/category-client";
 import { ProductType } from "@/types/product";
-import { ArrowLeft, Filter, Grid3X3, List, Package, Stethoscope } from "lucide-react";
-import { useState, useEffect } from "react";
-import Breadcrumb from "@/components/BreadCrumbs";
-import FilterCategory from "./components/filter-category";
-import FilterArea from "./components/filter-area";
 
-export default function Page() {
-    const params = useParams();
-    const searchParams = useSearchParams();
-    const { categorySlug } = params;
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+interface Props {
+  params: Promise<{ categorySlug: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
-    const { result: allProducts, loading: allProductsLoading, error: allProductsError }: ResponseType = useGetAllProducts();
-    const { result: categoryProducts, loading: categoryLoading, error: categoryError }: ResponseType = useGetCategoryProduct(categorySlug ?? "");
-    const [filterArea, setFilterArea] = useState('');
-    const [filterCategory, setFilterCategory] = useState('');
-    const { result: areaProducts, loading: areaLoading, error: areaError }: ResponseType = useGetProductsByArea(filterArea);
-    const { result: categoryFilterProducts, loading: categoryFilterLoading, error: categoryFilterError }: ResponseType = useGetProductsByCategory(filterCategory);
-    
-    const router = useRouter();
+// Fetch inicial en el servidor — Google puede leer estos productos directamente
+async function getInitialProducts(categorySlug: string): Promise<ProductType[]> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+    const url =
+      categorySlug === "todos"
+        ? `${baseUrl}/api/products?populate=*`
+        : `${baseUrl}/api/products?populate=*&filters[category][slug][$eq]=${categorySlug}`;
 
-    // Inicializar filtro de área desde query parameter
-    useEffect(() => {
-        const areaParam = searchParams.get('area');
-        if (areaParam) {
-            setFilterArea(areaParam);
-        }
-    }, [searchParams]);
-    
-    let loading = categoryLoading;
-    let error = categoryError;
-    let filteredProducts = categoryProducts;
-    
-    // Si el slug es 'todos', usar todos los productos
-    if (categorySlug === 'todos') {
-        loading = allProductsLoading;
-        error = allProductsError;
-        filteredProducts = allProducts;
-        
-        // Aplicar filtros si están activos
-        if (filterArea !== '' && filterCategory === '') {
-            loading = areaLoading;
-            error = areaError;
-            filteredProducts = areaProducts;
-        } else if (filterArea === '' && filterCategory !== '') {
-            loading = categoryFilterLoading;
-            error = categoryFilterError;
-            filteredProducts = categoryFilterProducts;
-        } else if (filterArea !== '' && filterCategory !== '') {
-            loading = categoryFilterLoading || areaLoading;
-            error = categoryFilterError || areaError;
-            if (categoryFilterProducts && areaProducts) {
-                filteredProducts = categoryFilterProducts.filter((product: ProductType) => 
-                    product.area === filterArea
-                );
-            } else {
-                filteredProducts = categoryFilterProducts;
-            }
-        }
-    } else {
-        // Lógica original para otras categorías
-        if (filterArea !== '' && filterCategory === '') {
-            loading = areaLoading;
-            error = areaError;
-            filteredProducts = areaProducts;
-        } else if (filterArea === '' && filterCategory !== '') {
-            loading = categoryFilterLoading;
-            error = categoryFilterError;
-            filteredProducts = categoryFilterProducts;
-        } else if (filterArea !== '' && filterCategory !== '') {
-            loading = categoryFilterLoading || areaLoading;
-            error = categoryFilterError || areaError;
-            if (categoryFilterProducts && areaProducts) {
-                filteredProducts = categoryFilterProducts.filter((product: ProductType) => 
-                    product.area === filterArea
-                );
-            } else {
-                filteredProducts = categoryFilterProducts;
-            }
-        }
-    }
-    // Determinar el nombre de la categoría o usar 'Todos los Productos' si es la vista general
-    const categoryName = categorySlug === 'todos' ? 'Todos los Productos' : categoryProducts?.[0]?.category?.categoryName || '';
+    const res = await fetch(url, {
+      next: { revalidate: 60 * 10 }, // revalida cada 10 minutos
+    });
 
-    // Orden alfabético y paginación
-    const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 12;
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data ?? [];
+  } catch {
+    return [];
+  }
+}
 
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [filterArea, filterCategory, categorySlug]);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { categorySlug } = await params;
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    }, [currentPage]);
+  if (categorySlug === "todos") {
+    return {
+      title: "Todos los Equipos Médicos | Salmetexmed México",
+      description:
+        "Explora todo nuestro catálogo de equipos médicos: sillas de ruedas, autoclaves, incubadoras, monitores de signos vitales e insumos médicos. Distribuidor autorizado en México.",
+      alternates: {
+        canonical: "https://salmetexmed.com.mx/categoria/todos",
+      },
+      openGraph: {
+        title: "Todos los Equipos Médicos | Salmetexmed México",
+        description:
+          "Catálogo completo de equipos médicos certificados. Envío a todo México.",
+        locale: "es_MX",
+        type: "website",
+        siteName: "Salmetexmed",
+      },
+    };
+  }
 
-    const sortedProducts = Array.isArray(filteredProducts)
-        ? [...filteredProducts].sort((a: ProductType, b: ProductType) => {
-            const aName = a?.productName?.toLocaleLowerCase('es-MX') || '';
-            const bName = b?.productName?.toLocaleLowerCase('es-MX') || '';
-            return aName.localeCompare(bName);
-        })
-        : [];
+  const products = await getInitialProducts(categorySlug);
+  const categoryName = products[0]?.category?.categoryName ?? categorySlug;
 
-    const totalItems = sortedProducts.length;
-    const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const displayedProducts = sortedProducts.slice(startIndex, endIndex);
-    const compactPages = (() => {
-        if (totalPages <= 7) {
-            return Array.from({ length: totalPages }, (_, i) => i + 1);
-        }
-        const arr: (number | string)[] = [];
-        arr.push(1);
-        const start = Math.max(2, currentPage - 1);
-        const end = Math.min(totalPages - 1, currentPage + 1);
-        if (start > 2) arr.push("...");
-        for (let p = start; p <= end; p++) arr.push(p);
-        if (end < totalPages - 1) arr.push("...");
-        arr.push(totalPages);
-        return arr;
-    })();
+  return {
+    title: `${categoryName} | Equipo Médico en México - Salmetexmed`,
+    description: `Compra equipos médicos de ${categoryName} en México. Tecnología certificada, calidad garantizada y soporte técnico especializado. Distribuidor autorizado Salmetexmed.`,
+    keywords: [
+      categoryName,
+      `${categoryName} México`,
+      `comprar ${categoryName}`,
+      `equipo médico ${categoryName}`,
+      "Salmetexmed",
+      "equipo médico México",
+    ],
+    alternates: {
+      canonical: `https://salmetexmed.com.mx/categoria/${categorySlug}`,
+    },
+    openGraph: {
+      title: `${categoryName} | Salmetexmed México`,
+      description: `Equipos médicos de ${categoryName} con envío a todo México.`,
+      locale: "es_MX",
+      type: "website",
+      siteName: "Salmetexmed",
+    },
+  };
+}
 
-    const breadcrumbItems = [
-        { label: "Inicio", href: "/" },
-        { label: "Categorías", href: "/categoria/todos" },
-        {
-            label: categoryName || "Cargando...",
-            isActive: true
-        }
-    ];
+export default async function Page({ params, searchParams }: Props) {
+  const { categorySlug } = await params;
+  const resolvedSearch = searchParams ? await searchParams : {};
+  const initialAreaFilter = (resolvedSearch?.area as string) ?? "";
 
-    return (
-        <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50/30">
-            {/* Breadcrumbs */}
-            <Breadcrumb
-                items={breadcrumbItems}
-                backButton={{
-                    show: true,
-                    label: "Regresar"
-                }} />
+  const initialProducts = await getInitialProducts(categorySlug);
+  const categoryName =
+    categorySlug === "todos"
+      ? "Todos los Equipos Médicos"
+      : initialProducts[0]?.category?.categoryName ?? categorySlug;
 
-            <div className="max-w-7xl py-2 mx-auto px-6 lg:px-8">
-                {/* Header Section - SEO Optimized */}
-                {((categoryProducts !== null && !categoryLoading) || (categorySlug === 'todos' && allProducts !== null && !allProductsLoading)) && (
-                    <header className="mb-3">
-                        <div className="flex items-center gap-4 mb-2">
-                            <div className="p-3 bg-linear-to-r from-blue-100 to-indigo-100 rounded-2xl hidden md:block">
-                                <Stethoscope className="w-8 h-8 text-blue-600" />
-                            </div>
-                            <div className="flex-1">
-                                {/* H1 optimizado para SEO */}
-                                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-                                    {categorySlug === 'todos' ? (
-                                        <>
-                                            <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                                                Todos los Equipos Médicos
-                                            </span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span className="block">Equipos Médicos de</span>
-                                            <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                                                {categoryProducts[0]?.category?.categoryName}
-                                            </span>
-                                        </>
-                                    )}
-                                </h1>
+  // JSON-LD: ItemList con los primeros productos para que Google los indexe
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: categoryName,
+    url: `https://salmetexmed.com.mx/categoria/${categorySlug}`,
+    numberOfItems: initialProducts.length,
+    itemListElement: initialProducts.slice(0, 20).map((product, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `https://salmetexmed.com.mx/productos/${product.slug}`,
+      name: product.productName,
+    })),
+  };
 
-                                {/* Meta descripción para SEO */}
-                                <p className="text-lg text-gray-600 leading-relaxed max-w-3xl">
-                                    {categorySlug === 'todos' ? (
-                                        <>Descubre nuestra completa selección de equipos médicos de alta calidad. Tecnología certificada, calidad garantizada y soporte técnico especializado.</>
-                                    ) : (
-                                        <>Descubre nuestra selección de equipos médicos especializados en{' '}
-                                        <strong>{categoryProducts?.[0]?.category?.categoryName?.toLowerCase() || 'esta categoría'}</strong>.
-                                        Tecnología certificada, calidad garantizada y soporte técnico especializado.</>
-                                    )}
-                                </p>
+  // JSON-LD: BreadcrumbList
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://salmetexmed.com.mx" },
+      { "@type": "ListItem", position: 2, name: "Categorías", item: "https://salmetexmed.com.mx/categoria/todos" },
+      { "@type": "ListItem", position: 3, name: categoryName, item: `https://salmetexmed.com.mx/categoria/${categorySlug}` },
+    ],
+  };
 
-                                 {/* Información adicional */}
-                                <div className="flex items-center gap-6 mt-2">
-                                    <div className="flex items-center gap-2">
-                                        <Package className="w-5 h-5 text-blue-600" />
-                                        <span className="text-sm font-medium text-gray-700">
-                                            {categorySlug === 'todos'
-                                                ? (Array.isArray(filteredProducts) ? filteredProducts.length : 0)
-                                                : (Array.isArray(categoryProducts) ? categoryProducts.length : 0)
-                                            } producto
-                                            {(categorySlug === 'todos'
-                                                ? (Array.isArray(filteredProducts) ? filteredProducts.length : 0)
-                                                : (Array.isArray(categoryProducts) ? categoryProducts.length : 0)
-                                            ) !== 1 ? 's' : ''} disponible
-                                            {(categorySlug === 'todos'
-                                                ? (Array.isArray(filteredProducts) ? filteredProducts.length : 0)
-                                                : (Array.isArray(categoryProducts) ? categoryProducts.length : 0)
-                                            ) !== 1 ? 's' : ''}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                        <span className="text-sm text-gray-600">Envío disponible</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                                        <span className="text-sm text-gray-600">Certificado médico</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Decorative separator */}
-                        <div className="w-24 h-1 bg-linear-to-r from-blue-500 to-indigo-500 rounded-full mt-[15px]"></div>
-                    </header>
-                )}
-
-                {/* Loading state for header */}
-                {loading && (
-                    <header className="mb-8">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="w-14 h-14 bg-gray-200 rounded-2xl animate-pulse"></div>
-                            <div className="flex-1">
-                                <div className="h-8 bg-gray-200 rounded-lg mb-2 animate-pulse"></div>
-                                <div className="h-6 bg-gray-200 rounded-lg w-2/3 animate-pulse"></div>
-                            </div>
-                        </div>
-                    </header>
-                )}
-
-                <Separator className="my-2" />
-
-                {/* Main Content Layout */}
-                <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Sidebar - Filters */}
-                    <aside className="lg:w-80 shrink-0">
-                        <div className="">
-                            <FilterArea 
-                                setFilterArea={setFilterArea} 
-                                filterArea={filterArea}
-                                setFilterCategory={setFilterCategory}
-                            />
-                        </div>
-                        <div className="">
-                            <FilterCategory 
-                                setFilterCategory={setFilterCategory}
-                                filterCategory={filterCategory}
-                                setFilterArea={setFilterArea}
-                                filterArea={filterArea}
-                            />
-                        </div>
-                    </aside>
-
-                    {/* Main Content - Products */}
-                    <main className="flex-1">
-                        {/* Filtros activos y botón para limpiar */}
-                        {(filterArea !== '' || filterCategory !== '') && (
-                            <div className="mb-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <h3 className="font-medium text-blue-700 mb-1">Filtros activos:</h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {filterArea !== '' && (
-                                                <div className="bg-white px-3 py-1 rounded-full text-sm border border-blue-200 flex items-center gap-2">
-                                                    <span>Área: {filterArea}</span>
-                                                    <button 
-                                                        onClick={() => setFilterArea('')}
-                                                        className="text-blue-500 hover:text-blue-700"
-                                                    >
-                                                        ×
-                                                    </button>
-                                                </div>
-                                            )}
-                                            {filterCategory !== '' && (
-                                                <div className="bg-white px-3 py-1 rounded-full text-sm border border-blue-200 flex items-center gap-2">
-                                                    <span>Categoría: {filterCategory}</span>
-                                                    <button 
-                                                        onClick={() => setFilterCategory('')}
-                                                        className="text-blue-500 hover:text-blue-700"
-                                                    >
-                                                        ×
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <button 
-                                        onClick={() => {
-                                            setFilterArea('');
-                                            setFilterCategory('');
-                                        }}
-                                        className="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm transition-colors duration-200"
-                                    >
-                                        Limpiar todos
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                        
-                        {/* Results Header */}
-                        {filteredProducts !== null && !loading && (
-                            <div className="flex items-center justify-between mb-6 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                                <div className="flex items-center gap-3">
-                                    <Filter className="w-5 h-5 text-blue-600" />
-                                    <div>
-                                        <h2 className="font-semibold text-gray-900">
-                                            Resultados de búsqueda
-                                        </h2>
-                                <p className="text-sm text-gray-600">
-                                    {totalItems} producto{totalItems !== 1 ? 's' : ''} encontrado{totalItems !== 1 ? 's' : ''}
-                                </p>
-                            </div>
-                        </div>
-
-                                {/* View Mode Toggle */}
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm text-gray-600 mr-2">Vista:</span>
-                                    <button
-                                        onClick={() => setViewMode('grid')}
-                                        className={`cursor-pointer p-2 rounded-lg transition-colors duration-200 ${viewMode === 'grid'
-                                            ? 'bg-blue-100 text-blue-600'
-                                            : 'text-gray-400 hover:text-gray-600'
-                                            }`}
-                                    >
-                                        <Grid3X3 className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                        onClick={() => setViewMode('list')}
-                                        className={`cursor-pointer p-2 rounded-lg transition-colors duration-200 ${viewMode === 'list'
-                                            ? 'bg-blue-100 text-blue-600'
-                                            : 'text-gray-400 hover:text-gray-600'
-                                            }`}
-                                    >
-                                        <List className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Products Grid */}
-                        <div className={`gap-3 ${viewMode === 'grid'
-                            ? 'grid md:grid-cols-2 xl:grid-cols-3'
-                            : 'flex flex-col space-y-4'
-                            }`}>
-                            {/* Loading State */}
-                            {loading && (
-                                <div className="col-span-full">
-                                    <SkeletonSchema grid={6} />
-                                </div>
-                            )}
-                            {displayedProducts !== null && !loading && Array.isArray(displayedProducts) && displayedProducts.map((product: ProductType) => (
-                                <ProductCard
-                                    key={product.id}
-                                    product={product}
-                                    viewMode={viewMode}
-                                />
-                            ))}
-
-                            {/* Empty State */}
-                            {displayedProducts !== null && !loading && displayedProducts.length === 0 && (
-                                <div className="col-span-full text-center py-12">
-                                    <div className="w-24 h-24 mx-auto bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
-                                        <Package className="w-12 h-12 text-gray-400" />
-                                    </div>
-                                    <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                                        No se encontraron productos
-                                    </h3>
-                                    <p className="text-gray-500 max-w-md mx-auto">
-                                        No hay productos disponibles en esta categoría en este momento.
-                                        Intenta ajustar los filtros o revisa otras categorías.
-                                    </p>
-                                </div>
-                            )}
-
-                            {/* Error State */}
-                            {error && (
-                                <div className="col-span-full text-center py-12">
-                                    <div className="bg-red-50 border border-red-200 rounded-xl p-8 max-w-md mx-auto">
-                                        <h3 className="text-lg font-semibold text-red-700 mb-2">
-                                            Error al cargar productos
-                                        </h3>
-                                        <p className="text-red-600 text-sm">{error}</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Pagination */}
-                        {!loading && totalPages > 1 && (
-                            <div className="flex items-center justify-center gap-2 mt-8">
-                                <button
-                                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                                    disabled={currentPage === 1}
-                                    className={`cursor-pointer px-3 py-1 rounded-lg border ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white hover:bg-blue-50 text-blue-700 border-blue-200'}`}
-                                >
-                                    Anterior
-                                </button>
-                                {compactPages.map((item, idx) => (
-                                    typeof item === 'number' ? (
-                                        <button
-                                            key={`p-${item}`}
-                                            onClick={() => setCurrentPage(item)}
-                                            className={`cursor-pointer px-3 py-1 rounded-lg border ${currentPage === item ? 'bg-blue-600 text-white border-blue-600' : 'bg-white hover:bg-blue-50 text-blue-700 border-blue-200'}`}
-                                        >
-                                            {item}
-                                        </button>
-                                    ) : (
-                                        <span
-                                            key={`e-${idx}`}
-                                            className="px-2 text-gray-500"
-                                        >
-                                            …
-                                        </span>
-                                    )
-                                ))}
-                                <button
-                                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                                    disabled={currentPage === totalPages}
-                                    className={`cursor-pointer px-3 py-1 rounded-lg border ${currentPage === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-white hover:bg-blue-50 text-blue-700 border-blue-200'}`}
-                                >
-                                    Siguiente
-                                </button>
-                            </div>
-                        )}
-                    </main>
-                </div>
-            </div>
-        </div>
-    );
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      {/* 
+        CategoryClient recibe los productos iniciales ya renderizados por el servidor.
+        Los filtros y paginación siguen funcionando en cliente.
+      */}
+      <CategoryClient
+        categorySlug={categorySlug}
+        initialProducts={initialProducts}
+        categoryName={categoryName}
+        initialAreaFilter={initialAreaFilter}
+      />
+    </>
+  );
 }
