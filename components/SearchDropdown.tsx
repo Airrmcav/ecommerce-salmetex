@@ -20,13 +20,11 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   
-  // Usar el hook de búsqueda
   const { result, loading, error } = useSearchProducts(searchTerm);
   
-  // Depuración
   useEffect(() => {
     if (searchTerm.trim() !== '') {
-      console.log('SearchDropdown - Resultados:', result);
+      // console.log('SearchDropdown - Resultados:', result);
     }
   }, [result, searchTerm]);
   

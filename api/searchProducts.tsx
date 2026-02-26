@@ -82,37 +82,29 @@ export function useSearchProducts(searchTerm: string) {
         } catch (err) {
           console.error('Error fetching categories by description:', err);
         }
-
-        // Procesar la respuesta de Strapi que tiene una estructura específica
         let products: ProductType[] = [];
         let categories: CategoryType[] = [];
-        let productIds = new Set<number>(); // Para evitar duplicados
-        let categoryIds = new Set<number>(); // Para evitar duplicados
+        let productIds = new Set<number>(); 
+        let categoryIds = new Set<number>(); 
         
-        // Función para procesar productos
         const processProducts = (data: any[]): ProductType[] => {
           if (!data || !Array.isArray(data)) return [];
           
           return data.map(item => {
             try {
-              // Verificar que item exista
               if (!item) {
                 console.error('Item es undefined');
-                return null; // Retornar null para filtrar después
+                return null; 
               }
-              
-              // Procesamos las imágenes si existen
               let images: any[] = [];
               try {
                 if (item.attributes && item.attributes.images && item.attributes.images.data) {
-                  // Formato antiguo con attributes
                   images = item.attributes.images.data.map((img: any) => ({
                     id: img.id,
                     url: img.attributes.url,
                     ...img.attributes
                   }));
                 } else if (item.images) {
-                  // Formato nuevo sin attributes
                   if (Array.isArray(item.images)) {
                     images = item.images;
                   } else if (item.images.data && Array.isArray(item.images.data)) {
@@ -127,11 +119,7 @@ export function useSearchProducts(searchTerm: string) {
                 console.error('Error procesando imágenes:', error);
                 images = [];
               }
-              
-              // Comprobar si estamos recibiendo datos en el formato antiguo (con attributes) o nuevo
               if (item.attributes) {
-                  // Formato antiguo con attributes
-                  // Verificar si category existe antes de acceder a sus propiedades
                   const category = item.attributes.category?.data 
                     ? {
                         id: item.attributes.category.data.id,
@@ -146,7 +134,6 @@ export function useSearchProducts(searchTerm: string) {
                     category
                   };
               } else {
-                // Formato nuevo sin attributes (datos directos)
                 return {
                   ...item,
                   images
@@ -154,28 +141,22 @@ export function useSearchProducts(searchTerm: string) {
               }
             } catch (error) {
               console.error('Error procesando producto:', error, item);
-              return null; // Retornar null para filtrar después
+              return null; 
             }
-          }).filter(Boolean); // Filtrar elementos null
+          }).filter(Boolean);
         };
-        
-        // Función para procesar categorías
         const processCategories = (data: any[]): CategoryType[] => {
           if (!data || !Array.isArray(data)) return [];
           
           return data.map(item => {
             try {
-              // Verificar que item exista
               if (!item) {
                 console.error('Item es undefined en categorías');
-                return null; // Retornar null para filtrar después
+                return null; 
               }
-              
-              // Procesamos las imágenes si existen
               let images: any[] = [];
               try {
                 if (item.attributes && item.attributes.image && item.attributes.image.data) {
-                  // Formato antiguo con attributes
                   const img: any = item.attributes.image.data;
                   images = [{
                     id: img.id,
@@ -183,7 +164,6 @@ export function useSearchProducts(searchTerm: string) {
                     ...img.attributes
                   }];
                 } else if (item.image) {
-                  // Formato nuevo sin attributes
                   if (item.image.data) {
                     const img: any = item.image.data;
                     images = [{
@@ -197,17 +177,13 @@ export function useSearchProducts(searchTerm: string) {
                 console.error('Error procesando imágenes de categoría:', error);
                 images = [];
               }
-              
-              // Comprobar si estamos recibiendo datos en el formato antiguo (con attributes) o nuevo
               if (item.attributes) {
-                // Formato antiguo con attributes
                 return {
                   ...item.attributes,
                   id: item.id,
                   images
                 };
               } else {
-                // Formato nuevo sin attributes (datos directos)
                 return {
                   ...item,
                   images
@@ -215,12 +191,10 @@ export function useSearchProducts(searchTerm: string) {
               }
             } catch (error) {
               console.error('Error procesando categoría:', error, item);
-              return null; // Retornar null para filtrar después
+              return null;
             }
-          }).filter(Boolean); // Filtrar elementos null
+          }).filter(Boolean); 
         };
-        
-        // Procesar productos por nombre
         if (productsJson && productsJson.data) {
           const processedProducts = processProducts(productsJson.data);
           processedProducts.forEach(product => {
@@ -230,8 +204,6 @@ export function useSearchProducts(searchTerm: string) {
             }
           });
         }
-        
-        // Procesar productos por descripción
         if (productsDescriptionJson && productsDescriptionJson.data) {
           const processedDescProducts = processProducts(productsDescriptionJson.data);
           processedDescProducts.forEach(product => {
@@ -241,8 +213,6 @@ export function useSearchProducts(searchTerm: string) {
             }
           });
         }
-        
-        // Procesar categorías por nombre
         if (categoriesJson && categoriesJson.data) {
           const processedCategories = processCategories(categoriesJson.data);
           processedCategories.forEach(category => {
@@ -252,8 +222,6 @@ export function useSearchProducts(searchTerm: string) {
             }
           });
         }
-        
-        // Procesar categorías por descripción
         if (categoriesDescriptionJson && categoriesDescriptionJson.data) {
           const processedDescCategories = processCategories(categoriesDescriptionJson.data);
           processedDescCategories.forEach(category => {
@@ -268,31 +236,17 @@ export function useSearchProducts(searchTerm: string) {
           products,
           categories
         });
-        
-        // Construir URLs para el log con el formato simplificado
         const productsUrlExample = `${baseUrl}/api/products?populate=*&filters[productName][$containsi]=${encodedSearchTerm}`;
         const categoriesUrlExample = `${baseUrl}/api/categories?populate=*&filters[categoryName][$containsi]=${encodedSearchTerm}`;
         
-        console.log('Search results:', { 
-          searchTerm,
-          normalizedSearchTerm,
-          productsCount: products.length,
-          categoriesCount: categories.length,
-          productsUrlExample,
-          categoriesUrlExample,
-          error: error || 'none'
-        });
         setLoading(false);
       } catch (error: any) {
         console.error('Search error:', error);
         setError(error.message || 'Error al buscar productos');
-        // Establecer un resultado vacío para evitar mostrar resultados anteriores
         setResult({ products: [], categories: [] });
         setLoading(false);
       }
     };
-
-    // Debounce para evitar demasiadas solicitudes mientras el usuario escribe
     const timeoutId = setTimeout(() => {
       fetchData();
     }, 300);

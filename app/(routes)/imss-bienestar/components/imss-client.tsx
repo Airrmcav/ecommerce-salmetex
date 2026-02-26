@@ -32,7 +32,6 @@ export default function IMSSClient() {
   const router = useRouter();
   const { addItem } = useCart();
   const { addLoveItems } = useLovedProducts();
-  // console.log(result);
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -198,15 +197,10 @@ export default function IMSSClient() {
 
         {!loading && !error && (
           <div className="flex gap-8 my-5">
-            {/* Sidebar de filtros (desktop) */}
             <aside className="hidden lg:block w-80 shrink-0">
               <FilterSidebar />
             </aside>
-
-            {/* Sidebar de filtros (mobile) */}
             {showMobileFilters && <FilterSidebar mobile />}
-
-            {/* Grid de productos */}
             <div className="flex-1">
               {selectedCategory && (
                 <div className="mb-6 flex flex-wrap gap-2 items-center">
@@ -287,12 +281,12 @@ export default function IMSSClient() {
                             </div>
                           </div>
 
-                          <div className="p-4 flex-1 flex flex-col min-h-[220px]">
-                            <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200 min-h-[56px] flex items-start">
+                          <div className="p-4 flex-1 flex flex-col min-h-55">
+                            <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200 min-h-14 flex items-start">
                               {productName}
                             </h3>
 
-                            <p className="text-gray-600 text-sm leading-relaxed mb-3 flex-1 line-clamp-2 min-h-[40px]">
+                            <p className="text-gray-600 text-sm leading-relaxed mb-3 flex-1 line-clamp-2 min-h-10">
                               {description ||
                                 "Producto de alta calidad del programa IMSS Bienestar."}
                             </p>

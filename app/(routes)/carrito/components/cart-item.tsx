@@ -16,7 +16,6 @@ const CartItem = (props: CartItemProps) => {
     const router = useRouter();
     const [isRemoving, setIsRemoving] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
-    // console.log(product);
 
     const handleRemove = async (e: React.MouseEvent) => {
         e.stopPropagation(); // Evita que se active el onClick del contenedor
