@@ -6,7 +6,7 @@ import Footer from "@/components/footer";
 import SocialMediaLinks from "@/components/socialMediaLinks";
 import { Toaster } from "@/components/ui/sonner";
 import NextTopLoader from "nextjs-toploader";
-import Script from "next/script"; // ✅ Import necesario
+import Script from "next/script";
 
 const geistSans = Inter({
   variable: "--font-geist-sans",
@@ -23,15 +23,20 @@ const geistMono = Inter({
 export const metadata: Metadata = {
   title: "Venta y Distribución de Equipamiento Médico en México",
   description:
-    "Venta de equipamiento médico con más de una década de experiencia. Suministros médicos, instrumental quirúrgico y tecnología hospitalaria de alta calidad en México.",
+    "Distribuidores autorizados de equipo médico en México: sillas de ruedas, autoclaves, incubadoras, monitores de signos vitales, insumos médicos e insumos para programas IMSS Bienestar.",
   keywords: [
-    "equipamiento médico",
-    "instrumental quirúrgico",
-    "suministros médicos",
-    "tecnología hospitalaria",
+    "sillas de ruedas médicas",
+    "autoclaves médicos",
+    "monitores de signos vitales",
+    "incubadoras neonatales",
+    "insumos médicos IMSS Bienestar",
     "equipo médico México",
-    "dispositivos médicos",
-    "material médico",
+    "distribución equipo hospitalario",
+    "instrumental quirúrgico México",
+    "insumos médicos Tepotzotlán",
+    "equipamiento clínica médica",
+    "comprar autoclave México",
+    "sillas hospitalarias",
   ],
   authors: [{ name: "Salmetexmed" }],
   creator: "Salmetexmed",
@@ -57,9 +62,17 @@ export const metadata: Metadata = {
     locale: "es_MX",
     url: "https://salmetexmed.com.mx",
     siteName: "Salmetexmed",
-    title: "Salmetexmed - Equipamiento Médico",
+    title:
+      "Sillas de Ruedas, Autoclaves e Insumos Médicos | Salmetexmed México",
     description:
-      "Líderes en equipamiento médico con más de una década de experiencia. Suministros médicos, instrumental quirúrgico y tecnología hospitalaria.",
+      "Distribuidores de equipo médico en México. Sillas, autoclaves, incubadoras, monitores de signos vitales e insumos IMSS Bienestar.",
+    images: [
+      {
+        url: "https://salmetexmed.com.mx/og-image.jpg",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   category: "healthcare",
   classification: "Medical Equipment",
@@ -69,7 +82,8 @@ export const metadata: Metadata = {
     "DC.title": "Salmetexmed - Equipamiento Médico",
     "DC.creator": "Salmetexmed",
     "DC.subject": "Equipamiento Médico, Instrumental Quirúrgico",
-    "DC.description": "Equipamiento médico profesional y suministros hospitalarios",
+    "DC.description":
+      "Equipamiento médico profesional y suministros hospitalarios",
     "geo.region": "MX",
     "geo.placename": "México",
   },
@@ -83,7 +97,7 @@ export default function RootLayout({
   return (
     <html lang="es-MX">
       <head>
- <Script
+        <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=AW-16830523296"
         />
@@ -97,7 +111,7 @@ export default function RootLayout({
         </Script>
 
         <Script id="google-ads-conversion">
-  {`
+          {`
     function gtag_report_conversion(url) {
       var callback = function () {
         if (typeof(url) != 'undefined') {
@@ -111,8 +125,7 @@ export default function RootLayout({
       return false;
     }
   `}
-</Script>
-
+        </Script>
 
         {/* Preconnect para mejorar velocidad */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -134,19 +147,18 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Organization",
+              "@type": ["MedicalBusiness", "LocalBusiness"],
               name: "Salmetexmed",
               description:
-                "Líderes en equipamiento médico con más de una década de experiencia",
-              url: "https://salmetex.com.mx",
+                "Distribuidores de equipo médico: sillas de ruedas, autoclaves, incubadoras, monitores de signos vitales e insumos para programas IMSS Bienestar.",
+              url: "https://salmetexmed.com.mx",
               logo: "https://salmetexmed.com.mx/logo.png",
-              contactPoint: {
-                "@type": "ContactPoint",
-                telephone: "+52 1 844 595 4660",
-                contactType: "customer service",
-                areaServed: "MX",
-                availableLanguage: "Spanish",
-              },
+              image: "https://salmetexmed.com.mx/logo.png",
+              priceRange: "$$",
+              telephone: "+52 1 844 595 4660",
+              currenciesAccepted: "MXN",
+              paymentAccepted: "Cash, Credit Card, Bank Transfer",
+              areaServed: { "@type": "Country", name: "México" },
               address: {
                 "@type": "PostalAddress",
                 streetAddress:
@@ -155,6 +167,44 @@ export default function RootLayout({
                 addressLocality: "Tepotzotlán",
                 addressRegion: "Estado de México",
                 addressCountry: "MX",
+              },
+              hasOfferCatalog: {
+                "@type": "OfferCatalog",
+                name: "Equipo Médico",
+                itemListElement: [
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Product",
+                      name: "Sillas de Ruedas",
+                    },
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: { "@type": "Product", name: "Autoclaves" },
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Product",
+                      name: "Incubadoras Neonatales",
+                    },
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Product",
+                      name: "Monitores de Signos Vitales",
+                    },
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Product",
+                      name: "Insumos Médicos IMSS Bienestar",
+                    },
+                  },
+                ],
               },
               sameAs: [
                 "https://facebook.com/salmetexmed",
