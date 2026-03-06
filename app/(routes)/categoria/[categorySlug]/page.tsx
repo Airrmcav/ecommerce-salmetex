@@ -7,7 +7,6 @@ interface Props {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-// Fetch inicial en el servidor — Google puede leer estos productos directamente
 async function getInitialProducts(categorySlug: string): Promise<ProductType[]> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -17,7 +16,7 @@ async function getInitialProducts(categorySlug: string): Promise<ProductType[]> 
         : `${baseUrl}/api/products?populate=*&filters[category][slug][$eq]=${categorySlug}`;
 
     const res = await fetch(url, {
-      next: { revalidate: 60 * 10 }, // revalida cada 10 minutos
+      next: { revalidate: 60 * 10 },
     });
 
     if (!res.ok) return [];

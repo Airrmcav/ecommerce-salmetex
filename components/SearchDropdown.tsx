@@ -19,32 +19,28 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   const { result, loading, error } = useSearchProducts(searchTerm);
-  
+
   useEffect(() => {
     if (searchTerm.trim() !== '') {
-      // console.log('SearchDropdown - Resultados:', result);
     }
   }, [result, searchTerm]);
-  
-  // Función para crear URLs amigables sin acentos
+
   const createSlug = (text: string | undefined) => {
-    // Si el texto es undefined o null, devolver un valor por defecto
     if (!text) return 'producto';
-    
+
     return text
-      .trim() // Eliminar espacios al inicio y final
-      .toLowerCase() // Convertir a minúsculas
-      .normalize('NFD') // Normalizar caracteres Unicode
-      .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos y diacríticos
-      .replace(/[^a-z0-9\s-]/g, '') // Solo permitir letras, números, espacios y guiones
-      .replace(/\s+/g, '-') // Reemplazar espacios con guiones
-      .replace(/-+/g, '-') // Reemplazar múltiples guiones con uno solo
-      .trim(); // Eliminar posibles espacios o guiones al inicio/final
+      .trim()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
   };
 
-  // Cerrar el dropdown cuando se hace clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -58,17 +54,15 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
     };
   }, []);
 
-  // Abrir el dropdown cuando hay resultados o cuando se está buscando
   useEffect(() => {
     if (searchTerm.trim() !== '') {
-      // Siempre mostrar el dropdown cuando hay un término de búsqueda
       setIsDropdownOpen(true);
     } else {
       setIsDropdownOpen(false);
     }
   }, [searchTerm]);
-  
-  // Verificar si hay resultados para mostrar
+
+
   const hasProducts = Array.isArray(result.products) && result.products.length > 0;
   const hasCategories = Array.isArray(result.categories) && result.categories.length > 0;
   const hasResults = hasProducts || hasCategories;
@@ -90,7 +84,6 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
     setSearchTerm('');
     if (onClose) onClose();
   };
-  // La variable hasResults ya está definida arriba
 
   return (
     <div className={`relative w-full ${isMobile ? '' : 'max-w-2xl'}`} ref={dropdownRef}>
@@ -133,8 +126,8 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
                   <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-2">Categorías</h3>
                   <div className="space-y-1">
                     {Array.isArray(result.categories) && result.categories.slice(0, 3).map((category: CategoryType) => (
-                      <Link 
-                        href={`/categoria/${createSlug(category.categoryName)}`} 
+                      <Link
+                        href={`/categoria/${createSlug(category.categoryName)}`}
                         key={category.id}
                         onClick={handleItemClick}
                         className="block px-3 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-150"
@@ -142,8 +135,8 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
                         <div className="flex items-center gap-2">
                           {category.mainImage && category.mainImage.url && (
                             <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0">
-                              <img 
-                                src={category.mainImage.url} 
+                              <img
+                                src={category.mainImage.url}
                                 alt={category.mainImage.alternativeText || category.categoryName}
                                 className="w-full h-full object-cover"
                               />
@@ -181,17 +174,17 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
                   <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-2">Productos</h3>
                   <div className="space-y-2">
                     {Array.isArray(result.products) && result.products.slice(0, 5).map((product: ProductType) => (
-                      <Link 
-                        href={`/${product.slug}`} 
+                      <Link
+                        href={`/${product.slug}`}
                         key={product.id}
                         onClick={handleItemClick}
                         className="flex items-center gap-3 px-3 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-150"
                       >
                         <div className="w-10 h-10 bg-gray-100 rounded-md overflow-hidden shrink-0">
                           {product.images && product.images.length > 0 && product.images[0].url ? (
-                            <img 
-                              src={product.images[0].url} 
-                              alt={product.productName || ''} 
+                            <img
+                              src={product.images[0].url}
+                              alt={product.productName || ''}
                               className="w-full h-full object-cover"
                               loading="lazy"
                             />
@@ -229,15 +222,15 @@ export default function SearchDropdown({ isMobile = false, onClose }: SearchDrop
               )}
 
               {/* Ver todos los resultados */}
-              {/* <div className="bg-gray-50 p-3 border-t border-gray-100 text-center">
-                <Link 
+              <div className="bg-gray-50 p-3 border-t border-gray-100 text-center">
+                <Link
                   href={`/buscar?q=${searchTerm}`}
                   onClick={handleItemClick}
                   className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                 >
                   Ver todos los resultados
                 </Link>
-              </div> */}
+              </div>
             </div>
           ) : searchTerm.trim() !== '' && !loading ? (
             <div className="p-4 text-center text-gray-500">
