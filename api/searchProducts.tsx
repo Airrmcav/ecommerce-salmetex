@@ -7,251 +7,204 @@ interface SearchResult {
   categories: CategoryType[];
 }
 
+const stripAccents = (text: string): string => {
+  return text
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ');
+};
+
+
+const generateSearchTerms = (term: string): string[] => {
+  const original = term.trim();
+  const base = stripAccents(original);
+  const variants = new Set<string>([original, base]);
+
+  const accentMap: Record<string, string> = {
+    a: 'á', e: 'é', i: 'í', o: 'ó', u: 'ú',
+  };
+
+
+  for (let i = 0; i < base.length; i++) {
+    const char = base[i];
+    if (accentMap[char]) {
+      variants.add(base.slice(0, i) + accentMap[char] + base.slice(i + 1));
+    }
+  }
+
+  return Array.from(variants);
+};
+
+const processProducts = (data: any[]): ProductType[] => {
+  if (!data || !Array.isArray(data)) return [];
+
+  return data.map(item => {
+    try {
+      if (!item) return null;
+
+      let images: any[] = [];
+      try {
+        if (item.attributes?.images?.data) {
+          images = item.attributes.images.data.map((img: any) => ({
+            id: img.id,
+            url: img.attributes.url,
+            ...img.attributes
+          }));
+        } else if (item.images) {
+          if (Array.isArray(item.images)) {
+            images = item.images;
+          } else if (item.images.data && Array.isArray(item.images.data)) {
+            images = item.images.data.map((img: any) => ({
+              id: img.id,
+              url: img.url || (img.attributes ? img.attributes.url : ''),
+              ...(img.attributes || img)
+            }));
+          }
+        }
+      } catch {
+        images = [];
+      }
+
+      if (item.attributes) {
+        const category = item.attributes.category?.data
+          ? { id: item.attributes.category.data.id, ...item.attributes.category.data.attributes }
+          : null;
+        return { ...item.attributes, id: item.id, images, category };
+      }
+      return { ...item, images };
+    } catch {
+      return null;
+    }
+  }).filter(Boolean);
+};
+
+const processCategories = (data: any[]): CategoryType[] => {
+  if (!data || !Array.isArray(data)) return [];
+
+  return data.map(item => {
+    try {
+      if (!item) return null;
+
+      let images: any[] = [];
+      try {
+        if (item.attributes?.image?.data) {
+          const img = item.attributes.image.data;
+          images = [{ id: img.id, url: img.attributes.url, ...img.attributes }];
+        } else if (item.image?.data) {
+          const img = item.image.data;
+          images = [{ id: img.id, url: img.attributes ? img.attributes.url : (img.url || ''), ...(img.attributes || img) }];
+        }
+      } catch {
+        images = [];
+      }
+
+      if (item.attributes) {
+        return { ...item.attributes, id: item.id, images };
+      }
+      return { ...item, images };
+    } catch {
+      return null;
+    }
+  }).filter(Boolean);
+};
+
+async function fetchWithFallback(url: string, signal: AbortSignal): Promise<{ data: any[] }> {
+  try {
+    const res = await fetch(url, { signal });
+    if (!res.ok) return { data: [] };
+    return await res.json();
+  } catch (err: any) {
+    if (err.name === 'AbortError') throw err;
+    return { data: [] };
+  }
+}
+
 export function useSearchProducts(searchTerm: string) {
   const [result, setResult] = useState<SearchResult>({ products: [], categories: [] });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Si no hay término de búsqueda, no hacemos nada
     if (!searchTerm || searchTerm.trim() === '') {
       setResult({ products: [], categories: [] });
       setLoading(false);
       return;
     }
 
-    // Función para normalizar texto (eliminar acentos, espacios extras y convertir a minúsculas)
-    const normalizeText = (text: string): string => {
-      return text
-        .trim() // Eliminar espacios al inicio y final
-        .toLowerCase() // Convertir a minúsculas
-        .normalize('NFD') // Normalizar caracteres Unicode
-        .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos y diacríticos
-        .replace(/\s+/g, ' '); // Reemplazar múltiples espacios con uno solo
-    };
+    const controller = new AbortController();
+    const { signal } = controller;
 
     const fetchData = async () => {
       setLoading(true);
+      setError('');
+
       try {
-        // Normalizar el término de búsqueda para mejorar coincidencias
-        const normalizedSearchTerm = normalizeText(searchTerm);
-        const encodedSearchTerm = encodeURIComponent(searchTerm);
-        const encodedNormalizedSearchTerm = encodeURIComponent(normalizedSearchTerm);
-        
-        // Construir URLs con formato más simple para evitar problemas de codificación
         const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-        
-        // Buscar productos con el término normalizado (siempre usar el normalizado)
-        let productsJson = { data: [] };
-        try {
-          // Construir la URL manualmente para asegurar compatibilidad con Strapi
-          const productsUrl = `${baseUrl}/api/products?populate=*&filters[productName][$containsi]=${encodedNormalizedSearchTerm}`;
-          const productsRes = await fetch(productsUrl);
-          productsJson = await productsRes.json();
-        } catch (err) {
-          console.error('Error fetching products:', err);
-        }
-        
-        // Buscar productos por descripción también (usando término normalizado)
-        let productsDescriptionJson = { data: [] };
-        try {
-          const productsDescUrl = `${baseUrl}/api/products?populate=*&filters[description][$containsi]=${encodedNormalizedSearchTerm}`;
-          const productsDescRes = await fetch(productsDescUrl);
-          productsDescriptionJson = await productsDescRes.json();
-        } catch (err) {
-          console.error('Error fetching products by description:', err);
+        const original = searchTerm.trim();
+        const terms = generateSearchTerms(original);
+
+        const productRequests: Promise<{ data: any[] }>[] = [];
+        const categoryRequests: Promise<{ data: any[] }>[] = [];
+
+        for (const term of terms) {
+          const t = encodeURIComponent(term);
+          productRequests.push(
+            fetchWithFallback(`${baseUrl}/api/products?populate=*&filters[productName][$containsi]=${t}`, signal),
+            fetchWithFallback(`${baseUrl}/api/products?populate=*&filters[description][$containsi]=${t}`, signal)
+          );
+          categoryRequests.push(
+            fetchWithFallback(`${baseUrl}/api/categories?populate=*&filters[categoryName][$containsi]=${t}`, signal),
+            fetchWithFallback(`${baseUrl}/api/categories?populate=*&filters[description][$containsi]=${t}`, signal)
+          );
         }
 
-        // Buscar categorías con el término normalizado
-        let categoriesJson = { data: [] };
-        try {
-          // Construir la URL manualmente para asegurar compatibilidad con Strapi
-          const categoriesUrl = `${baseUrl}/api/categories?populate=*&filters[categoryName][$containsi]=${encodedNormalizedSearchTerm}`;
-          const categoriesRes = await fetch(categoriesUrl);
-          categoriesJson = await categoriesRes.json();
-        } catch (err) {
-          console.error('Error fetching categories:', err);
+        const [productResults, categoryResults] = await Promise.all([
+          Promise.all(productRequests),
+          Promise.all(categoryRequests),
+        ]);
+
+        if (signal.aborted) return;
+
+        const productMap = new Map<number, ProductType>();
+        for (const json of productResults) {
+          if (json?.data) {
+            processProducts(json.data).forEach(p => {
+              if (p && !productMap.has(p.id)) productMap.set(p.id, p);
+            });
+          }
         }
-        
-        // Buscar categorías por descripción también
-        let categoriesDescriptionJson = { data: [] };
-        try {
-          const categoriesDescUrl = `${baseUrl}/api/categories?populate=*&filters[description][$containsi]=${encodedNormalizedSearchTerm}`;
-          const categoriesDescRes = await fetch(categoriesDescUrl);
-          categoriesDescriptionJson = await categoriesDescRes.json();
-        } catch (err) {
-          console.error('Error fetching categories by description:', err);
+
+        const categoryMap = new Map<number, CategoryType>();
+        for (const json of categoryResults) {
+          if (json?.data) {
+            processCategories(json.data).forEach(c => {
+              if (c && !categoryMap.has(c.id)) categoryMap.set(c.id, c);
+            });
+          }
         }
-        let products: ProductType[] = [];
-        let categories: CategoryType[] = [];
-        let productIds = new Set<number>(); 
-        let categoryIds = new Set<number>(); 
-        
-        const processProducts = (data: any[]): ProductType[] => {
-          if (!data || !Array.isArray(data)) return [];
-          
-          return data.map(item => {
-            try {
-              if (!item) {
-                console.error('Item es undefined');
-                return null; 
-              }
-              let images: any[] = [];
-              try {
-                if (item.attributes && item.attributes.images && item.attributes.images.data) {
-                  images = item.attributes.images.data.map((img: any) => ({
-                    id: img.id,
-                    url: img.attributes.url,
-                    ...img.attributes
-                  }));
-                } else if (item.images) {
-                  if (Array.isArray(item.images)) {
-                    images = item.images;
-                  } else if (item.images.data && Array.isArray(item.images.data)) {
-                    images = item.images.data.map((img: any) => ({
-                      id: img.id,
-                      url: img.url || (img.attributes ? img.attributes.url : ''),
-                      ...(img.attributes || img)
-                    }));
-                  }
-                }
-              } catch (error) {
-                console.error('Error procesando imágenes:', error);
-                images = [];
-              }
-              if (item.attributes) {
-                  const category = item.attributes.category?.data 
-                    ? {
-                        id: item.attributes.category.data.id,
-                        ...item.attributes.category.data.attributes
-                      }
-                    : null;
-                  
-                  return {
-                    ...item.attributes,
-                    id: item.id,
-                    images,
-                    category
-                  };
-              } else {
-                return {
-                  ...item,
-                  images
-                };
-              }
-            } catch (error) {
-              console.error('Error procesando producto:', error, item);
-              return null; 
-            }
-          }).filter(Boolean);
-        };
-        const processCategories = (data: any[]): CategoryType[] => {
-          if (!data || !Array.isArray(data)) return [];
-          
-          return data.map(item => {
-            try {
-              if (!item) {
-                console.error('Item es undefined en categorías');
-                return null; 
-              }
-              let images: any[] = [];
-              try {
-                if (item.attributes && item.attributes.image && item.attributes.image.data) {
-                  const img: any = item.attributes.image.data;
-                  images = [{
-                    id: img.id,
-                    url: img.attributes.url,
-                    ...img.attributes
-                  }];
-                } else if (item.image) {
-                  if (item.image.data) {
-                    const img: any = item.image.data;
-                    images = [{
-                      id: img.id,
-                      url: img.attributes ? img.attributes.url : (img.url || ''),
-                      ...(img.attributes || img)
-                    }];
-                  }
-                }
-              } catch (error) {
-                console.error('Error procesando imágenes de categoría:', error);
-                images = [];
-              }
-              if (item.attributes) {
-                return {
-                  ...item.attributes,
-                  id: item.id,
-                  images
-                };
-              } else {
-                return {
-                  ...item,
-                  images
-                };
-              }
-            } catch (error) {
-              console.error('Error procesando categoría:', error, item);
-              return null;
-            }
-          }).filter(Boolean); 
-        };
-        if (productsJson && productsJson.data) {
-          const processedProducts = processProducts(productsJson.data);
-          processedProducts.forEach(product => {
-            if (!productIds.has(product.id)) {
-              products.push(product);
-              productIds.add(product.id);
-            }
-          });
-        }
-        if (productsDescriptionJson && productsDescriptionJson.data) {
-          const processedDescProducts = processProducts(productsDescriptionJson.data);
-          processedDescProducts.forEach(product => {
-            if (!productIds.has(product.id)) {
-              products.push(product);
-              productIds.add(product.id);
-            }
-          });
-        }
-        if (categoriesJson && categoriesJson.data) {
-          const processedCategories = processCategories(categoriesJson.data);
-          processedCategories.forEach(category => {
-            if (!categoryIds.has(category.id)) {
-              categories.push(category);
-              categoryIds.add(category.id);
-            }
-          });
-        }
-        if (categoriesDescriptionJson && categoriesDescriptionJson.data) {
-          const processedDescCategories = processCategories(categoriesDescriptionJson.data);
-          processedDescCategories.forEach(category => {
-            if (!categoryIds.has(category.id)) {
-              categories.push(category);
-              categoryIds.add(category.id);
-            }
-          });
-        }
-        
+
         setResult({
-          products,
-          categories
+          products: Array.from(productMap.values()),
+          categories: Array.from(categoryMap.values()),
         });
-        const productsUrlExample = `${baseUrl}/api/products?populate=*&filters[productName][$containsi]=${encodedSearchTerm}`;
-        const categoriesUrlExample = `${baseUrl}/api/categories?populate=*&filters[categoryName][$containsi]=${encodedSearchTerm}`;
-        
-        setLoading(false);
-      } catch (error: any) {
-        console.error('Search error:', error);
-        setError(error.message || 'Error al buscar productos');
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+        console.error('Search error:', err);
+        setError(err.message || 'Error al buscar');
         setResult({ products: [], categories: [] });
-        setLoading(false);
+      } finally {
+        if (!signal.aborted) setLoading(false);
       }
     };
-    const timeoutId = setTimeout(() => {
-      fetchData();
-    }, 300);
 
-    return () => clearTimeout(timeoutId);
+    const timeoutId = setTimeout(fetchData, 300);
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [searchTerm]);
 
   return { result, loading, error };
