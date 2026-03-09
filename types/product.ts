@@ -5,6 +5,7 @@ export type ProductType = {
   slug: string;
   description: string;
   textSeo: string;
+  mercadolibre_url?: string;
   programa: {
     id: number;
     slug: string;

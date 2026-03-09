@@ -55,7 +55,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${product.productName} | ${product.category?.categoryName} - Salmetexmed`,
       description,
       keywords,
-      // No indexar productos inactivos
       robots: {
         index: product.active,
         follow: true,
@@ -116,7 +115,6 @@ export default async function Page({ params, searchParams }: Props) {
   let breadcrumbJsonLd = null;
 
   try {
-    // Gracias al cache, no hace una segunda llamada a la API
     const product = await getProduct(resolvedParams.productSlug);
 
     if (product) {
@@ -136,7 +134,7 @@ export default async function Page({ params, searchParams }: Props) {
         offers: {
           "@type": "Offer",
           priceCurrency: "MXN",
-          ...(product.price && { price: product.price }),
+          price: product.price ?? "0",
           availability:
             product.active && (product.quantity ?? 1) > 0
               ? "https://schema.org/InStock"
@@ -157,8 +155,7 @@ export default async function Page({ params, searchParams }: Props) {
         }),
       };
 
-      // Schema de Breadcrumb — aparece en Google como:
-      // salmetexmed.com.mx > [Categoría] > [Producto]
+      // Schema de Breadcrumb
       breadcrumbJsonLd = {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
