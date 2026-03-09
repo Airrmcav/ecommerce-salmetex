@@ -77,7 +77,7 @@ export default function ProductClient() {
         }}
       />
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto pt-2">
         <div className="grid sm:grid-cols-2">
           <div>
             <CarouselProduct

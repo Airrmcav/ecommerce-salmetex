@@ -100,22 +100,6 @@ const InfoProduct = (props: InfoProductProps) => {
         <h1 className="text-3xl font-bold text-gray-900 mb-2 leading-tight">
           {product.productName}
         </h1>
-
-        {product.mercadolibre_url && (
-          <a
-            href={product.mercadolibre_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Ver ${product.productName} en Mercado Libre`}
-            className="shrink-0"
-          >
-            <img
-              src="/logo/ml.png"
-              alt="Mercado Libre"
-              className="h-24 w-auto object-contain"
-            />
-          </a>
-        )}
       </div>
       {product.programa && (
         <div className="mb-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -200,10 +184,25 @@ const InfoProduct = (props: InfoProductProps) => {
 
       {/* Precio */}
       <div className="mb-3 mt-2">
-        <span className="text-4xl font-bold text-gray-900">
-          {hasPrice ? formatPrice(product.price!) : "Consultar precio"}
-        </span>
-        {hasPrice && <span className="text-gray-600 ml-2">IVA incluido</span>}
+        <a
+          href={product.mercadolibre_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Ver ${product.productName} en Mercado Libre`}
+          className="flex items-center gap-3"
+        >
+          <span className="text-4xl font-bold text-gray-900">
+            {hasPrice ? formatPrice(product.price!) : "Consultar precio"}
+          </span>
+          {hasPrice && <span className="text-gray-600">IVA incluido</span>}
+          {product.mercadolibre_url && (
+            <img
+              src="/logo/ml.png"
+              alt="Mercado Libre"
+              className="h-24 w-auto object-contain"
+            />
+          )}
+        </a>
       </div>
 
       {/* Agregar al carrito y Favoritos */}
