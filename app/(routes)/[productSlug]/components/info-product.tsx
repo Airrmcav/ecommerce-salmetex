@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { formatPrice } from "@/lib/formatPrice";
 import { ProductType } from "@/types/product";
@@ -25,6 +24,23 @@ export type InfoProductProps = {
   product: ProductType;
 };
 
+const MercadoLibreLogo = () => (
+  <svg viewBox="0 0 256 180" className="w-5 h-5 shrink-0" aria-hidden="true">
+    <ellipse cx="128" cy="90" rx="120" ry="80" fill="#FFE600" />
+    <path
+      d="M70 95c10-10 20-15 35-15l20 15-10 10-20-5-15 10-15-15z"
+      fill="#2D3277"
+    />
+    <path
+      d="M186 95c-10-10-20-15-35-15l-20 15 10 10 20-5 15 10 15-15z"
+      fill="#2D3277"
+    />
+  </svg>
+);
+
+const badgeClass =
+  "inline-flex items-center gap-1.5 px-2.5 py-1 h-8 text-sm font-medium border rounded-md whitespace-nowrap";
+
 const InfoProduct = (props: InfoProductProps) => {
   const { product } = props;
   const { addItem } = useCart();
@@ -33,7 +49,8 @@ const InfoProduct = (props: InfoProductProps) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   const handleIncrement = () => setQuantity((prev) => prev + 1);
-  const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+  const handleDecrement = () =>
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleAddToCart = () => {
     const productWithQuantity = { ...product, quantity };
@@ -45,17 +62,24 @@ const InfoProduct = (props: InfoProductProps) => {
     const message = `Hola, quiero *cotizar ahora* el producto: ${product.productName}.`;
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
-    if (typeof window !== "undefined" && (window as any).gtag_report_conversion) {
+    if (
+      typeof window !== "undefined" &&
+      (window as any).gtag_report_conversion
+    ) {
       (window as any).gtag_report_conversion();
     }
 
     window.open(url, "_blank");
   };
 
-  const handleShare = (platform: "facebook" | "twitter" | "instagram" | "mail") => {
+  const handleShare = (
+    platform: "facebook" | "twitter" | "instagram" | "mail",
+  ) => {
     if (typeof window === "undefined") return;
     const currentUrl = encodeURIComponent(window.location.href);
-    const productTitle = encodeURIComponent(`Mira este producto: ${product.productName}`);
+    const productTitle = encodeURIComponent(
+      `Mira este producto: ${product.productName}`,
+    );
 
     const urls: Record<string, string> = {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`,
@@ -71,10 +95,28 @@ const InfoProduct = (props: InfoProductProps) => {
   const isAvailable = product.active && hasPrice;
 
   return (
-    <div className="max-w-2xl mx-auto p-3 bg-white rounded-lg">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2 leading-tight">
-        {product.productName}
-      </h1>
+    <div className="max-w-2xl mx-auto p-3 bg-white rounded-lg absolute">
+      <div className="flex items-center justify-between pr-5">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2 leading-tight">
+          {product.productName}
+        </h1>
+
+        {product.mercadolibre_url && (
+          <a
+            href={product.mercadolibre_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Ver ${product.productName} en Mercado Libre`}
+            className="shrink-0"
+          >
+            <img
+              src="/logo/ml.png"
+              alt="Mercado Libre"
+              className="h-24 w-auto object-contain"
+            />
+          </a>
+        )}
+      </div>
       {product.programa && (
         <div className="mb-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
           <div className="flex items-center gap-4">
@@ -93,14 +135,20 @@ const InfoProduct = (props: InfoProductProps) => {
                     {product.programa.description}
                   </p>
                   <button
-                    onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                    onClick={() =>
+                      setIsDescriptionExpanded(!isDescriptionExpanded)
+                    }
                     aria-expanded={isDescriptionExpanded}
                     className="flex cursor-pointer items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-2 font-medium transition-colors"
                   >
                     {isDescriptionExpanded ? (
-                      <>Ver menos <ChevronUp className="w-4 h-4" /></>
+                      <>
+                        Ver menos <ChevronUp className="w-4 h-4" />
+                      </>
                     ) : (
-                      <>Ver más <ChevronDown className="w-4 h-4" /></>
+                      <>
+                        Ver más <ChevronDown className="w-4 h-4" />
+                      </>
                     )}
                   </button>
                 </>
@@ -110,43 +158,44 @@ const InfoProduct = (props: InfoProductProps) => {
         </div>
       )}
 
-      {/* Badges: Categoría, Área, Disponibilidad */}
-      <div className="space-y-3 mb-0 flex justify-start gap-2 flex-wrap">
-        <Badge
-          variant="outline"
-          className="px-2 py-1 text-sm font-medium bg-blue-50 text-blue-700 border-blue-200"
+      {/* Badges: Categoría, Área, Disponibilidad, Mercado Libre — todos con mismas dimensiones */}
+      <div className="mb-0 flex justify-start gap-2 flex-wrap items-center">
+        {/* Categoría */}
+        <span
+          className={`${badgeClass} bg-blue-50 text-blue-700 border-blue-200 p-5`}
         >
           {product.category.categoryName}
-        </Badge>
+        </span>
 
+        {/* Área */}
         {product.area && (
-          <Badge
-            variant="outline"
-            className="px-2 py-1 text-sm font-medium bg-gray-50 text-gray-700 border-gray-200"
+          <span
+            className={`${badgeClass} bg-gray-50 text-gray-700 border-gray-200 p-5`}
           >
             {product.area}
-          </Badge>
+          </span>
         )}
 
-        <Badge
-          className={`${
+        {/* Disponibilidad */}
+        <span
+          className={`${badgeClass} ${
             product.active
-              ? "bg-green-100 text-green-800 border-green-300"
+              ? "bg-green-100 text-green-800 border-green-300 p-5"
               : "bg-red-100 text-red-800 border-red-300"
-          } px-2 py-1 text-sm font-medium border`}
+          }`}
         >
           {product.active ? (
             <>
-              <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" />
+              <CheckCircle className="w-4 h-4 shrink-0 " aria-hidden="true" />
               Disponible
             </>
           ) : (
             <>
-              <XCircle className="w-4 h-4 mr-2" aria-hidden="true" />
+              <XCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
               No Disponible
             </>
           )}
-        </Badge>
+        </span>
       </div>
 
       {/* Precio */}
@@ -154,9 +203,7 @@ const InfoProduct = (props: InfoProductProps) => {
         <span className="text-4xl font-bold text-gray-900">
           {hasPrice ? formatPrice(product.price!) : "Consultar precio"}
         </span>
-        {hasPrice && (
-          <span className="text-gray-600 ml-2">IVA incluido</span>
-        )}
+        {hasPrice && <span className="text-gray-600 ml-2">IVA incluido</span>}
       </div>
 
       {/* Agregar al carrito y Favoritos */}
@@ -186,7 +233,10 @@ const InfoProduct = (props: InfoProductProps) => {
           aria-label={`Agregar ${product.productName} a favoritos`}
           className="flex-1 sm:flex-none px-4 py-3 border-2 border-gray-300 hover:border-red-400 hover:bg-red-50 rounded-lg group cursor-pointer"
         >
-          <Heart className="w-5 h-5 group-hover:fill-red-400 group-hover:text-red-400 transition-all" aria-hidden="true" />
+          <Heart
+            className="w-5 h-5 group-hover:fill-red-400 group-hover:text-red-400 transition-all"
+            aria-hidden="true"
+          />
         </Button>
       </div>
 
@@ -204,7 +254,10 @@ const InfoProduct = (props: InfoProductProps) => {
 
       {/* Compartir */}
       <div className="my-4 max-w-87.5 sm:max-w-none">
-        <div className="flex items-center justify-center gap-2 mb-3" aria-label="Compartir producto">
+        <div
+          className="flex items-center justify-center gap-2 mb-3"
+          aria-label="Compartir producto"
+        >
           <Share2 className="w-5 h-5 text-gray-600" aria-hidden="true" />
           <span className="font-medium text-gray-900">Compartir</span>
 
@@ -255,7 +308,7 @@ const InfoProduct = (props: InfoProductProps) => {
 
       <Separator className="my-3" />
 
-      {/* Descripción — h2 para jerarquía correcta de headings */}
+      {/* Descripción */}
       {product.description && (
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-3">
@@ -267,7 +320,7 @@ const InfoProduct = (props: InfoProductProps) => {
         </div>
       )}
 
-      {/* Características — h2 para jerarquía correcta de headings */}
+      {/* Características */}
       {Array.isArray(product.characteristics) &&
         product.characteristics.length > 0 && (
           <div>
@@ -281,7 +334,10 @@ const InfoProduct = (props: InfoProductProps) => {
                     key={index}
                     className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
                   >
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 shrink-0" aria-hidden="true" />
+                    <CheckCircle
+                      className="w-5 h-5 text-green-600 mt-0.5 shrink-0"
+                      aria-hidden="true"
+                    />
                     <span className="text-gray-700">{characteristic}</span>
                   </div>
                 ),
