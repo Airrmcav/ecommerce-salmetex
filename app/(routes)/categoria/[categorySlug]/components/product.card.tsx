@@ -24,7 +24,10 @@ const ProductCard = ({ product, viewMode = "grid" }: ProductCardProps) => {
   const hasPrice = product.price && product.price > 0;
 
   return (
-    <div className="relative p-0 transition-all">
+    <div 
+      className="relative p-0 transition-all cursor-pointer"
+      onClick={() => router.push(`/${product.slug}`)}
+    >
       <div className="w-full">
         <div className="py-1 px-0">
           <div className="group h-full border-0 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white rounded-2xl overflow-hidden">
@@ -69,7 +72,10 @@ const ProductCard = ({ product, viewMode = "grid" }: ProductCardProps) => {
                 </div>
 
                 <IconButton
-                  onClick={() => addLoveItems(product)}
+                  onClick={(e) => {
+                    e?.stopPropagation();
+                    addLoveItems(product);
+                  }}
                   icon={<Heart className="w-4 h-4 text-gray-800 hover:text-red-500 transition-colors" aria-hidden="true" />}
                   className="absolute top-3 left-3 p-2 rounded-full bg-gray-300/5 backdrop-blur-sm hover:bg-white transition-all duration-200"
                   aria-label={`Agregar ${product.productName} a favoritos`}
@@ -108,7 +114,10 @@ const ProductCard = ({ product, viewMode = "grid" }: ProductCardProps) => {
                 {/* Botones */}
                 <div className="flex gap-2 mt-auto">
                   <button
-                    onClick={() => router.push(`/${product.slug}`)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/${product.slug}`);
+                    }}
                     className={`cursor-pointer flex-1 py-2.5 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${
                       product.active
                         ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
@@ -120,7 +129,10 @@ const ProductCard = ({ product, viewMode = "grid" }: ProductCardProps) => {
                     Ver Detalles
                   </button>
                   <IconButton
-                    onClick={() => addItem(product)}
+                    onClick={(e) => {
+                      e?.stopPropagation();
+                      addItem(product);
+                    }}
                     icon={<ShoppingCart size={20} aria-hidden="true" />}
                     className={`${
                       !hasPrice ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
