@@ -2,11 +2,12 @@ import { cn } from "@/lib/utils";
 import { ReactElement } from "react";
 
 interface IconButttonProps {
-    onClick: () => void;
+    onClick: (e?: React.MouseEvent<HTMLButtonElement>) => void;
     icon: ReactElement;
     className?: string;
     disabled?: boolean;
     title?: string;
+    aria_label?: string;
 }
 
 const IconButton = (props: IconButttonProps) => {
