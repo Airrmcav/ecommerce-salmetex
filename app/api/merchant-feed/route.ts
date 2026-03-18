@@ -1,171 +1,107 @@
 import { NextResponse } from "next/server";
 
-const BASE_URL = "https://salmetexmed.com.mx";
-const API_URL =
-  "https://backend-ecommerce-production-fb02.up.railway.app/api/products?populate=*";
-
-
-const clean = (text: any) => {
-  if (!text) return "";
-  return String(text)
-    .replace(/&/g, "y")
-    .replace(/</g, "")
-    .replace(/>/g, "")
-    .replace(/"/g, "")
-    .trim();
-};
-
-
-const getBrand = (name: string) => {
-  const n = name.toLowerCase();
-  if (n.includes("beurer")) return "Beurer";
-  if (n.includes("microgyn")) return "Microgyn";
-  return "Salmetex";
-};
-
-
-const getIntent = (product: any) => {
-  const name = product.productName.toLowerCase();
-  const area = (product.area || "").toLowerCase();
-
-  if (
-    area.includes("equipo") ||
-    name.includes("rayos x") ||
-    name.includes("colposcopio")
-  ) {
-    return "b2b";
-  }
-
-  return "paciente";
-};
-
-
-const getVariant = (id: number) => {
-  return id % 2 === 0 ? "A" : "B";
-};
-
-
-const generateTitle = (product: any) => {
-  const base = clean(product.productName);
-  const brand = getBrand(product.productName);
-  const intent = getIntent(product);
-  const variant = getVariant(product.id);
-
-
-  if (intent === "b2b") {
-    if (variant === "A") {
-      return `${base} | Equipo Médico Profesional en México | Venta para Clínicas`;
-    } else {
-      return `${base} ${brand !== "Salmetex" ? "| " + brand : ""} | Uso Hospitalario | Cotización`;
-    }
-  }
-
-  if (variant === "A") {
-    return `${base} | Compra en México | Envío Rápido`;
-  } else {
-    return `${base} ${brand !== "Salmetex" ? "| " + brand : ""} | Uso en Casa | Mejor Precio`;
-  }
-};
-
-const getCustomLabels = (product: any) => {
-  const price = Number(product.price);
-  const intent = getIntent(product);
-  const variant = getVariant(product.id);
-
-  let value = "bajo_valor";
-  if (price > 50000) value = "alto_valor";
-  else if (price > 10000) value = "medio_valor";
-
-  return {
-    label0: value, 
-    label1: intent, 
-    label2: variant,
-  };
-};
-
-
-const getGoogleCategory = (area: string) => {
-  const a = (area || "").toLowerCase();
-
-  if (a.includes("mobiliario"))
-    return "Business & Industrial > Medical Furniture";
-  if (a.includes("equipo"))
-    return "Health & Beauty > Medical Equipment";
-
-  return "Health & Beauty > Medical Supplies";
-};
-
 export async function GET() {
   try {
-    const res = await fetch(API_URL, { cache: "no-store" });
-    const json = await res.json();
-
-    const products = json.data || [];
-
-    const filtered = products.filter(
-      (p: any) => p.price && p.price > 0 && p.active
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products?populate=*`,
+      { cache: "no-store" }
     );
 
-    const items = filtered
+    const json = await res.json();
+    const products = json.data;
+
+    const baseUrl = "https://salmetexmed.com.mx";
+
+    // 🔥 Función para limpiar CDATA
+    const cdata = (str: string) => `<![CDATA[${str || ""}]]>`;
+
+    // 🔥 Mapeo automático de categorías (nivel agencia)
+    const getGoogleCategory = (categoryName: string = "") => {
+      const name = categoryName.toLowerCase();
+
+      if (name.includes("mobiliario"))
+        return "Business & Industrial > Medical > Medical Furniture";
+
+      if (name.includes("rayos") || name.includes("equipo"))
+        return "Health & Beauty > Health Care > Medical Equipment";
+
+      if (name.includes("insumos") || name.includes("desechable"))
+        return "Health & Beauty > Health Care";
+
+      return "Health & Beauty > Health Care";
+    };
+
+    // 🔥 Filtrar SOLO productos válidos
+    const validProducts = products.filter(
+      (p: any) =>
+        p.price &&
+        p.price > 0 &&
+        p.images &&
+        p.images.length > 0 &&
+        p.images[0]?.url
+    );
+
+    const itemsXml = validProducts
       .map((product: any) => {
-        try {
-          const title = generateTitle(product);
-          const description = clean(product.description);
-          const link = `${BASE_URL}/producto/${product.slug}`;
+        const title = product.productName;
+        const description = product.description || "";
+        const link = `${baseUrl}/producto/${product.slug}`;
 
-          const imageUrl = product.images?.[0]?.url
-            ? `https://backend-ecommerce-production-fb02.up.railway.app${product.images[0].url}`
-            : "";
+        // ✅ AQUÍ ESTÁ EL FIX IMPORTANTE
+        const imageUrl = product.images[0].url;
 
-          if (!title || !imageUrl) return "";
+        const category = getGoogleCategory(
+          product.category?.categoryName
+        );
 
-          const brand = getBrand(product.productName);
-          const category = clean(product.category?.categoryName);
-          const googleCategory = getGoogleCategory(product.area);
+        return `
+        <item>
+          <g:id>${product.id}</g:id>
+          
+          <g:title>${cdata(title)}</g:title>
+          
+          <g:description>${cdata(description)}</g:description>
+          
+          <g:link>${cdata(link)}</g:link>
+          
+          <g:image_link>${cdata(imageUrl)}</g:image_link>
+          
+          <g:availability>in stock</g:availability>
+          
+          <g:price>${product.price} MXN</g:price>
+          
+          <g:brand>${cdata("Salmetex")}</g:brand>
+          
+          <g:condition>new</g:condition>
 
-          const { label0, label1, label2 } = getCustomLabels(product);
+          <g:google_product_category>${cdata(category)}</g:google_product_category>
 
-          return `
-<item>
-<g:id>${product.id}</g:id>
-<g:title><![CDATA[${title}]]></g:title>
-<g:description><![CDATA[${description} Disponible en México. Compra segura en Salmetex.]]></g:description>
-<g:link><![CDATA[${link}]]></g:link>
-<g:image_link><![CDATA[${imageUrl}]]></g:image_link>
-<g:brand><![CDATA[${brand}]]></g:brand>
-<g:condition>new</g:condition>
-<g:availability>in stock</g:availability>
-<g:price>${product.price} MXN</g:price>
-<g:product_type><![CDATA[${category}]]></g:product_type>
-<g:google_product_category><![CDATA[${googleCategory}]]></g:google_product_category>
-<g:identifier_exists>no</g:identifier_exists>
+          <g:product_type>${cdata(
+            `${product.category?.categoryName || ""}, ${product.area || ""}`
+          )}</g:product_type>
 
-
-<g:custom_label_0><![CDATA[${label0}]]></g:custom_label_0>
-<g:custom_label_1><![CDATA[${label1}]]></g:custom_label_1>
-<g:custom_label_2><![CDATA[${label2}]]></g:custom_label_2>
-
-</item>`;
-        } catch {
-          return "";
-        }
+        </item>
+        `;
       })
       .join("");
 
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+    const xml = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
-<channel>
-<title>SalmetexMed</title>
-<link>${BASE_URL}</link>
-<description>Productos médicos</description>
-${items}
-</channel>
+  <channel>
+    <title>SalmetexMed</title>
+    <link>${baseUrl}</link>
+    <description>Productos médicos</description>
+    ${itemsXml}
+  </channel>
 </rss>`;
 
     return new NextResponse(xml, {
-      headers: { "Content-Type": "application/xml" },
+      headers: {
+        "Content-Type": "application/xml",
+      },
     });
-  } catch {
-    return NextResponse.json({ error: "feed error" }, { status: 500 });
+  } catch (error) {
+    console.error("Merchant Feed Error:", error);
+    return new NextResponse("Error generating feed", { status: 500 });
   }
 }
