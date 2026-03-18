@@ -4,7 +4,7 @@ const BASE_URL = "https://salmetexmed.com.mx";
 const API_URL =
   "https://backend-ecommerce-production-fb02.up.railway.app/api/products?populate=*";
 
-// 🧼 limpiar texto
+
 const clean = (text: any) => {
   if (!text) return "";
   return String(text)
@@ -15,7 +15,7 @@ const clean = (text: any) => {
     .trim();
 };
 
-// 🏷️ marca
+
 const getBrand = (name: string) => {
   const n = name.toLowerCase();
   if (n.includes("beurer")) return "Beurer";
@@ -23,7 +23,7 @@ const getBrand = (name: string) => {
   return "Salmetex";
 };
 
-// 🧠 detectar tipo de cliente
+
 const getIntent = (product: any) => {
   const name = product.productName.toLowerCase();
   const area = (product.area || "").toLowerCase();
@@ -39,19 +39,19 @@ const getIntent = (product: any) => {
   return "paciente";
 };
 
-// 🧠 A/B testing (determinístico por ID)
+
 const getVariant = (id: number) => {
   return id % 2 === 0 ? "A" : "B";
 };
 
-// 🧠 títulos dinámicos avanzados
+
 const generateTitle = (product: any) => {
   const base = clean(product.productName);
   const brand = getBrand(product.productName);
   const intent = getIntent(product);
   const variant = getVariant(product.id);
 
-  // 🔥 B2B
+
   if (intent === "b2b") {
     if (variant === "A") {
       return `${base} | Equipo Médico Profesional en México | Venta para Clínicas`;
@@ -60,7 +60,6 @@ const generateTitle = (product: any) => {
     }
   }
 
-  // 🧑‍⚕️ Paciente
   if (variant === "A") {
     return `${base} | Compra en México | Envío Rápido`;
   } else {
@@ -68,7 +67,6 @@ const generateTitle = (product: any) => {
   }
 };
 
-// 🧠 labels inteligentes
 const getCustomLabels = (product: any) => {
   const price = Number(product.price);
   const intent = getIntent(product);
@@ -79,13 +77,13 @@ const getCustomLabels = (product: any) => {
   else if (price > 10000) value = "medio_valor";
 
   return {
-    label0: value, // 💰 valor
-    label1: intent, // 🎯 b2b / paciente
-    label2: variant, // 🧪 A/B test
+    label0: value, 
+    label1: intent, 
+    label2: variant,
   };
 };
 
-// 🧠 categoría Google
+
 const getGoogleCategory = (area: string) => {
   const a = (area || "").toLowerCase();
 
@@ -142,7 +140,7 @@ export async function GET() {
 <g:google_product_category><![CDATA[${googleCategory}]]></g:google_product_category>
 <g:identifier_exists>no</g:identifier_exists>
 
-<!-- 🔥 INTELIGENCIA -->
+
 <g:custom_label_0><![CDATA[${label0}]]></g:custom_label_0>
 <g:custom_label_1><![CDATA[${label1}]]></g:custom_label_1>
 <g:custom_label_2><![CDATA[${label2}]]></g:custom_label_2>
