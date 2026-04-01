@@ -13,12 +13,13 @@ import { makePaymentRequest } from "@/api/payment";
 
 export default function Cart() {
     const { items, removeAll, getTotalPrice } = useCart();
-    const [isProcessing, setIsProcessing] = useState(false);
+    const [processingMethod, setProcessingMethod] = useState<'stripe' | 'mercadopago' | null>(null);
     const totalPrice = getTotalPrice();
-    const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRAPI_PUBLISHABLE_KEY || '')
+    const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '')
     
     const buyStripe = async () => {
         try{
+            setProcessingMethod('stripe');
             const stripe = await stripePromise
             const res = await makePaymentRequest.post("/api/orders", {
                 products: items
@@ -30,6 +31,32 @@ export default function Cart() {
             removeAll()
         } catch (error) {
             console.log(error)
+            setProcessingMethod(null);
+        }
+    }
+
+    const buyMercadoPago = async () => {
+        try {
+            setProcessingMethod('mercadopago');
+            const res = await makePaymentRequest.post("/mercado-pago/preference", {
+                products: items,
+                installments: 12
+            })
+            
+            console.log('Respuesta Mercado Pago:', res.data);
+            
+            // Redirigir a la URL de Mercado Pago
+            const initPoint = res.data?.mercadoPagoPreference?.init_point || res.data?.init_point;
+            
+            if (initPoint) {
+                window.location.href = initPoint
+            } else {
+                console.error('No se encontró URL de Mercado Pago en la respuesta:', res.data);
+                setProcessingMethod(null);
+            }
+        } catch (error) {
+            console.error('Error en Mercado Pago:', error)
+            setProcessingMethod(null);
         }
     }
 
@@ -145,25 +172,48 @@ export default function Cart() {
                                             <span className="text-blue-600">{formatPrice(totalPrice)}</span>
                                         </div>
 
-                                        {/* Botón de checkout */}
-                                        <Button
-                                            className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-                                            onClick={buyStripe}
-                                            disabled={isProcessing}
-                                        >
-                                            {isProcessing ? (
-                                                <div className="flex items-center">
-                                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                                                    Procesando...
-                                                </div>
-                                            ) : (
-                                                <div className="flex items-center">
-                                                    <ShieldCheck className="w-5 h-5 mr-2" />
-                                                    Proceder al Pago
-                                                    <ArrowRight className="w-5 h-5 ml-2" />
-                                                </div>
-                                            )}
-                                        </Button>
+                                        {/* Botones de checkout */}
+                                        <div className="space-y-3">
+                                            {/* Botón Stripe */}
+                                            <Button
+                                                className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                                                onClick={buyStripe}
+                                                disabled={processingMethod !== null}
+                                            >
+                                                {processingMethod === 'stripe' ? (
+                                                    <div className="flex items-center">
+                                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                                                        Procesando con Stripe...
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center">
+                                                        <ShieldCheck className="w-5 h-5 mr-2" />
+                                                        Pagar con Stripe
+                                                        <ArrowRight className="w-5 h-5 ml-2" />
+                                                    </div>
+                                                )}
+                                            </Button>
+
+                                            {/* Botón Mercado Pago */}
+                                            <Button
+                                                className="w-full cursor-pointer bg-amber-500 hover:bg-amber-600 text-white py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                                                onClick={buyMercadoPago}
+                                                disabled={processingMethod !== null}
+                                            >
+                                                {processingMethod === 'mercadopago' ? (
+                                                    <div className="flex items-center">
+                                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                                                        Procesando con Mercado Pago...
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center">
+                                                        <ShieldCheck className="w-5 h-5 mr-2" />
+                                                        Pagar con Mercado Pago
+                                                        <ArrowRight className="w-5 h-5 ml-2" />
+                                                    </div>
+                                                )}
+                                            </Button>
+                                        </div>
 
                                         {/* Garantías */}
                                         <div className="mt-6 space-y-3 text-sm text-gray-600">
