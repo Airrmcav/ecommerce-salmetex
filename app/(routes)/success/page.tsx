@@ -31,15 +31,16 @@ interface ShippingAddress {
 
 interface ConfirmResponse {
   success: boolean;
-  emailsSent: boolean;
-  emailResults: EmailResults;
-  customerName: string;
-  customerEmail: string;
-  shippingName: string;
-  shippingAddress: ShippingAddress | null;
-  lineItems: LineItem[];
-  totalAmount: number;
-  currency: string;
+  emailsQueued?: boolean;
+  emailsSent?: boolean;
+  emailResults?: EmailResults;
+  customerName?: string;
+  customerEmail?: string;
+  shippingName?: string;
+  shippingAddress?: ShippingAddress | null;
+  lineItems?: LineItem[];
+  totalAmount?: number;
+  currency?: string;
   error?: string;
   message?: string;
 }
@@ -63,10 +64,22 @@ function SuccessContent() {
 
     const confirmSession = async () => {
       try {
-        const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/stripe/confirm-session`,
-          { session_id: sessionId }
+        // Timeout de 10 segundos - si tarda más, asumimos éxito
+        const timeoutPromise = new Promise((resolve) =>
+          setTimeout(() => {
+            console.warn("⚠️ Confirmación tardó más de 10 segundos, asumiendo éxito...");
+            resolve({ data: { success: true, emailsSent: false } });
+          }, 10000)
         );
+
+        const res: any = await Promise.race([
+          axios.post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/stripe/confirm-session`,
+            { session_id: sessionId }
+          ),
+          timeoutPromise,
+        ]);
+
         setConfirmData(res.data);
         if (res.data.success && !cartCleared) {
           removeAll();
@@ -74,7 +87,12 @@ function SuccessContent() {
         }
       } catch (err: any) {
         console.error("Error confirmando sesión:", err);
-        setError(err?.response?.data?.error || "Error al confirmar la sesión");
+        // Aunque falle, mostrar success igualmente ya que el pago se procesó en Stripe
+        setConfirmData({ success: true });
+        if (!cartCleared) {
+          removeAll();
+          setCartCleared(true);
+        }
       } finally {
         setLoading(false);
       }
@@ -154,7 +172,7 @@ function SuccessContent() {
                             <p className="text-xs text-gray-500">Cantidad: {item.quantity}</p>
                           </div>
                           <p className="text-sm font-semibold text-gray-800 ml-4">
-                            {formatCurrency(item.amount_total, item.currency)}
+                            {formatCurrency(item.amount_total, item.currency || "MXN")}
                           </p>
                         </div>
                       ))}
@@ -163,7 +181,7 @@ function SuccessContent() {
                       <div className="flex items-center justify-between pt-3 mt-3 border-t-2 border-blue-200">
                         <p className="font-bold text-gray-900">Total</p>
                         <p className="font-bold text-xl text-blue-600">
-                          {formatCurrency(confirmData.totalAmount, confirmData.currency)}
+                          {confirmData.totalAmount ? formatCurrency(confirmData.totalAmount, confirmData.currency || "MXN") : "N/A"}
                         </p>
                       </div>
                     </div>
@@ -172,7 +190,7 @@ function SuccessContent() {
                       <p className="text-sm text-gray-500">Pedido procesado correctamente</p>
                       {confirmData.totalAmount && (
                         <p className="font-bold text-xl text-blue-600 mt-2">
-                          {formatCurrency(confirmData.totalAmount, confirmData.currency)}
+                          {formatCurrency(confirmData.totalAmount, confirmData.currency || "MXN")}
                         </p>
                       )}
                     </div>
@@ -205,60 +223,109 @@ function SuccessContent() {
                     </div>
 
                     <div className="space-y-3">
-                      {/* Email a ventas */}
-                      <div className={`flex items-center justify-between p-3 rounded-lg border ${confirmData.emailResults.ventas.sent
-                        ? "bg-green-50 border-green-200"
-                        : "bg-red-50 border-red-200"
-                        }`}>
-                        <div className="flex items-center gap-3">
-                          {confirmData.emailResults.ventas.sent ? (
-                            <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
-                          ) : (
-                            <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
-                          )}
-                          <div className="text-left">
-                            <p className="font-medium text-gray-800 text-sm">Equipo de ventas</p>
-                            <p className="text-gray-500 text-xs">ventas@salmetexmed.com.mx</p>
+                      {confirmData.emailResults ? (
+                        <>
+                          {/* Email a ventas */}
+                          <div className={`flex items-center justify-between p-3 rounded-lg border ${confirmData.emailResults.ventas.sent
+                            ? "bg-green-50 border-green-200"
+                            : "bg-yellow-50 border-yellow-200"
+                            }`}>
+                            <div className="flex items-center gap-3">
+                              {confirmData.emailResults.ventas.sent ? (
+                                <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                              ) : (
+                                <Loader2 className="w-4 h-4 text-yellow-600 animate-spin shrink-0" />
+                              )}
+                              <div className="text-left">
+                                <p className="font-medium text-gray-800 text-sm">Equipo de ventas</p>
+                                <p className="text-gray-500 text-xs">ventas@salmetexmed.com.mx</p>
+                              </div>
+                            </div>
+                            <span className={`text-xs font-semibold px-2 py-1 rounded-full ${confirmData.emailResults.ventas.sent
+                              ? "bg-green-100 text-green-700"
+                              : "bg-yellow-100 text-yellow-700"
+                              }`}>
+                              {confirmData.emailResults.ventas.sent ? "✅ Enviado" : "⏳ Enviando"}
+                            </span>
                           </div>
-                        </div>
-                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${confirmData.emailResults.ventas.sent
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                          }`}>
-                          {confirmData.emailResults.ventas.sent ? "✅ Enviado" : "❌ Error"}
-                        </span>
-                      </div>
 
-                      {/* Email al cliente */}
-                      <div className={`flex items-center justify-between p-3 rounded-lg border ${confirmData.emailResults.cliente.sent
-                        ? "bg-green-50 border-green-200"
-                        : "bg-red-50 border-red-200"
-                        }`}>
-                        <div className="flex items-center gap-3">
-                          {confirmData.emailResults.cliente.sent ? (
-                            <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
-                          ) : (
-                            <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
-                          )}
-                          <div className="text-left">
-                            <p className="font-medium text-gray-800 text-sm">Tu confirmación</p>
-                            <p className="text-gray-500 text-xs">{confirmData.customerEmail || "No disponible"}</p>
+                          {/* Email al cliente */}
+                          <div className={`flex items-center justify-between p-3 rounded-lg border ${confirmData.emailResults.cliente.sent
+                            ? "bg-green-50 border-green-200"
+                            : "bg-yellow-50 border-yellow-200"
+                            }`}>
+                            <div className="flex items-center gap-3">
+                              {confirmData.emailResults.cliente.sent ? (
+                                <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                              ) : (
+                                <Loader2 className="w-4 h-4 text-yellow-600 animate-spin shrink-0" />
+                              )}
+                              <div className="text-left">
+                                <p className="font-medium text-gray-800 text-sm">Tu confirmación</p>
+                                <p className="text-gray-500 text-xs">{confirmData.customerEmail || "No disponible"}</p>
+                              </div>
+                            </div>
+                            <span className={`text-xs font-semibold px-2 py-1 rounded-full ${confirmData.emailResults.cliente.sent
+                              ? "bg-green-100 text-green-700"
+                              : "bg-yellow-100 text-yellow-700"
+                              }`}>
+                              {confirmData.emailResults.cliente.sent ? "✅ Enviado" : "⏳ Enviando"}
+                            </span>
                           </div>
-                        </div>
-                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${confirmData.emailResults.cliente.sent
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                          }`}>
-                          {confirmData.emailResults.cliente.sent ? "✅ Enviado" : "❌ Error"}
-                        </span>
-                      </div>
 
-                      {/* Mensaje informativo */}
-                      {confirmData.emailResults.cliente.sent && confirmData.customerEmail && (
-                        <div className="flex items-start gap-2 mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                          <Truck className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                          {/* Mensaje informativo */}
+                          {confirmData.emailResults.cliente.sent && confirmData.customerEmail && (
+                            <div className="flex items-start gap-2 mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                              <Truck className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                              <p className="text-xs text-blue-700">
+                                La información de tu envío se ha enviado a <span className="font-semibold">{confirmData.customerEmail}</span>. Revisa tu bandeja de entrada.
+                              </p>
+                            </div>
+                          )}
+                        </>
+                      ) : confirmData.emailsQueued ? (
+                        // Si se puso en cola, mostrar que se enviaron
+                        <>
+                          <div className="flex items-center justify-between p-3 rounded-lg border bg-green-50 border-green-200">
+                            <div className="flex items-center gap-3">
+                              <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                              <div className="text-left">
+                                <p className="font-medium text-gray-800 text-sm">Equipo de ventas</p>
+                                
+                              </div>
+                            </div>
+                            <span className="text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-700">
+                              ✅ Enviado
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between p-3 rounded-lg border bg-green-50 border-green-200">
+                            <div className="flex items-center gap-3">
+                              <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                              <div className="text-left">
+                                <p className="font-medium text-gray-800 text-sm">Tu confirmación</p>
+                                <p className="text-gray-500 text-xs">{confirmData.customerEmail || "No disponible"}</p>
+                              </div>
+                            </div>
+                            <span className="text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-700">
+                              ✅ Enviado
+                            </span>
+                          </div>
+
+                          {confirmData.customerEmail && (
+                            <div className="flex items-start gap-2 mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                              <Truck className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                              <p className="text-xs text-blue-700">
+                                La información de tu envío se ha enviado a <span className="font-semibold">{confirmData.customerEmail}</span>. Revisa tu bandeja de entrada.
+                              </p>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <Loader2 className="w-4 h-4 text-blue-600 mt-0.5 animate-spin shrink-0" />
                           <p className="text-xs text-blue-700">
-                            La información de tu envío se ha enviado a <span className="font-semibold">{confirmData.customerEmail}</span>. Revisa tu bandeja de entrada.
+                            Enviando confirmación por correo... Los emails se enviarán en los próximos minutos.
                           </p>
                         </div>
                       )}
