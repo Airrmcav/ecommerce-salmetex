@@ -95,7 +95,7 @@ const InfoProduct = (props: InfoProductProps) => {
   const isAvailable = product.active && hasPrice;
 
   return (
-    <div className="max-w-2xl mx-auto p-3 bg-white rounded-lg absolute">
+    <div className="max-w-2xl mx-auto p-3 bg-white rounded-lg">
       <div className="flex items-center justify-between pr-5">
         <h1 className="text-3xl font-bold text-gray-900 mb-2 leading-tight">
           {product.productName}
@@ -254,7 +254,7 @@ const InfoProduct = (props: InfoProductProps) => {
       {/* Compartir */}
       <div className="my-4 max-w-87.5 sm:max-w-none">
         <div
-          className="flex items-center justify-center gap-2 mb-3"
+          className="md:flex md:flex-wrap hidden items-center justify-center gap-2 mb-3"
           aria-label="Compartir producto"
         >
           <Share2 className="w-5 h-5 text-gray-600" aria-hidden="true" />
@@ -309,7 +309,7 @@ const InfoProduct = (props: InfoProductProps) => {
 
       {/* Descripción */}
       {product.description && (
-        <div className="mb-6">
+        <div className="mb-6 p-2">
           <h2 className="text-xl font-semibold text-gray-900 mb-3">
             Descripción
           </h2>

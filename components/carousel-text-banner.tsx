@@ -213,7 +213,7 @@ const Carousel = () => {
                       <img
                         src={slide.image}
                         alt={slide.title}
-                        className="w-full max-w-md p-5 rounded-full lg:max-w-lg h-auto max-h-[350px] object-contain 
+                        className="w-full max-w-md p-5 hidden sm:block rounded-full lg:max-w-lg h-auto max-h-[350px] object-contain 
                                                          filter drop-shadow-2xl transform hover:scale-105 
                                                          transition-transform duration-500"
                         loading={index === 0 ? "eager" : "lazy"}
