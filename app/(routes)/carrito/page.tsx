@@ -17,12 +17,14 @@ import {
 import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { makePaymentRequest } from "@/api/payment";
+import { GuestCheckoutModal } from "@/components/checkout/GuestCheckoutModal";
 
 export default function Cart() {
   const { items, removeAll, getTotalPrice } = useCart();
   const [processingMethod, setProcessingMethod] = useState<
     "stripe" | "mercadopago" | null
   >(null);
+  const [isMPModalOpen, setIsMPModalOpen] = useState(false);
   const totalPrice = getTotalPrice();
   const stripePromise = loadStripe(
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
@@ -47,32 +49,18 @@ export default function Cart() {
   };
 
   const buyMercadoPago = async () => {
-    try {
-      setProcessingMethod("mercadopago");
-      const res = await makePaymentRequest.post("/mercado-pago/preference", {
-        products: items,
-        installments: 12,
-      });
+    // Ahora solo abre el modal en lugar de hacer la petición directamente
+    setIsMPModalOpen(true);
+  };
 
-      console.log("Respuesta Mercado Pago:", res.data);
+  const handleMercadoPagoSuccess = (initPoint: string) => {
+    window.location.href = initPoint;
+  };
 
-      // Redirigir a la URL de Mercado Pago
-      const initPoint =
-        res.data?.mercadoPagoPreference?.init_point || res.data?.init_point;
-
-      if (initPoint) {
-        window.location.href = initPoint;
-      } else {
-        console.error(
-          "No se encontró URL de Mercado Pago en la respuesta:",
-          res.data,
-        );
-        setProcessingMethod(null);
-      }
-    } catch (error) {
-      console.error("Error en Mercado Pago:", error);
-      setProcessingMethod(null);
-    }
+  const handleMercadoPagoError = (error: string) => {
+    console.error("Error en Mercado Pago:", error);
+    setProcessingMethod(null);
+    alert(`Error: ${error}`);
   };
 
   const totalItems = items.length;
@@ -172,10 +160,6 @@ export default function Cart() {
                         <span>Subtotal ({totalItems} productos)</span>
                         <span>{formatPrice(totalPrice)}</span>
                       </div>
-                      {/* <div className="flex justify-between text-gray-600">
-                                                <span>IVA (16%)</span>
-                                                <span>{formatPrice(totalPrice * 0.16)}</span>
-                                            </div> */}
                       <div className="flex justify-between text-green-600">
                         <span className="flex items-center">
                           <Truck className="w-4 h-4 mr-1" />
@@ -215,8 +199,6 @@ export default function Cart() {
                               Pagar con Stripe
                               <ArrowRight className="w-5 h-5 ml-2" />
                             </div>
-
-                            {/* Info extra */}
                             <div className="flex items-center mt-1 text-xs opacity-80">
                               <span className="mr-1">💳</span>
                               Pago en una sola exhibición
@@ -243,8 +225,6 @@ export default function Cart() {
                               Pagar con Mercado Pago
                               <ArrowRight className="w-5 h-5 ml-2" />
                             </div>
-
-                            {/* Info extra */}
                             <div className="flex items-center mt-1 text-xs opacity-80">
                               <span className="mr-1">🧾</span>
                               Hasta 12 meses sin intereses
@@ -286,6 +266,18 @@ export default function Cart() {
           </div>
         )}
       </div>
+
+      {/* Modal para checkout de Mercado Pago (invitado) */}
+      <GuestCheckoutModal
+        isOpen={isMPModalOpen}
+        onClose={() => {
+          setIsMPModalOpen(false);
+          setProcessingMethod(null);
+        }}
+        onSuccess={handleMercadoPagoSuccess}
+        onError={handleMercadoPagoError}
+        installments={12}
+      />
     </div>
   );
 }
