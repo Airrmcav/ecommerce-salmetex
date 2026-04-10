@@ -70,147 +70,49 @@ function SuccessContent() {
   const [error, setError] = useState<string | null>(null);
   const [cartCleared, setCartCleared] = useState(false);
 
-async confirmMercadoPago(ctx) {
-  try {
-    const { payment_id, status, external_reference } = ctx.request.body as {
-      payment_id: string;
-      status: string;
-      external_reference: string;
-    };
-
-    console.log(" Confirmando pago MP:", { payment_id, status, external_reference });
-
-    if (!payment_id) {
-      ctx.response.status = 400;
-      return { error: "payment_id es requerido" };
-    }
-
-    if (status !== "approved") {
-      return { success: false, message: "El pago no está aprobado" };
-    }
-
-    const orderId = parseInt(external_reference, 10);
-
-    if (!orderId || isNaN(orderId)) {
-      ctx.response.status = 400;
-      return { error: "external_reference inválido" };
-    }
-
-    // 🔥 CONSULTA COMPLETA con populate de products
-    const order = await strapi.entityService.findOne(
-      "api::order.order",
-      orderId,
-      {
-        populate: {
-          products: true, // 👈 Importante: hacer populate de los productos
-        },
-      },
+  const confirmMercadoPagoPayment = async () => {
+    const alreadyProcessed = sessionStorage.getItem(
+      `mp_processed_${paymentId}`,
     );
-
-    console.log("📦 Orden recuperada:", JSON.stringify(order, null, 2));
-
-    if (!order) {
-      return { success: false, message: "Orden no encontrada" };
+    if (alreadyProcessed) {
+      const cached = JSON.parse(alreadyProcessed);
+      setConfirmData(cached);
+      setLoading(false);
+      return;
     }
 
-    // 🔥 VALIDAR que tengamos los datos necesarios
-    if (!order.totalAmount || order.totalAmount <= 0) {
-      console.error("❌ totalAmount inválido:", order.totalAmount);
-    }
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/confirm-mercadopago`,
+        {
+          payment_id: paymentId,
+          status: paymentStatus,
+          external_reference: externalReference,
+        },
+      );
 
-    if (order.status === "paid") {
-      console.log("✅ Orden ya procesada:", orderId);
-      // ... (resto del código para orden ya pagada)
-    }
+      // 👇 Guardar en sessionStorage para recargas
+      sessionStorage.setItem(
+        `mp_processed_${paymentId}`,
+        JSON.stringify(res.data),
+      );
 
-    // ✅ Marcar como pagado
-    await strapi.service("api::order.order").update(orderId, {
-      data: { status: "paid" },
-    } as any);
-
-    // 🔥 PROCESAR shippingAddress de forma segura
-    const shippingAddressRaw = order.shippingAddress || {};
-    const shippingAddressForEmail = {
-      line1: shippingAddressRaw.line1 || "",
-      line2: shippingAddressRaw.line2 || "",
-      city: shippingAddressRaw.city || "",
-      state: shippingAddressRaw.state || "",
-      postal_code: shippingAddressRaw.postal_code || "",
-      country: shippingAddressRaw.country || "MX",
-    };
-
-    // 🔥 PROCESAR productos de forma segura
-    const productsRaw = order.products || [];
-    const lineItems = Array.isArray(productsRaw) 
-      ? productsRaw.map((p: any) => {
-          console.log("📦 Procesando producto:", p);
-          return {
-            description: p.title || p.productName || "Producto",
-            quantity: p.quantity || 1,
-            amount_total: Math.round((p.unit_price || p.price || 0) * 100),
-            currency: "MXN",
-          };
-        })
-      : [];
-
-    // 🔥 CALCULAR totalAmount correctamente (en centavos)
-    const totalAmountInCents = Math.round((order.totalAmount || 0) * 100);
-
-    console.log("💰 Total amount:", {
-      original: order.totalAmount,
-      inCents: totalAmountInCents,
-    });
-
-    const emailData: OrderEmailData = {
-      sessionId: String(payment_id),
-      customerName: order.customerName || "Cliente",
-      customerEmail: order.customerEmail || "",
-      shippingName: order.customerName || "Cliente",
-      shippingAddress: shippingAddressForEmail,
-      lineItems,
-      totalAmount: totalAmountInCents,
-      currency: "mxn",
-    };
-
-    console.log("📧 Email data:", JSON.stringify(emailData, null, 2));
-
-    // 📧 Enviar correos
-    setImmediate(async () => {
-      try {
-        await strapi.service("plugin::email.email").send({
-          to: "ventas@salmetexmed.com.mx",
-          subject: `🛒 Nueva Venta MP - ${order.customerName} - $${order.totalAmount} MXN`,
-          html: buildSalesEmailHtml(emailData),
-        });
-
-        if (order.customerEmail) {
-          await strapi.service("plugin::email.email").send({
-            to: order.customerEmail,
-            subject: `✅ Confirmación de compra - SALMETEXMED`,
-            html: buildCustomerEmailHtml(emailData),
-          });
-        }
-      } catch (e: any) {
-        console.error("Error enviando correos MP:", e.message);
+      setConfirmData(res.data);
+      if (res.data.success && !cartCleared) {
+        removeAll();
+        setCartCleared(true);
       }
-    });
-
-    return {
-      success: true,
-      emailsQueued: true,
-      customerName: order.customerName,
-      customerEmail: order.customerEmail,
-      shippingAddress: shippingAddressForEmail,
-      totalAmount: totalAmountInCents,
-      currency: "mxn",
-      lineItems,
-    };
-  } catch (error: any) {
-    console.error("🚨 Error confirmando pago MP:", error);
-    ctx.response.status = 500;
-    return { error: error.message };
-  }
-},
+    } catch (err: any) {
+      console.error("Error confirmando pago MP:", err);
+      setConfirmData({ success: true });
+      if (!cartCleared) {
+        removeAll();
+        setCartCleared(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (paymentId && paymentStatus === "approved") {
