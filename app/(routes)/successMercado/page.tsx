@@ -9,12 +9,13 @@ import {
   ShoppingBag,
   Mail,
   Loader2,
+  AlertCircle,
   Package,
   MapPin,
   Truck,
 } from "lucide-react";
 import Script from "next/script";
-import { useEffect, useState, Suspense, useCallback } from "react";
+import { useEffect, useState, Suspense } from "react";
 import axios from "axios";
 import { useCart } from "@/hooks/use-cart";
 
@@ -55,8 +56,6 @@ interface ConfirmResponse {
   message?: string;
 }
 
-const SESSION_STORAGE_KEY = "mp_processed_";
-
 function SuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -68,16 +67,70 @@ function SuccessContent() {
 
   const [loading, setLoading] = useState(true);
   const [confirmData, setConfirmData] = useState<ConfirmResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [cartCleared, setCartCleared] = useState(false);
 
-  const formatCurrency = useCallback((amount: number, currency: string) => {
+  const confirmMercadoPagoPayment = async () => {
+    const alreadyProcessed = sessionStorage.getItem(
+      `mp_processed_${paymentId}`,
+    );
+    if (alreadyProcessed) {
+      const cached = JSON.parse(alreadyProcessed);
+      setConfirmData(cached);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/confirm-mercadopago`,
+        {
+          payment_id: paymentId,
+          status: paymentStatus,
+          external_reference: externalReference,
+        },
+      );
+
+      // 👇 Guardar en sessionStorage para recargas
+      sessionStorage.setItem(
+        `mp_processed_${paymentId}`,
+        JSON.stringify(res.data),
+      );
+
+      setConfirmData(res.data);
+      if (res.data.success && !cartCleared) {
+        removeAll();
+        setCartCleared(true);
+      }
+    } catch (err: any) {
+      console.error("Error confirmando pago MP:", err);
+      setConfirmData({ success: true });
+      if (!cartCleared) {
+        removeAll();
+        setCartCleared(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (paymentId && paymentStatus === "approved") {
+      confirmMercadoPagoPayment();
+      return;
+    }
+
+    setLoading(false);
+  }, [sessionId, paymentId]);
+
+  const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat("es-MX", {
       style: "currency",
       currency: currency?.toUpperCase() || "MXN",
     }).format(amount / 100);
-  }, []);
+  };
 
-  const formatAddress = useCallback((addr: ShippingAddress | null) => {
+  const formatAddress = (addr: ShippingAddress | null) => {
     if (!addr) return null;
     const parts = [
       addr.line1,
@@ -89,65 +142,7 @@ function SuccessContent() {
       addr.country === "MX" ? "México" : addr.country,
     ].filter(Boolean);
     return parts;
-  }, []);
-
-  const confirmMercadoPagoPayment = useCallback(async () => {
-    if (!paymentId) return;
-
-    const cacheKey = `${SESSION_STORAGE_KEY}${paymentId}`;
-    const cached = sessionStorage.getItem(cacheKey);
-    
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached) as ConfirmResponse;
-        setConfirmData(parsed);
-        if (parsed.success && !cartCleared) {
-          removeAll();
-          setCartCleared(true);
-        }
-      } catch {
-        sessionStorage.removeItem(cacheKey);
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
-
-    try {
-      const res = await axios.post<ConfirmResponse>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/confirm-mercadopago`,
-        {
-          payment_id: paymentId,
-          status: paymentStatus,
-          external_reference: externalReference,
-        },
-      );
-
-      sessionStorage.setItem(cacheKey, JSON.stringify(res.data));
-      setConfirmData(res.data);
-      
-      if (res.data.success && !cartCleared) {
-        removeAll();
-        setCartCleared(true);
-      }
-    } catch {
-      setConfirmData({ success: true });
-      if (!cartCleared) {
-        removeAll();
-        setCartCleared(true);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [paymentId, paymentStatus, externalReference, cartCleared, removeAll]);
-
-  useEffect(() => {
-    if (paymentId && paymentStatus === "approved") {
-      confirmMercadoPagoPayment();
-    } else {
-      setLoading(false);
-    }
-  }, [paymentId, paymentStatus, confirmMercadoPagoPayment]);
+  };
 
   const isMP = !!paymentId;
   const showDetails = (sessionId || paymentId) && confirmData?.success;
@@ -155,17 +150,16 @@ function SuccessContent() {
   return (
     <div className="bg-gradient-to-br pt-5 from-blue-50 via-white to-green-50 flex items-center justify-center p-0">
       <div className="max-w-7xl w-full relative">
-        <Script id="conversion-event" strategy="afterInteractive">
+        {/* ✅ Script de conversión */}
+        <Script id="conversion-event">
           {`
-            if (typeof gtag === 'function') {
-              gtag('event', 'conversion', {
-                'send_to': 'AW-16830523296/PbBNCOqpj6kaEKDPtdk-'
-              });
-            }
+            gtag('event', 'conversion', {
+              'send_to': 'AW-16830523296/PbBNCOqpj6kaEKDPtdk-'
+            });
           `}
         </Script>
-        
         <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 transform animate-in fade-in-0 slide-in-from-bottom-8 duration-700">
+          {/* Header con check */}
           <div className="text-center">
             <div className="relative mb-8">
               <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-in zoom-in-50 duration-500 delay-200">
@@ -187,9 +181,11 @@ function SuccessContent() {
             )}
           </div>
 
+          {/* Detalles de la compra */}
           {showDetails && (
             <div className="mt-8 animate-in fade-in-0 duration-500 delay-500">
               <div className="grid md:grid-cols-2 gap-6">
+                {/* Columna izquierda: Productos */}
                 <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                   <div className="flex items-center gap-2 mb-4">
                     <Package className="w-5 h-5 text-blue-600" />
@@ -202,7 +198,7 @@ function SuccessContent() {
                     <div className="space-y-3">
                       {confirmData.lineItems.map((item, index) => (
                         <div
-                          key={`${item.description}-${index}`}
+                          key={index}
                           className="flex items-center justify-between py-2 border-b border-gray-200 last:border-0"
                         >
                           <div className="flex-1">
@@ -222,6 +218,7 @@ function SuccessContent() {
                         </div>
                       ))}
 
+                      {/* Total */}
                       <div className="flex items-center justify-between pt-3 mt-3 border-t-2 border-blue-200">
                         <p className="font-bold text-gray-900">Total</p>
                         <p className="font-bold text-xl text-blue-600">
@@ -251,7 +248,9 @@ function SuccessContent() {
                   )}
                 </div>
 
+                {/* Columna derecha: Envío y Correos */}
                 <div className="space-y-6">
+                  {/* Dirección de envío (solo Stripe la tiene) */}
                   {confirmData.shippingAddress && !isMP && (
                     <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                       <div className="flex items-center gap-2 mb-4">
@@ -273,6 +272,7 @@ function SuccessContent() {
                     </div>
                   )}
 
+                  {/* Estado de correos */}
                   <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                     <div className="flex items-center gap-2 mb-4">
                       <Mail className="w-5 h-5 text-blue-600" />
@@ -298,8 +298,8 @@ function SuccessContent() {
                               className={`text-xs font-semibold px-2 py-1 rounded-full ${confirmData.emailResults.ventas.sent ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
                             >
                               {confirmData.emailResults.ventas.sent
-                                ? "Enviado"
-                                : "Procesando"}
+                                ? "✅ Enviado"
+                                : "⏳ Enviando"}
                             </span>
                           </div>
 
@@ -325,8 +325,8 @@ function SuccessContent() {
                               className={`text-xs font-semibold px-2 py-1 rounded-full ${confirmData.emailResults.cliente.sent ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
                             >
                               {confirmData.emailResults.cliente.sent
-                                ? "Enviado"
-                                : "Procesando"}
+                                ? "✅ Enviado"
+                                : "⏳ Enviando"}
                             </span>
                           </div>
 
@@ -356,7 +356,7 @@ function SuccessContent() {
                               </div>
                             </div>
                             <span className="text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-700">
-                              Enviado
+                              ✅ Enviado
                             </span>
                           </div>
 
@@ -373,7 +373,7 @@ function SuccessContent() {
                               </div>
                             </div>
                             <span className="text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-700">
-                              Enviado
+                              ✅ Enviado
                             </span>
                           </div>
 
@@ -394,7 +394,8 @@ function SuccessContent() {
                         <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                           <Loader2 className="w-4 h-4 text-blue-600 mt-0.5 animate-spin shrink-0" />
                           <p className="text-xs text-blue-700">
-                            Enviando confirmación por correo...
+                            Enviando confirmación por correo... Los emails se
+                            enviarán en los próximos minutos.
                           </p>
                         </div>
                       )}
@@ -405,10 +406,19 @@ function SuccessContent() {
             </div>
           )}
 
+          {/* Loading state */}
           {loading && (sessionId || paymentId) && (
             <div className="flex items-center justify-center gap-3 py-8 mt-6">
               <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
               <span className="text-gray-600">Procesando tu pedido...</span>
+            </div>
+          )}
+
+          {/* Error state */}
+          {error && (
+            <div className="flex items-center justify-center gap-2 py-6 mt-6 text-amber-600 bg-amber-50 rounded-xl border border-amber-200">
+              <AlertCircle className="w-5 h-5" />
+              <span>Hubo un problema: {error}</span>
             </div>
           )}
 
