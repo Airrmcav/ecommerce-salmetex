@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 // Hook para uso en componentes cliente
 export function useGetProductBySlug(slug: string | string[]) {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products?filters[slug][$eq]=${slug}&populate=*`;
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products?filters[slug][$eq]=${slug}&populate=*&fields=*`;
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +15,7 @@ export function useGetProductBySlug(slug: string | string[]) {
         const res = await fetch(url);
         const json = await res.json();
         const data = Array.isArray(json?.data) ? json.data : [];
-
+console.log("RAW DATA:", json);
         const processed = data
           .map((item: any) => {
             try {

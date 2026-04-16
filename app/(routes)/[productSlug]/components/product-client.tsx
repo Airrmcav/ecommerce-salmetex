@@ -7,7 +7,7 @@ import CarouselProduct from "./carousel-product";
 import Breadcrumb from "@/components/BreadCrumbs";
 import InfoProduct from "./info-product";
 import { ProductType } from "@/types/product";
-import { renderCharacteristics } from "./renderCharacteristics";
+import { RenderCharacteristics } from "./renderCharacteristics";
 
 export default function ProductClient() {
   const params = useParams();
@@ -141,7 +141,7 @@ export default function ProductClient() {
           {/* Características */}
           {hasCharacteristics ? (
             <div className="mt-3 p-5">
-              {renderCharacteristics(parsedCharacteristics)}
+              <RenderCharacteristics data={parsedCharacteristics} />
             </div>
           ) : (
             <div className="text-center p-12">
