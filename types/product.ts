@@ -20,6 +20,7 @@ export type ProductType = {
   };
 
   price?: number;
+  purchaseType?: "buy" | "quote" | "contact";
   quantity?: number;
   isFeatured: boolean;
   active: boolean;

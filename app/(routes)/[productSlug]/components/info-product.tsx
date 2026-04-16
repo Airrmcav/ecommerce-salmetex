@@ -15,6 +15,10 @@ import {
   PhoneCall,
   ChevronDown,
   ChevronUp,
+  ExternalLink,
+  Minus,
+  Plus,
+  MessageCircle,
 } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { useLovedProducts } from "@/hooks/use-loved-products";
@@ -24,324 +28,296 @@ export type InfoProductProps = {
   product: ProductType;
 };
 
-const MercadoLibreLogo = () => (
-  <svg viewBox="0 0 256 180" className="w-5 h-5 shrink-0" aria-hidden="true">
-    <ellipse cx="128" cy="90" rx="120" ry="80" fill="#FFE600" />
-    <path
-      d="M70 95c10-10 20-15 35-15l20 15-10 10-20-5-15 10-15-15z"
-      fill="#2D3277"
-    />
-    <path
-      d="M186 95c-10-10-20-15-35-15l-20 15 10 10 20-5 15 10 15-15z"
-      fill="#2D3277"
-    />
-  </svg>
+// ─── sub-componentes pequeños ────────────────────────────────────────────────
+
+const AvailabilityBadge = ({
+  active,
+  purchaseType,
+}: {
+  active: boolean;
+  purchaseType?: "buy" | "quote" | "contact";
+}) => {
+  if (!active) {
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-300">
+        <XCircle className="w-3 h-3" />
+        No disponible
+      </span>
+    );
+  }
+
+  if (purchaseType !== "buy") {
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-300">
+        <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
+        Disponible bajo cotización
+      </span>
+    );
+  }
+
+  return (
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-300">
+      <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+      Disponible
+    </span>
+  );
+};
+
+const CategoryBadge = ({ label }: { label: string }) => (
+  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+    {label}
+  </span>
 );
 
-const badgeClass =
-  "inline-flex items-center gap-1.5 px-2.5 py-1 h-8 text-sm font-medium border rounded-md whitespace-nowrap";
+const AreaBadge = ({ label }: { label: string }) => (
+  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+    {label}
+  </span>
+);
 
-const InfoProduct = (props: InfoProductProps) => {
-  const { product } = props;
+const QuantitySelector = ({
+  value,
+  onIncrement,
+  onDecrement,
+}: {
+  value: number;
+  onIncrement: () => void;
+  onDecrement: () => void;
+}) => (
+  <div className="flex items-center gap-3">
+    <span className="text-sm text-gray-500">Cantidad:</span>
+    <div className="inline-flex items-center border border-gray-200 rounded-lg overflow-hidden">
+      <button
+        onClick={onDecrement}
+        aria-label="Reducir cantidad"
+        className="w-8 h-8 flex items-center cursor-pointer justify-center bg-gray-50 hover:bg-gray-100 transition-colors"
+      >
+        <Minus className="w-3 h-3" />
+      </button>
+      <span className="w-8 text-center text-sm font-medium">{value}</span>
+      <button
+        onClick={onIncrement}
+        aria-label="Aumentar cantidad"
+        className="w-8 h-8 flex items-center cursor-pointer justify-center bg-gray-50 hover:bg-gray-100 transition-colors"
+      >
+        <Plus className="w-3 h-3" />
+      </button>
+    </div>
+  </div>
+);
+
+// ─── componente principal ─────────────────────────────────────────────────────
+
+const InfoProduct = ({ product }: InfoProductProps) => {
   const { addItem } = useCart();
   const { addLoveItems } = useLovedProducts();
   const [quantity, setQuantity] = useState(1);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
-  const handleIncrement = () => setQuantity((prev) => prev + 1);
-  const handleDecrement = () =>
-    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+  const isBuyable = product.purchaseType === "buy";
+  const hasPrice = Boolean(product.price && product.price > 0);
+  const isAvailable = product.active && hasPrice;
+  const isQuote = product.purchaseType !== "buy";
 
-  const handleAddToCart = () => {
-    const productWithQuantity = { ...product, quantity };
-    addItem(productWithQuantity);
-  };
+  const handleAddToCart = () => addItem({ ...product, quantity });
 
-  const handleWhatsApp = () => {
-    const phoneNumber = "8445954660";
-    const message = `Hola, quiero *cotizar ahora* el producto: ${product.productName}.`;
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+  const handleWhatsApp = (type: "quote" | "info") => {
+  const message =
+    type === "quote"
+      ? `Hola, quiero cotizar el producto *${product.productName}*. ¿Me puedes dar precio y tiempo de entrega?`
+    : `Hola, tengo algunas dudas sobre el producto *${product.productName}*. ¿Me puedes asesorar?`;
 
-    if (
-      typeof window !== "undefined" &&
-      (window as any).gtag_report_conversion
-    ) {
-      (window as any).gtag_report_conversion();
-    }
+  const url = `https://wa.me/8445954660?text=${encodeURIComponent(message)}`;
 
-    window.open(url, "_blank");
-  };
+  if (
+    typeof window !== "undefined" &&
+    (window as any).gtag_report_conversion
+  ) {
+    (window as any).gtag_report_conversion();
+  }
 
-  const handleShare = (
-    platform: "facebook" | "twitter" | "instagram" | "mail",
-  ) => {
+  window.open(url, "_blank");
+};
+
+  const handleShare = (platform: "facebook" | "mail") => {
     if (typeof window === "undefined") return;
-    const currentUrl = encodeURIComponent(window.location.href);
-    const productTitle = encodeURIComponent(
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(
       `Mira este producto: ${product.productName}`,
     );
 
-    const urls: Record<string, string> = {
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`,
-      twitter: `https://twitter.com/intent/tweet?url=${currentUrl}&text=${productTitle}`,
-      instagram: `https://www.instagram.com/`,
-      mail: `mailto:?subject=${productTitle}&body=${encodeURIComponent(`Échale un vistazo: ${window.location.href}`)}`,
+    const urls: Record<typeof platform, string> = {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+      mail: `mailto:?subject=${title}&body=${encodeURIComponent(window.location.href)}`,
     };
 
     window.open(urls[platform], "_blank");
   };
 
-  const hasPrice = product.price && product.price > 0;
-  const isAvailable = product.active && hasPrice;
-
   return (
-    <div className="max-w-2xl mx-auto p-3 bg-white rounded-lg">
-      <div className="flex items-center justify-between pr-5">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 leading-tight">
-          {product.productName}
-        </h1>
+    <div className="max-w-2xl mx-auto p-4 space-y-4">
+      <div className="flex flex-wrap items-center gap-1.5">
+        
+        <CategoryBadge label={product.category.categoryName} />
+        {product.area && <AreaBadge label={product.area} />}
+        <AvailabilityBadge active={product.active}  purchaseType={product.purchaseType}/>
       </div>
+      <h1 className="text-2xl font-semibold text-gray-900 leading-snug">
+        {product.productName}
+      </h1>
       {product.programa && (
-        <div className="mb-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
-          <div className="flex items-center gap-4">
-            <div>
-              <p className="text-sm text-gray-500">Programa</p>
-              <h2 className="text-lg font-semibold text-gray-900">
-                {product.programa.namePrograma}
-              </h2>
-              {product.programa.description && (
-                <>
-                  <p
-                    className={`text-xs text-gray-600 mt-1 ${
-                      isDescriptionExpanded ? "" : "line-clamp-2"
-                    }`}
-                  >
-                    {product.programa.description}
-                  </p>
-                  <button
-                    onClick={() =>
-                      setIsDescriptionExpanded(!isDescriptionExpanded)
-                    }
-                    aria-expanded={isDescriptionExpanded}
-                    className="flex cursor-pointer items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-2 font-medium transition-colors"
-                  >
-                    {isDescriptionExpanded ? (
-                      <>
-                        Ver menos <ChevronUp className="w-4 h-4" />
-                      </>
-                    ) : (
-                      <>
-                        Ver más <ChevronDown className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
+        <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <p className="text-xs text-gray-400 uppercase tracking-wide mb-0.5">
+            Programa
+          </p>
+          <p className="text-sm font-semibold text-gray-900">
+            {product.programa.namePrograma}
+          </p>
+          {product.programa.description && (
+            <>
+              <p
+                className={`text-xs text-gray-600 mt-1 leading-relaxed ${isDescriptionExpanded ? "" : "line-clamp-2"}`}
+              >
+                {product.programa.description}
+              </p>
+              <button
+                onClick={() => setIsDescriptionExpanded((v) => !v)}
+                aria-expanded={isDescriptionExpanded}
+                className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 mt-1.5 font-medium"
+              >
+                {isDescriptionExpanded ? (
+                  <>
+                    <ChevronUp className="w-3 h-3" /> Ver menos
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-3 h-3" /> Ver más
+                  </>
+                )}
+              </button>
+            </>
+          )}
         </div>
       )}
-
-      {/* Badges: Categoría, Área, Disponibilidad, Mercado Libre — todos con mismas dimensiones */}
-      <div className="mb-0 flex justify-start gap-2 flex-wrap items-center">
-        {/* Categoría */}
-        <span
-          className={`${badgeClass} bg-blue-50 text-blue-700 border-blue-200 p-5`}
-        >
-          {product.category.categoryName}
-        </span>
-
-        {/* Área */}
-        {product.area && (
-          <span
-            className={`${badgeClass} bg-gray-50 text-gray-700 border-gray-200 p-5`}
-          >
-            {product.area}
-          </span>
-        )}
-
-        {/* Disponibilidad */}
-        <span
-          className={`${badgeClass} ${
-            product.active
-              ? "bg-green-100 text-green-800 border-green-300 p-5"
-              : "bg-red-100 text-red-800 border-red-300"
-          }`}
-        >
-          {product.active ? (
-            <>
-              <CheckCircle className="w-4 h-4 shrink-0 " aria-hidden="true" />
-              Disponible
-            </>
-          ) : (
-            <>
-              <XCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
-              No Disponible
-            </>
-          )}
-        </span>
-      </div>
-
-      {/* Precio */}
-      <div className="mb-3 mt-2">
-        <a
-          href={product.mercadolibre_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Ver ${product.productName} en Mercado Libre`}
-          className="flex items-center gap-3"
-        >
-          <span className="text-4xl font-bold text-gray-900">
+      <div>
+        <div className="flex items-baseline gap-2">
+          <span className="text-3xl font-semibold text-gray-900">
             {hasPrice ? formatPrice(product.price!) : "Consultar precio"}
           </span>
-          {hasPrice && <span className="text-gray-600">IVA incluido</span>}
-          {product.mercadolibre_url && (
-            <img
-              src="/logo/ml.png"
-              alt="Mercado Libre"
-              className="h-24 w-auto object-contain"
-            />
+          {hasPrice && (
+            <span className="text-sm text-gray-500">MXN · IVA incluido</span>
           )}
-        </a>
+        </div>
+        {product.mercadolibre_url && (
+          <a
+            href={product.mercadolibre_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 mt-1 text-xs text-blue-600 hover:underline"
+          >
+            <ExternalLink className="w-3 h-3" />
+            Ver en Mercado Libre
+          </a>
+        )}
       </div>
 
-      {/* Agregar al carrito y Favoritos */}
-      <div className="flex gap-2 mb-0 max-w-87.5 sm:max-w-none">
-        <Button
-          className="flex-1 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 text-lg font-normal rounded-lg"
-          disabled={!isAvailable}
-          onClick={handleAddToCart}
-          aria-label={
-            !hasPrice
-              ? "Consultar precio de este producto"
-              : `Agregar ${product.productName} al carrito`
-          }
-          title={
-            !hasPrice
-              ? "Este producto no tiene precio definido"
-              : "Agregar al carrito"
-          }
-        >
-          <ShoppingCart className="w-5 h-5 mr-2" aria-hidden="true" />
-          {!hasPrice ? "Consultar precio" : "Agregar al Carrito"}
-        </Button>
-
-        <Button
-          variant="outline"
-          onClick={() => addLoveItems(product)}
-          aria-label={`Agregar ${product.productName} a favoritos`}
-          className="flex-1 sm:flex-none px-4 py-3 border-2 border-gray-300 hover:border-red-400 hover:bg-red-50 rounded-lg group cursor-pointer"
-        >
-          <Heart
-            className="w-5 h-5 group-hover:fill-red-400 group-hover:text-red-400 transition-all"
-            aria-hidden="true"
+      <Separator />
+      <div className="space-y-3">
+        {isBuyable && isAvailable && (
+          <QuantitySelector
+            value={quantity}
+            onIncrement={() => setQuantity((v) => v + 1)}
+            onDecrement={() => setQuantity((v) => Math.max(1, v - 1))}
           />
-        </Button>
-      </div>
+        )}
 
-      {/* Cotizar por WhatsApp */}
-      <div className="my-2">
-        <Button
-          className="w-full cursor-pointer bg-green-500 hover:bg-green-600 text-white py-4 px-6 text-lg font-medium rounded-lg flex items-center justify-center gap-3"
-          onClick={handleWhatsApp}
-          aria-label={`Cotizar ${product.productName} por WhatsApp`}
-        >
-          <PhoneCall aria-hidden="true" />
-          Cotizar por WhatsApp
-        </Button>
-      </div>
-
-      {/* Compartir */}
-      <div className="my-4 max-w-87.5 sm:max-w-none">
-        <div
-          className="md:flex md:flex-wrap hidden items-center justify-center gap-2 mb-3"
-          aria-label="Compartir producto"
-        >
-          <Share2 className="w-5 h-5 text-gray-600" aria-hidden="true" />
-          <span className="font-medium text-gray-900">Compartir</span>
+        <div className="flex gap-2">
+          {isBuyable ? (
+            <Button
+              className="flex-1 bg-blue-600 cursor-pointer hover:bg-blue-700 text-white"
+              disabled={!isAvailable}
+              onClick={handleAddToCart}
+            >
+              <ShoppingCart className="w-4 h-4 mr-2 " />
+              {isAvailable ? "Agregar al carrito" : "No disponible"}
+            </Button>
+          ) : (
+            <Button
+              className="flex-1 cursor-pointer bg-orange-500 hover:bg-orange-600 text-white"
+              onClick={() => handleWhatsApp("quote")}
+            >
+              <PhoneCall className="w-4 h-4 mr-2" />
+              Solicitar cotización
+            </Button>
+          )}
 
           <Button
             variant="outline"
-            size="sm"
-            className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-blue-50 border-blue-200 hover:bg-blue-100 text-blue-700"
-            onClick={() => handleShare("facebook")}
-            aria-label="Compartir en Facebook"
+            onClick={() => addLoveItems(product)}
+            aria-label={`Agregar ${product.productName} a favoritos`}
+            className="px-3 border-gray-200 cursor-pointer hover:border-red-300 hover:bg-red-50 group"
           >
-            <Facebook className="w-4 h-4" aria-hidden="true" />
-            Facebook
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700"
-            onClick={() => handleShare("twitter")}
-            aria-label="Compartir en X (Twitter)"
-          >
-            <Twitter className="w-4 h-4" aria-hidden="true" />X
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-pink-50 border-pink-200 hover:bg-pink-100 text-pink-700"
-            onClick={() => handleShare("instagram")}
-            aria-label="Ir a Instagram de Salmetexmed"
-          >
-            <Instagram className="w-4 h-4" aria-hidden="true" />
-            Instagram
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="hidden sm:flex cursor-pointer items-center gap-2 px-4 py-2 bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700"
-            onClick={() => handleShare("mail")}
-            aria-label="Compartir por correo electrónico"
-          >
-            <Mail className="w-4 h-4" aria-hidden="true" />
-            Correo
+            <Heart className="w-4 h-4 group-hover:fill-red-400 group-hover:text-red-400 transition-all" />
           </Button>
         </div>
+        <Button
+          className="w-full bg-green-500 cursor-pointer hover:bg-green-600 text-white"
+          onClick={() => handleWhatsApp("info")}
+          aria-label={`Cotizar ${product.productName} por WhatsApp`}
+        >
+          <MessageCircle className="w-4 h-4 mr-2" />
+          Hablar con un asesor
+        </Button>
+      </div>
+      <div className="hidden md:flex items-center gap-2 flex-wrap">
+        <Share2 className="w-4 h-4 text-gray-400" />
+        <span className="text-xs text-gray-400 mr-1">Compartir:</span>
+        {[
+          { id: "facebook" as const, label: "Facebook", icon: Facebook },
+          { id: "mail" as const, label: "Correo", icon: Mail },
+        ].map(({ id, label, icon: Icon }) => (
+          <Button
+            key={id}
+            variant="outline"
+            size="sm"
+            className="text-xs h-7 px-3 cursor-pointer"
+            onClick={() => handleShare(id)}
+            aria-label={`Compartir en ${label}`}
+          >
+            <Icon className="w-3 h-3 mr-1" />
+            {label}
+          </Button>
+        ))}
       </div>
 
-      <Separator className="my-3" />
-
-      {/* Descripción */}
+      <Separator />
       {product.description && (
-        <div className="mb-6 p-2">
-          <h2 className="text-xl font-semibold text-gray-900 mb-3">
+        <div>
+          <h2 className="text-base font-semibold text-gray-900 mb-2">
             Descripción
           </h2>
-          <p className="text-gray-700 leading-relaxed text-sm text-justify">
+          <p className="text-sm text-gray-600 leading-relaxed">
             {product.description}
           </p>
         </div>
       )}
-
-      {/* Características */}
       {Array.isArray(product.characteristics) &&
         product.characteristics.length > 0 && (
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-base font-semibold text-gray-900 mb-2">
               Características
             </h2>
-            <div className="space-y-3">
-              {product.characteristics.map(
-                (characteristic: string, index: number) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
-                  >
-                    <CheckCircle
-                      className="w-5 h-5 text-green-600 mt-0.5 shrink-0"
-                      aria-hidden="true"
-                    />
-                    <span className="text-gray-700">{characteristic}</span>
-                  </div>
-                ),
-              )}
-            </div>
+            <ul className="space-y-2">
+              {product.characteristics.map((item: string, i: number) => (
+                <li
+                  key={i}
+                  className="flex items-start gap-2 text-sm text-gray-700 bg-gray-50 rounded-lg p-2.5"
+                >
+                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
     </div>
