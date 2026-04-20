@@ -21,7 +21,9 @@ import {
   ShoppingCart,
   ChevronRight,
   ChevronLeft,
+  PhoneCall,
 } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import IconButton from "./icon-button";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
@@ -30,8 +32,21 @@ import { useLovedProducts } from "@/hooks/use-loved-products";
 const FeaturedProducts = () => {
   const { loading, result }: ResponseType = useGetFeaturedProducts();
   const router = useRouter();
-  const { addItem, items } = useCart();
+  const { addItem } = useCart();
   const { addLoveItems } = useLovedProducts();
+
+  // ✅ Función WhatsApp (personaliza el número)
+  const handleWhatsApp = (productName: string, type: "quote" | "info") => {
+    const message =
+      type === "quote"
+        ? `Hola, me interesa solicitar una cotización para: ${productName}`
+        : `Hola, quiero más información sobre: ${productName}`;
+    const phone = "5215512345678"; // ⚠️ REEMPLAZA CON TU NÚMERO REAL
+    window.open(
+      `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+      "_blank",
+    );
+  };
 
   return (
     <div className="max-w-7xl mb-20 mx-auto sm:py-0 sm:px-6 lg:px-8">
@@ -54,7 +69,7 @@ const FeaturedProducts = () => {
 
       {/* Carousel Section */}
       <div className="relative">
-        {/* Mobile swipe hint - Mejorado */}
+        {/* Mobile swipe hint */}
         <div className="md:hidden mb-4 flex justify-center items-center gap-2">
           <div className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-50 to-indigo-50 rounded-full border border-blue-200 shadow-sm">
             <ChevronLeft className="w-4 h-4 text-blue-600 animate-pulse" />
@@ -65,7 +80,7 @@ const FeaturedProducts = () => {
           </div>
         </div>
 
-        {/* Desktop hint - Nuevo */}
+        {/* Desktop hint */}
         <div className="hidden md:block mb-4 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-100">
             <ChevronLeft className="w-4 h-4 text-blue-600" />
@@ -89,8 +104,10 @@ const FeaturedProducts = () => {
                   description,
                   active,
                   price,
+                  purchaseType,
                 } = product;
                 const imageUrl = images?.[0]?.url;
+                const isBuyable = purchaseType === "buy";
 
                 return (
                   <CarouselItem
@@ -100,11 +117,11 @@ const FeaturedProducts = () => {
                     <div
                       className="h-full cursor-pointer"
                       onClick={() => {
-                        if (product.slug === "productos-destacados") {
-                          router.push(`/productos-destacados`);
-                        } else {
-                          router.push(`/${product.slug}`);
-                        }
+                        router.push(
+                          product.slug === "productos-destacados"
+                            ? `/productos-destacados`
+                            : `/${product.slug}`,
+                        );
                       }}
                     >
                       <Card className="group h-full border-0 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white rounded-2xl overflow-hidden">
@@ -160,15 +177,13 @@ const FeaturedProducts = () => {
                             {/* Category Badge */}
                             <div className="absolute bottom-3 left-3">
                               <Badge className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-xs font-medium">
-                                {category && category.categoryName
-                                  ? category.categoryName
-                                  : "Categoría"}
+                                {category?.categoryName || "Categoría"}
                               </Badge>
                             </div>
                           </div>
 
                           {/* Content */}
-                          <div className="p-4 flex-1 flex flex-col min-h-55">
+                          <div className="p-4 flex-1 flex flex-col min-h-[140px]">
                             <h2 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200 min-h-14 flex items-start">
                               {productName}
                             </h2>
@@ -192,51 +207,40 @@ const FeaturedProducts = () => {
                                 </span>
                               </div>
                             )}
-
-                            {/* Action Buttons */}
                             <div className="flex gap-2 mt-auto">
+                              {isBuyable ? (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    addItem({ ...product, quantity: 1 });
+                                  }}
+                                  className="flex-1 py-2.5 px-3 rounded-lg font-medium text-sm bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+                                >
+                                  <ShoppingCart className="w-4 h-4" />
+                                  Agregar al carrito
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleWhatsApp(productName, "quote");
+                                  }}
+                                  className="flex-1 py-2.5 px-3 rounded-lg font-medium text-sm bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+                                >
+                                  <PhoneCall className="w-4 h-4" />
+                                  Solicitar cotización
+                                </button>
+                              )}
+
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  if (product.slug === "productos-destacados") {
-                                    router.push(`/productos-destacados`);
-                                  } else {
-                                    router.push(`/${product.slug}`);
-                                  }
+                                  handleWhatsApp(productName, "quote");
                                 }}
-                                className={`cursor-pointer flex-1 py-2.5 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${
-                                  active
-                                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
-                                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                }`}
-                                disabled={!active}
-                                aria-label={`Ver detalles de ${productName}`}
+                                className=" py-2.5 px-3 rounded-lg font-medium text-sm bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
                               >
-                                Ver Detalles
+                                <FaWhatsapp className="w-4 h-4" />
                               </button>
-                              <IconButton
-                                onClick={(e) => {
-                                  e?.stopPropagation();
-                                  const productWithQuantity = {
-                                    ...product,
-                                    quantity: 1,
-                                  };
-                                  addItem(productWithQuantity);
-                                }}
-                                icon={<ShoppingCart size={20} />}
-                                className={`${!product.price || product.price <= 0 ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"} text-white shadow-md hover:shadow-lg`}
-                                disabled={!product.price || product.price <= 0}
-                                title={
-                                  !product.price || product.price <= 0
-                                    ? "Este producto no tiene precio definido"
-                                    : "Agregar al carrito"
-                                }
-                                aria-label={
-                                  !product.price || product.price <= 0
-                                    ? "Este producto no tiene precio definido"
-                                    : `Agregar ${productName} al carrito`
-                                }
-                              />
                             </div>
                           </div>
                         </CardContent>
@@ -251,7 +255,7 @@ const FeaturedProducts = () => {
           <CarouselPrevious className="cursor-pointer hidden md:flex -left-12 bg-white shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600" />
           <CarouselNext className="cursor-pointer hidden md:flex -right-12 bg-white shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600" />
 
-          {/* Navigation Arrows - Mobile - NUEVO */}
+          {/* Navigation Arrows - Mobile */}
           <CarouselPrevious className="cursor-pointer md:hidden left-2 bg-white/90 backdrop-blur-sm shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600 w-10 h-10" />
           <CarouselNext className="cursor-pointer md:hidden right-2 bg-white/90 backdrop-blur-sm shadow-lg border-2 hover:bg-blue-50 hover:border-blue-200 text-gray-700 hover:text-blue-600 w-10 h-10" />
         </Carousel>

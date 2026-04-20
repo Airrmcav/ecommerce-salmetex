@@ -4,12 +4,19 @@ import { Badge } from "@/components/ui/badge";
 import { ProductType } from "@/types/product";
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle, XCircle, Heart, ShoppingCart } from "lucide-react";
+import {
+  CheckCircle,
+  XCircle,
+  Heart,
+  ShoppingCart,
+  PhoneCall,
+} from "lucide-react";
 import IconButton from "@/components/icon-button";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/lib/formatPrice";
 import { useCart } from "@/hooks/use-cart";
 import { useLovedProducts } from "@/hooks/use-loved-products";
+import { FaWhatsapp } from "react-icons/fa";
 
 type ProductCardProps = {
   product: ProductType;
@@ -22,9 +29,22 @@ const ProductCard = ({ product, viewMode = "grid" }: ProductCardProps) => {
   const { addLoveItems } = useLovedProducts();
 
   const hasPrice = product.price && product.price > 0;
+  const isBuyable = product.purchaseType === "buy";
+
+  const handleWhatsApp = (productName: string, type: "quote" | "info") => {
+    const message =
+      type === "quote"
+        ? `Hola, me interesa solicitar una cotización para: ${productName}`
+        : `Hola, quiero más información sobre: ${productName}`;
+    const phone = "5215512345678"; // ⚠️ REEMPLAZA CON TU NÚMERO REAL
+    window.open(
+      `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+      "_blank",
+    );
+  };
 
   return (
-    <div 
+    <div
       className="relative p-0 transition-all cursor-pointer"
       onClick={() => router.push(`/${product.slug}`)}
     >
@@ -32,14 +52,15 @@ const ProductCard = ({ product, viewMode = "grid" }: ProductCardProps) => {
         <div className="py-1 px-0">
           <div className="group h-full border-0 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white rounded-2xl overflow-hidden">
             <div className="p-0 h-full flex flex-col">
-
               {/* Imagen */}
               <div className="relative overflow-hidden bg-white h-52 flex items-center justify-center">
                 {product.images && product.images.length > 0 ? (
                   <div className="relative w-full h-full">
                     <Image
                       src={product.images[0].url}
-                      alt={product.images[0].alternativeText || product.productName}
+                      alt={
+                        product.images[0].alternativeText || product.productName
+                      }
                       fill
                       sizes="(max-width: 768px) 90vw, (max-width: 1280px) 45vw, 30vw"
                       className="object-contain group-hover:scale-105 transition-transform duration-300"
@@ -48,7 +69,9 @@ const ProductCard = ({ product, viewMode = "grid" }: ProductCardProps) => {
                   </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                    <span className="text-4xl" aria-hidden="true">🏥</span>
+                    <span className="text-4xl" aria-hidden="true">
+                      🏥
+                    </span>
                   </div>
                 )}
 
@@ -76,7 +99,12 @@ const ProductCard = ({ product, viewMode = "grid" }: ProductCardProps) => {
                     e?.stopPropagation();
                     addLoveItems(product);
                   }}
-                  icon={<Heart className="w-4 h-4 text-gray-800 hover:text-red-500 transition-colors" aria-hidden="true" />}
+                  icon={
+                    <Heart
+                      className="w-4 h-4 text-gray-800 hover:text-red-500 transition-colors"
+                      aria-hidden="true"
+                    />
+                  }
                   className="absolute top-3 left-3 p-2 rounded-full bg-gray-300/5 backdrop-blur-sm hover:bg-white transition-all duration-200"
                   aria-label={`Agregar ${product.productName} a favoritos`}
                   title="Agregar a favoritos"
@@ -111,36 +139,58 @@ const ProductCard = ({ product, viewMode = "grid" }: ProductCardProps) => {
                   </div>
                 )}
 
-                {/* Botones */}
                 <div className="flex gap-2 mt-auto">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/${product.slug}`);
-                    }}
-                    className={`cursor-pointer flex-1 py-2.5 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${
-                      product.active
-                        ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
-                        : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    }`}
-                    disabled={!product.active}
-                    aria-label={`Ver detalles de ${product.productName}`}
-                  >
-                    Ver Detalles
-                  </button>
-                  <IconButton
-                    onClick={(e) => {
-                      e?.stopPropagation();
-                      addItem(product);
-                    }}
-                    icon={<ShoppingCart size={20} aria-hidden="true" />}
-                    className={`${
-                      !hasPrice ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
-                    } text-white shadow-md hover:shadow-lg`}
-                    disabled={!hasPrice}
-                    title={!hasPrice ? "Este producto no tiene precio definido" : "Agregar al carrito"}
-                    aria-label={!hasPrice ? "Producto sin precio definido" : `Agregar ${product.productName} al carrito`}
-                  />
+                  {isBuyable ? (
+                    <>
+                      {/* 🛒 Comprar */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addItem({ ...product, quantity: 1 });
+                        }}
+                        className="flex-1 py-2.5 px-3 rounded-lg font-medium text-sm bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+                      >
+                        <ShoppingCart className="w-4 h-4" />
+                        Agregar
+                      </button>
+
+                      {/* 💬 WhatsApp secundario */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleWhatsApp(`${product.productName}`, "info");
+                        }}
+                        className="py-2.5 px-3 rounded-lg bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center"
+                      >
+                        <FaWhatsapp className="w-4 h-4" />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {/* 📞 Cotización */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleWhatsApp(`${product.productName}`, "quote");
+                        }}
+                        className="flex-1 py-2.5 px-3 rounded-lg font-medium text-sm bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+                      >
+                        <PhoneCall className="w-4 h-4" />
+                        Cotizar
+                      </button>
+
+                      {/* 💬 WhatsApp principal */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleWhatsApp(`${product.productName}`, "quote");
+                        }}
+                        className="py-2.5 px-3 cursor-pointer rounded-lg bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center"
+                      >
+                        <FaWhatsapp className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
