@@ -50,7 +50,7 @@ export const dataCarouselTop = [
     id: 3,
     title: "Iluminación Quirúrgica Profesional para quirófano",
     subtitle: "Stock Disponible",
-    description: "Lampara de cirugía sin sombreado de 1 brazoL",
+    description: "Lampara de cirugía sin sombreado de 1 brazo",
     features: [
       "Iluminación clara y precisa",
       "Uso médico profesional",
@@ -58,6 +58,23 @@ export const dataCarouselTop = [
     ],
     link: "/la-clinica-es-nuestra",
     image: "carousel/lampara.png",
+    ctaText: "Cotiza por WhatsApp Ahora",
+    badge: "EQUIPO MÉDICO",
+    phone: "844 595 4660",
+    website: "www.salmetexmed.com.mx",
+  },
+  {
+    id: 4,
+    title: "Genera ingresos con ultrasonido en tu consultorio",
+    subtitle: "Recupera tu inversión en pocos meses",
+    description: "COLPOSCOPIO + CÁMARA 2K",
+    features: [
+      "Ideal para ginecología",
+      "Imagen clara y precisa",
+      "Listo para uso clínico",
+    ],
+    link: "/la-clinica-es-nuestra",
+    image: "carousel/Colpos.png",
     ctaText: "Cotiza por WhatsApp Ahora",
     badge: "EQUIPO MÉDICO",
     phone: "844 595 4660",
@@ -89,7 +106,7 @@ export default function MainCarousel() {
 
   return (
     // FIX 1: Altura mínima explícita para que absolute inset-0 funcione correctamente
-    <div className="relative w-full min-h-[480px] md:min-h-[410px] overflow-hidden">
+    <div className="relative w-full min-h-120 md:min-h-99.5 overflow-hidden">
       {dataCarouselTop.map((slide, index) => (
         <div
           key={slide.id}
@@ -101,7 +118,7 @@ export default function MainCarousel() {
           }`}
         >
           {/* Contenido principal */}
-          <div className="relative z-10 h-full flex flex-col px-2 ">
+          <div className="relative z-10 h-full flex flex-col px-2">
             {/* Header con título */}
             <div className="shrink-0 text-center">
               <div className="inline-block">

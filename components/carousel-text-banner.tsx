@@ -6,7 +6,7 @@ import TopCircles from "./index/TopCircles";
 
 export default function CarouselLayout() {
   return (
-    <main className="flex flex-col mb-5 w-full h-[70vh] bg-linear-to-b from-blue-700 via-blue-300 to-white overflow-hidden relative">
+    <main className="flex flex-col mb-5 w-full h-[70vh] bg-linear-to-b from-blue-400 via-blue-100 to-white overflow-hidden relative">
       
       {/* Sección Superior */}
       <section className="flex-[0.4] w-full ">
@@ -14,7 +14,7 @@ export default function CarouselLayout() {
       </section>
 
       {/* Sección Central */}
-      <section className="flex-[1.6] w-full ">
+      <section className="flex-[1.6] w-full pt-5">
         <MainCarousel />
       </section>
 
