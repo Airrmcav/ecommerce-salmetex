@@ -1,3 +1,5 @@
+import { VariantType } from "./variant";
+
 export type ProductType = {
   id: number;
   documentId: string;
@@ -20,7 +22,9 @@ export type ProductType = {
   };
 
   price?: number;
+  variants?: VariantType[];
   purchaseType?: "buy" | "quote" | "contact";
+  selectedVariant?: VariantType;
   quantity?: number;
   isFeatured: boolean;
   active: boolean;
