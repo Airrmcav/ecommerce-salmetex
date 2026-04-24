@@ -105,7 +105,7 @@ export default function MainCarousel() {
   const slide = dataCarouselTop[currentSlide];
 
   return (
-    <div className="relative w-full min-h-120 md:min-h-full overflow-hidden">
+    <div className="relative w-full  md:min-h-full">
       {dataCarouselTop.map((slide, index) => (
         <div
           key={slide.id}
@@ -135,7 +135,7 @@ export default function MainCarousel() {
             </div>
 
             {/* Contenido central */}
-            <div className="flex-1 flex flex-col lg:flex-row items-start justify-center gap-2 md:gap-6 min-h-0">
+            <div className="flex-1 flex flex-col lg:flex-row items-center justify-end gap-4 md:gap-6">
               <div className="hidden lg:flex flex-col justify-center space-y-1 md:space-y-2 w-1/4 px-2">
                 <p className="text-blue-800 font-semibold text-xs md:text-sm uppercase tracking-wide mb-3 md:mb-6">
                   {slide.description}
@@ -152,16 +152,13 @@ export default function MainCarousel() {
                 ))}
               </div>
 
-              {/* Columna central - Imagen */}
               <div className="flex-1 flex items-center justify-center relative min-h-0 px-2">
                 <div className="relative z-10 w-full flex items-center justify-center">
+                  {/* Imagen */}
                   <img
                     src={slide.image}
                     alt={slide.title}
-                    className="w-full"
-                    // FIX 4: Reducida altura máx para que no tape el footer
-                    style={{ maxHeight: "325px", objectFit: "contain" }}
-                    loading={index === 0 ? "eager" : "lazy"}
+                    className="w-full object-contain max-h-[220px] md:max-h-[300px]"
                   />
                 </div>
               </div>
@@ -229,6 +226,8 @@ export default function MainCarousel() {
       ))}
 
       {/* Flechas */}
+      <div className="hidden md:block">
+
       <button
         onClick={prevSlide}
         className="absolute cursor-pointer left-2 md:left-30 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm text-blue-900 transition-all duration-300 hover:scale-110 shadow-lg"
@@ -243,20 +242,18 @@ export default function MainCarousel() {
       >
         <ChevronRight size={20} className="md:w-6 md:h-6" />
       </button>
-
-      {/* Play/Pause */}
-      {/* FIX 7: Icono correcto según estado — Pause cuando reproduce, Play cuando está pausado */}
       <button
         onClick={() => setIsPlaying(!isPlaying)}
         className="absolute top-2 right-2 md:top-4 md:right-4 z-20 p-1.5 md:p-2 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm text-blue-900 transition-all duration-300 hover:scale-110 shadow-lg"
         aria-label={isPlaying ? "Pausar" : "Reproducir"}
-      >
+        >
         {isPlaying ? <Pause size={14} /> : <Play size={14} />}
       </button>
+        </div>
 
       {/* Dots */}
       {/* FIX 8: bottom-3 en lugar de bottom-16/20 para que queden al fondo */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-2">
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 md:flex items-center space-x-2 hidden">
         {dataCarouselTop.map((_, index) => (
           <button
             key={index}
