@@ -74,7 +74,7 @@ export default function MiniCarousel() {
   return (
     <>
       {/* ── Carrusel ── */}
-      <div className="w-full h-full flex items-center justify-center relative z-20">
+      <div className="w-full h-full hidden md:flex items-center justify-center relative z-20 ">
         <div
           className="inline-flex rounded-2xl overflow-hidden"
           style={{
