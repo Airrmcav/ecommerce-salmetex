@@ -105,12 +105,10 @@ export default function MainCarousel() {
   const slide = dataCarouselTop[currentSlide];
 
   return (
-    // FIX 1: Altura mínima explícita para que absolute inset-0 funcione correctamente
-    <div className="relative w-full min-h-120 md:min-h-99.5 overflow-hidden">
+    <div className="relative w-full min-h-120 md:min-h-full overflow-hidden">
       {dataCarouselTop.map((slide, index) => (
         <div
           key={slide.id}
-          // FIX 2: pointer-events-none en slides ocultos para evitar clicks fantasma
           className={`absolute inset-0 max-w-7xl mx-auto transition-all duration-1000 ease-in-out ${
             index === currentSlide
               ? "opacity-100 scale-100 pointer-events-auto"
@@ -123,8 +121,8 @@ export default function MainCarousel() {
             <div className="shrink-0 text-center">
               <div className="inline-block">
                 {/* FIX 3: border-1 no es clase Tailwind válida → cambiado a border */}
-                <div className="max-w-3xl mx-auto px-4 py-2 md:px-6 md:py-3 rounded-2xl border border-blue-600 backdrop-blur-sm">
-                  <h2 className="text-base md:text-2xl lg:text-3xl font-bold text-blue-900 uppercase tracking-wide leading-tight">
+                <div className="max-w-4xl mx-auto px-4 py-2 md:px-5 md:py-3 rounded-2xl border border-blue-600 backdrop-blur-sm">
+                  <h2 className="text-base md:text-2xl lg:text-2xl font-bold text-blue-900 uppercase tracking-wide leading-tight">
                     {slide.title}
                   </h2>
                   {slide.subtitle && (
@@ -162,7 +160,7 @@ export default function MainCarousel() {
                     alt={slide.title}
                     className="w-full"
                     // FIX 4: Reducida altura máx para que no tape el footer
-                    style={{ maxHeight: "320px", objectFit: "contain" }}
+                    style={{ maxHeight: "325px", objectFit: "contain" }}
                     loading={index === 0 ? "eager" : "lazy"}
                   />
                 </div>
