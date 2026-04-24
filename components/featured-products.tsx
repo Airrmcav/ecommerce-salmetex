@@ -55,7 +55,7 @@ const FeaturedProducts = () => {
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full mb-4">
           <Star className="w-4 h-4 text-blue-600" />
           <span className="text-sm font-medium text-blue-800">
-            Productos Destacados
+            Casos de Éxito
           </span>
         </div>
         <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">

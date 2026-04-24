@@ -14,7 +14,7 @@ export default function CarouselLayout() {
       </section>
 
       {/* Sección Central */}
-      <section className="flex-[1.6] w-full pt-5">
+      <section className="flex-[1.6] w-full">
         <MainCarousel />
       </section>
 
