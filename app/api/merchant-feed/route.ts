@@ -45,7 +45,7 @@ export async function GET() {
       .map((product: any) => {
         const title = product.productName;
         const description = product.description || "";
-        const link = `${baseUrl}/producto/${product.slug}`;
+        const link = `${baseUrl}/${product.slug}`;
 
         // ✅ AQUÍ ESTÁ EL FIX IMPORTANTE
         const imageUrl = product.images[0].url;
