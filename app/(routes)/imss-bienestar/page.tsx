@@ -1,6 +1,8 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import IMSSClient from "./components/imss-client";
 import { ProductType } from "@/types/product";
+import SkeletonSchema from "@/components/skeletonSchema";
 
 export const metadata: Metadata = {
   title: "Productos y Equipamiento Médico para IMSS Bienestar | Salmetexmed",
@@ -19,9 +21,7 @@ async function getInitialProducts(): Promise<ProductType[]> {
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
     if (!baseUrl) {
-      console.error(
-        "NEXT_PUBLIC_BACKEND_URL no está definida",
-      );
+      console.error("NEXT_PUBLIC_BACKEND_URL no está definida");
       return [];
     }
 
@@ -37,35 +37,29 @@ async function getInitialProducts(): Promise<ProductType[]> {
       `&populate[images][fields][0]=url` +
       `&populate[category][fields][0]=categoryName`;
 
-    const res = await fetch(
-      `${baseUrl}/api/products?${query}`,
-      {
-        next: {
-          revalidate: 3600,
-        },
-      },
-    );
+    const res = await fetch(`${baseUrl}/api/products?${query}`, {
+      next: { revalidate: 3600 },
+    });
 
     if (!res.ok) {
-      console.error(
-        "Error fetching IMSS products:",
-        res.status,
-      );
+      console.error("Error fetching IMSS products:", res.status);
       return [];
     }
 
     const json = await res.json();
     return json?.data ?? [];
   } catch (error) {
-    console.error(
-      "Error in getInitialProducts:",
-      error,
-    );
+    console.error("Error in getInitialProducts:", error);
     return [];
   }
 }
 
 export default async function IMSSPage() {
   const initialProducts = await getInitialProducts();
-  return <IMSSClient initialProducts={initialProducts} />;
+
+  return (
+    <Suspense fallback={<SkeletonSchema grid={12} />}>
+      <IMSSClient initialProducts={initialProducts} />
+    </Suspense>
+  );
 }
