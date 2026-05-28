@@ -3,58 +3,106 @@ import CategoryClient from "./components/category-client";
 import { ProductType } from "@/types/product";
 
 interface Props {
-  params: Promise<{ categorySlug: string }>;
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+  params: Promise<{
+    categorySlug: string;
+  }>;
+
+  searchParams?: Promise<{
+    [key: string]: string | string[] | undefined;
+  }>;
 }
 
-async function getInitialProducts(categorySlug: string): Promise<ProductType[]> {
+/* =========================================================
+   FETCH PRODUCTOS OPTIMIZADO
+========================================================= */
+
+async function getInitialProducts(
+  categorySlug: string,
+): Promise<ProductType[]> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+    if (!baseUrl) {
+      console.error(
+        "NEXT_PUBLIC_BACKEND_URL no está definida",
+      );
+
+      return [];
+    }
+
+    const query =
+      `fields[0]=productName` +
+      `&fields[1]=slug` +
+      `&fields[2]=price` +
+      `&fields[3]=description` +
+      `&fields[4]=purchaseType` +
+      `&fields[5]=active` +
+      `&pagination[pageSize]=1000` +
+      `&populate[images][fields][0]=url` +
+      `&populate[category][fields][0]=categoryName` +
+      `&populate[category][fields][1]=slug`;
+
     const url =
       categorySlug === "todos"
-        ? `${baseUrl}/api/products?populate=*`
-        : `${baseUrl}/api/products?populate=*&filters[category][slug][$eq]=${categorySlug}`;
+        ? `${baseUrl}/api/products?${query}`
+        : `${baseUrl}/api/products?${query}&filters[category][slug][$eq]=${categorySlug}`;
 
     const res = await fetch(url, {
-      next: { revalidate: 60 * 10 },
+      next: {
+        revalidate: 3600,
+      },
     });
 
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.error(
+        "Error al obtener productos:",
+        res.status,
+      );
+
+      return [];
+    }
+
     const json = await res.json();
-    return json.data ?? [];
-  } catch {
+
+    return json?.data ?? [];
+  } catch (error) {
+    console.error(
+      "Error getInitialProducts:",
+      error,
+    );
+
     return [];
   }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+/* =========================================================
+   GENERATE METADATA
+========================================================= */
+
+export async function generateMetadata({
+  params,
+}: Props): Promise<Metadata> {
   const { categorySlug } = await params;
 
-  if (categorySlug === "todos") {
-    return {
-      title: "Todos los Equipos Médicos | Salmetexmed México",
-      description:
-        "Explora todo nuestro catálogo de equipos médicos: sillas de ruedas, autoclaves, incubadoras, monitores de signos vitales e insumos médicos. Distribuidor autorizado en México.",
-      alternates: {
-        canonical: "https://salmetexmed.com.mx/categoria/todos",
-      },
-      openGraph: {
-        title: "Todos los Equipos Médicos | Salmetexmed México",
-        description:
-          "Catálogo completo de equipos médicos certificados. Envío a todo México.",
-        locale: "es_MX",
-        type: "website",
-        siteName: "Salmetexmed",
-      },
-    };
-  }
+  const products =
+    await getInitialProducts(categorySlug);
 
-  const products = await getInitialProducts(categorySlug);
-  const categoryName = products[0]?.category?.categoryName ?? categorySlug;
+  const categoryName =
+    categorySlug === "todos"
+      ? "Todos los Equipos Médicos"
+      : products?.[0]?.category?.categoryName ??
+        categorySlug.replace(/-/g, " ");
+
+  const canonical =
+    categorySlug === "todos"
+      ? "https://salmetexmed.com.mx/categoria/todos"
+      : `https://salmetexmed.com.mx/categoria/${categorySlug}`;
 
   return {
-    title: `${categoryName} | Equipo Médico en México - Salmetexmed`,
-    description: `Compra equipos médicos de ${categoryName} en México. Tecnología certificada, calidad garantizada y soporte técnico especializado. Distribuidor autorizado Salmetexmed.`,
+    title: `${categoryName} | Salmetexmed México`,
+
+    description: `Compra equipos médicos de ${categoryName} en México. Equipos certificados, garantía y envío nacional.`,
+
     keywords: [
       categoryName,
       `${categoryName} México`,
@@ -63,70 +111,158 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       "Salmetexmed",
       "equipo médico México",
     ],
+
     alternates: {
-      canonical: `https://salmetexmed.com.mx/categoria/${categorySlug}`,
+      canonical,
     },
+
     openGraph: {
       title: `${categoryName} | Salmetexmed México`,
+
       description: `Equipos médicos de ${categoryName} con envío a todo México.`,
-      locale: "es_MX",
-      type: "website",
+
+      url: canonical,
+
       siteName: "Salmetexmed",
+
+      locale: "es_MX",
+
+      type: "website",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+
+      title: `${categoryName} | Salmetexmed México`,
+
+      description: `Compra equipos médicos de ${categoryName} en México.`,
+    },
+
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }
 
-export default async function Page({ params, searchParams }: Props) {
-  const { categorySlug } = await params;
-  const resolvedSearch = searchParams ? await searchParams : {};
-  const initialAreaFilter = (resolvedSearch?.area as string) ?? "";
+/* =========================================================
+   PAGE
+========================================================= */
 
-  const initialProducts = await getInitialProducts(categorySlug);
+export default async function Page({
+  params,
+  searchParams,
+}: Props) {
+  const { categorySlug } = await params;
+
+  const resolvedSearch = searchParams
+    ? await searchParams
+    : {};
+
+  const initialAreaFilter =
+    (resolvedSearch?.area as string) ?? "";
+
+  const initialProducts =
+    await getInitialProducts(categorySlug);
+
   const categoryName =
     categorySlug === "todos"
       ? "Todos los Equipos Médicos"
-      : initialProducts[0]?.category?.categoryName ?? categorySlug;
+      : initialProducts?.[0]?.category?.categoryName ??
+        categorySlug.replace(/-/g, " ");
 
-  // JSON-LD: ItemList con los primeros productos para que Google los indexe
+  /* =========================================================
+     JSON LD
+  ========================================================= */
+
   const itemListJsonLd = {
     "@context": "https://schema.org",
+
     "@type": "ItemList",
+
     name: categoryName,
+
     url: `https://salmetexmed.com.mx/categoria/${categorySlug}`,
+
     numberOfItems: initialProducts.length,
-    itemListElement: initialProducts.slice(0, 20).map((product, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      url: `https://salmetexmed.com.mx/productos/${product.slug}`,
-      name: product.productName,
-    })),
+
+    itemListElement: initialProducts
+      .slice(0, 20)
+      .map((product, index) => ({
+        "@type": "ListItem",
+
+        position: index + 1,
+
+        url: `https://salmetexmed.com.mx/${product.slug}`,
+
+        name: product.productName,
+      })),
   };
 
-  // JSON-LD: BreadcrumbList
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
+
     "@type": "BreadcrumbList",
+
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://salmetexmed.com.mx" },
-      { "@type": "ListItem", position: 2, name: "Categorías", item: "https://salmetexmed.com.mx/categoria/todos" },
-      { "@type": "ListItem", position: 3, name: categoryName, item: `https://salmetexmed.com.mx/categoria/${categorySlug}` },
+      {
+        "@type": "ListItem",
+
+        position: 1,
+
+        name: "Inicio",
+
+        item: "https://salmetexmed.com.mx",
+      },
+
+      {
+        "@type": "ListItem",
+
+        position: 2,
+
+        name: "Categorías",
+
+        item: "https://salmetexmed.com.mx/categoria/todos",
+      },
+
+      {
+        "@type": "ListItem",
+
+        position: 3,
+
+        name: categoryName,
+
+        item: `https://salmetexmed.com.mx/categoria/${categorySlug}`,
+      },
     ],
   };
 
   return (
     <>
+      {/* =========================================================
+          JSON-LD SEO
+      ========================================================= */}
+
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListJsonLd),
+        }}
       />
+
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            breadcrumbJsonLd,
+          ),
+        }}
       />
-      {/* 
-        CategoryClient recibe los productos iniciales ya renderizados por el servidor.
-        Los filtros y paginación siguen funcionando en cliente.
-      */}
+
+      {/* =========================================================
+          CLIENT COMPONENT
+      ========================================================= */}
+
       <CategoryClient
         categorySlug={categorySlug}
         initialProducts={initialProducts}

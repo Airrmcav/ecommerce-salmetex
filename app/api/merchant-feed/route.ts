@@ -3,8 +3,19 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products?populate=*`,
-      { cache: "no-store" }
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products?` +
+        `fields[0]=productName` +
+        `&fields[1]=slug` +
+        `&fields[2]=price` +
+        `&fields[3]=description` +
+        `&fields[4]=active` +
+        `&populate[images][fields][0]=url` +
+        `&populate[category][fields][0]=categoryName`,
+      {
+        next: {
+          revalidate: 3600, // 1 hora
+        },
+      }
     );
 
     const json = await res.json();
@@ -45,7 +56,7 @@ export async function GET() {
       .map((product: any) => {
         const title = product.productName;
         const description = product.description || "";
-        const link = `${baseUrl}/producto/${product.slug}`;
+        const link = `${baseUrl}/${product.slug}`;
 
         // ✅ AQUÍ ESTÁ EL FIX IMPORTANTE
         const imageUrl = product.images[0].url;
