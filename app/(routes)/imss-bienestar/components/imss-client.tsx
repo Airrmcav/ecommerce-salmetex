@@ -4,8 +4,8 @@ import { Separator } from "@/components/ui/separator";
 import Breadcrumb from "@/components/BreadCrumbs";
 import SkeletonSchema from "@/components/skeletonSchema";
 
-import ProductCard from "./product.card";
-import FilterArea from "./filter-area";
+import ProductCard from "./ProductCard";
+import FilterArea from "./FilterArea";
 
 import { ProductType } from "@/types/product";
 
@@ -294,17 +294,7 @@ export default function IMSSClient({
 
   return (
     <div className="space-y-8">
-      {/* BREADCRUMB */}
-      <Breadcrumb
-        data={[
-          { label: "Inicio", href: "/" },
-          {
-            label: "IMSS Bienestar",
-            href: "/imss-bienestar",
-          },
-        ]}
-      />
-
+    
       {/* HEADER WITH FILTERS */}
       <div className="space-y-6">
         <div className="flex flex-col gap-2">
@@ -394,7 +384,7 @@ export default function IMSSClient({
 
       {/* PRODUCTS GRID / LIST */}
       {loading ? (
-        <SkeletonSchema />
+        <SkeletonSchema grid={pageSize} />
       ) : displayedProducts.length > 0 ? (
         <div
           className={
@@ -408,7 +398,6 @@ export default function IMSSClient({
               <ProductCard
                 key={product.id}
                 product={product}
-                view={viewMode}
               />
             ),
           )}
