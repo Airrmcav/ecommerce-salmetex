@@ -13,7 +13,6 @@ import {
   ChevronRight,
   ChevronLeft,
   PhoneCall,
-  
 } from "lucide-react";
 
 import { FaWhatsapp } from "react-icons/fa";
@@ -151,8 +150,8 @@ const FeaturedProductsCarousel = ({ products }: Props) => {
                           {/* Favorite */}
                           <IconButton
                             onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
+                              e?.preventDefault();
+                              e?.stopPropagation();
 
                               addLoveItems(product);
                             }}
@@ -182,7 +181,7 @@ const FeaturedProductsCarousel = ({ products }: Props) => {
                           </p>
 
                           {/* Price */}
-                          {price > 0 && (
+                          {price != null && price > 0 && (
                             <div className="mb-4 mt-3">
                               <span className="text-2xl font-bold text-blue-600">
                                 $
@@ -190,7 +189,6 @@ const FeaturedProductsCarousel = ({ products }: Props) => {
                                   minimumFractionDigits: 2,
                                 })}
                               </span>
-
                               <span className="text-sm text-gray-500 ml-1">
                                 MXN
                               </span>
