@@ -2,7 +2,7 @@
 import Breadcrumb from "@/components/BreadCrumbs";
 import { Separator } from "@/components/ui/separator";
 import SkeletonSchema from "@/components/skeletonSchema";
-import { useSearchProducts } from "@/api/searchProducts";
+import { useSearchProducts } from "@/api/searchProduct/searchProducts";
 import { ProductType } from "@/types/product";
 import ProductCard from "@/app/(routes)/categoria/[categorySlug]/components/product.card";
 import { Filter, Grid3X3, List, Package } from "lucide-react";

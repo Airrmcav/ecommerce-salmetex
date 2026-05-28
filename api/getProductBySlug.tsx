@@ -1,9 +1,27 @@
 // Función para uso en Server Components
 export async function getProductBySlug(slug: string | string[]) {
-    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products?filters[slug][$eq]=${slug}&populate=*`;
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products?` +
+        `filters[slug][$eq]=${slug}` +
+        `&fields[0]=productName` +
+        `&fields[1]=slug` +
+        `&fields[2]=description` +
+        `&fields[3]=price` +
+        `&fields[4]=active` +
+        `&fields[5]=purchaseType` +
+        `&fields[6]=specifications` +
+        `&fields[7]=isFeatured` +
+        `&populate[images][fields][0]=url` +
+        `&populate[images][fields][1]=alternativeText` +
+        `&populate[images][fields][2]=caption` +
+        `&populate[category][fields][0]=categoryName` +
+        `&populate[category][fields][1]=slug`;
     
     try {
-        const res = await fetch(url, { cache: 'no-store' });
+        const res = await fetch(url, {
+            next: {
+                revalidate: 86400, // 24 horas
+            },
+        });
         const json = await res.json();
 
         const data = Array.isArray(json?.data) ? json.data : [];

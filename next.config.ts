@@ -3,7 +3,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
-    minimumCacheTTL: 60 * 60 * 24 * 30,
+
+    minimumCacheTTL: 60 * 60 * 24 * 365,
+
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+
     remotePatterns: [
       {
         protocol: "http",
@@ -30,16 +36,29 @@ const nextConfig: NextConfig = {
         source: "/(.*)",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
+
           { key: "X-Frame-Options", value: "DENY" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+
           {
             key: "Strict-Transport-Security",
-            value: "max-age=63072000; includeSubDomains; preload",
+            value:
+              "max-age=63072000; includeSubDomains; preload",
           },
-          { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
+
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
+          },
+
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            value:
+              "camera=(), microphone=(), geolocation=()",
           },
         ],
       },
