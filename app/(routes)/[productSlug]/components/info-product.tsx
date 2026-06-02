@@ -2,7 +2,11 @@
 import { Separator } from "@/components/ui/separator";
 import { ProductType } from "@/types/product";
 import { useInfoProduct } from "../../../../hooks/useInfoProduct";
-import { AvailabilityBadge, CategoryBadge, AreaBadge } from "../../../../components/infoProduct/Badges";
+import {
+  AvailabilityBadge,
+  CategoryBadge,
+  AreaBadge,
+} from "../../../../components/infoProduct/Badges";
 import { ProgramaCard } from "../../../../components/infoProduct/ProgramaCard";
 import { PriceSection } from "../../../../components/infoProduct/PriceSection";
 import { VariantSelector } from "../../../../components/infoProduct/VariantSelector";
@@ -12,19 +16,33 @@ import { ProductDetails } from "../../../../components/infoProduct/ProductDetail
 
 export const InfoProduct = ({ product }: { product: ProductType }) => {
   const {
-    quantity, setQuantity,
-    isDescriptionExpanded, setIsDescriptionExpanded,
-    selectedVariant, setSelectedVariant,
-    displayPrice, hasPrice, isAvailable, isBuyable, hasVariants,
-    handleAddToCart, handleWhatsApp, handleShare, addLoveItems,
+    quantity,
+    setQuantity,
+    isDescriptionExpanded,
+    setIsDescriptionExpanded,
+    selectedVariant,
+    setSelectedVariant,
+    displayPrice,
+    hasPrice,
+    isAvailable,
+    isBuyable,
+    hasVariants,
+    handleAddToCart,
+    handleWhatsApp,
+    handleShare,
+    addLoveItems,
   } = useInfoProduct(product);
-
+console.log("product.variants:", product.variants);
+console.log("hasVariants:", hasVariants);
   return (
     <div className="max-w-2xl mx-auto p-4 space-y-4">
       <div className="flex flex-wrap items-center gap-1.5">
         <CategoryBadge label={product.category.categoryName} />
         {product.area && <AreaBadge label={product.area} />}
-        <AvailabilityBadge active={product.active} purchaseType={product.purchaseType} />
+        <AvailabilityBadge
+          active={product.active}
+          purchaseType={product.purchaseType}
+        />
       </div>
 
       <h1 className="text-2xl font-semibold text-gray-900 leading-snug">
@@ -75,6 +93,8 @@ export const InfoProduct = ({ product }: { product: ProductType }) => {
         description={product.description}
         characteristics={product.characteristics}
       />
+
+    
     </div>
   );
 };
