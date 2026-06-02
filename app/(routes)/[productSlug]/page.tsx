@@ -44,11 +44,15 @@ const getProduct = cache(
         return null;
       }
 
-     const query =
+   const query =
   `populate[images][fields][0]=url` +
   `&populate[images][fields][1]=alternativeText` +
   `&populate[category][fields][0]=categoryName` +
   `&populate[category][fields][1]=slug` +
+  `&populate[variants][fields][0]=name` +
+  `&populate[variants][fields][1]=price` +
+  `&populate[variants][fields][2]=stock` +
+  `&populate[variants][fields][3]=isDefault` +
   `&filters[slug][$eq]=${slug}`;
 
       const url =
