@@ -14,7 +14,7 @@ export const VariantSelector = ({
   selectedVariant,
   onSelect,
 }: Props) => {
-  if (!variants || variants.length === 0) return null; // ← agrega esta guarda
+  if (!variants || variants.length === 0) return null;
 
   return (
     <div>
