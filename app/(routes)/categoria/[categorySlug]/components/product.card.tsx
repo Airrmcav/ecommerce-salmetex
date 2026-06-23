@@ -111,7 +111,7 @@ const ProductCard = ({ product, viewMode = "grid" }: ProductCardProps) => {
                 />
 
                 <div className="absolute bottom-3 left-3">
-                  <Badge className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  <Badge className="bg-blue-600 hover:bg-blue-700 text-white px-1 py-1 rounded-full text-[10px] font-medium">
                     {product?.category?.categoryName || "Categoría"}
                   </Badge>
                 </div>

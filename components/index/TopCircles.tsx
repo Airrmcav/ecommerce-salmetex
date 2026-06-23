@@ -4,10 +4,10 @@ const quickLinks = [
   { id: 1, title: "Mesas de cirugía",       link: "/categoria/mesas-quirurgicas",         image: "/carousel/mesa.png"       },
   { id: 2, title: "Lámparas de cirugía",    link: "/categoria/lamparas-de-cirugia",       image: "/carousel/lampara.png"    },
   { id: 3, title: "Monitores",              link: "/categoria/equipos-de-signos-vitales", image: "/carousel/monitor.jpg"    },
-  { id: 4, title: "Ultrasonidos",             link: "/categoria/equipo-de-ultrasonido",                image: "/carousel/2.png"  },
+  { id: 4, title: "Ultrasonidos",             link: "/categoria/ultrasonidos-profesionales-para-clinicas-y-hospitales",                image: "/carousel/2.png"  },
   { id: 5, title: "Insumos médicos",        link: "/insumos-medicos",                     image: "/carousel/insumos2.png"   },
-  { id: 6, title: "IMSS Bienestar",         link: "/imss-bienestar",                      image: "/carousel/imss.png"       },
-  { id: 7, title: "La clínica es Nuestra",  link: "/la-clinica-es-nuestra",               image: "/carousel/clinica.png"    },
+  // { id: 6, title: "IMSS Bienestar",         link: "/imss-bienestar",                      image: "/carousel/imss.png"       },
+  // { id: 7, title: "La clínica es Nuestra",  link: "/la-clinica-es-nuestra",               image: "/carousel/clinica.png"    },
 ];
 
 const TopCircles = () => {
