@@ -159,9 +159,9 @@ export default function Page() {
                 </div>
 
                 {/* Articles Grid */}
-                    <div id="articulos">
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {blogPosts.slice(1).map((post) => (
+                <div id="articulos">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {blogPosts.slice(1).map((post) => (
                         <article 
                             key={post.id}
                             className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-slate-200 overflow-hidden group"
@@ -205,6 +205,7 @@ export default function Page() {
                         </article>
                     ))}
                 </div>
+                    </div>
 
                 {/* Load More Button */}
                 <div className="text-center mt-16">
