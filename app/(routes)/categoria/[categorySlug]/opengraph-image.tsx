@@ -1,8 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getCategoryFromProducts } from "@/lib/category-data";
 
-export const runtime = "edge";
-
 export async function generateImageMetadata({
   params,
 }: {
