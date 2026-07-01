@@ -2,8 +2,6 @@ import { ImageResponse } from "next/og";
 import { cache } from "react";
 import { formatPrice } from "@/lib/formatPrice";
 
-export const runtime = "edge";
-
 const getProductForOg = cache(async (slug: string) => {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
