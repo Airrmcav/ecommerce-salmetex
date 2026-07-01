@@ -1,4 +1,31 @@
+import Link from "next/link";
 import { Calendar, User, ArrowRight, Tag } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Blog Médico Profesional | Salmetexmed",
+  description: "Actualizaciones técnicas, innovaciones y análisis profundos sobre equipos médicos de vanguardia. Artículos para profesionales de la salud en México.",
+  keywords: [
+    "blog equipo médico",
+    "artículos equipos médicos",
+    "información equipos médicos México",
+    "Salmetexmed",
+    "noticias equipo médico",
+  ],
+  robots: {
+    index: false,
+    follow: false,
+  },
+  alternates: {
+    canonical: "https://salmetexmed.com.mx/blog",
+  },
+  openGraph: {
+    title: "Blog Médico Profesional | Salmetexmed",
+    description: "Artículos técnicos y análisis profundos sobre equipos médicos de vanguardia.",
+    url: "https://salmetexmed.com.mx/blog",
+    type: "website",
+  },
+};
 
 export default function Page() {
     const blogPosts = [
@@ -123,15 +150,16 @@ export default function Page() {
                                 </div>
                                 <span>{blogPosts[0].readTime} de lectura</span>
                             </div>
-                            <button className="flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                            <Link href="/blog#articulos" className="flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition-colors">
                                 Leer más
                                 <ArrowRight className="w-4 h-4" />
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
 
                 {/* Articles Grid */}
+                    <div id="articulos">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {blogPosts.slice(1).map((post) => (
                         <article 

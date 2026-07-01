@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/use-cart";
@@ -84,11 +85,13 @@ const LovedItemsProduct = ({ product, className }: LovedItemProductProps) => {
                 <div className="flex-shrink-0 self-center sm:self-start">
                     <div className="w-48 h-48 sm:w-32 sm:h-32 bg-white rounded-lg overflow-hidden border group-hover:shadow-md transition-shadow relative mx-auto">
                         {product.images?.[0]?.url ? (
-                            <img
-                                src={product.images[0].url}
-                                alt={product.productName}
-                                className="w-full h-full object-contain"
-                            />
+<Image
+                                    src={product.images[0].url}
+                                    alt={product.productName}
+                                    fill
+                                    sizes="128px"
+                                    className="object-contain"
+                                  />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-400">
                                 <Stethoscope size={32} />

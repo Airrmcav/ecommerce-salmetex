@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useCart } from "@/hooks/use-cart";
 import { formatPrice } from "@/lib/formatPrice";
 import { cn } from "@/lib/utils";
@@ -42,12 +43,14 @@ const CartItem = (props: CartItemProps) => {
             <div className="flex flex-col sm:flex-row items-center justify-between">
                 {/* Imagen placeholder con icono médico */}
                 <div className="flex items-center space-x-4 flex-1">
-                    <div className="w-16 h-16 rounded-lg sm:flex items-center justify-center border border-blue-200 group-hover:from-blue-100 group-hover:to-blue-200 transition-colors hidden">
+                    <div className="relative w-16 h-16 rounded-lg sm:flex items-center justify-center border border-blue-200 group-hover:from-blue-100 group-hover:to-blue-200 transition-colors hidden">
                         {product.images && product.images.length > 0 ? (
-                            <img 
-                                src={product.images[0].url} 
-                                alt={product.productName} 
-                                className="w-12 h-12 object-contain" 
+                            <Image
+                                src={product.images[0].url}
+                                alt={product.productName}
+                                fill
+                                sizes="64px"
+                                className="object-contain"
                                 loading="lazy"
                             />
                         ) : (

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+export const revalidate = 3600;
 import CategoryClient from "./components/category-client";
 import { ProductType } from "@/types/product";
 
@@ -37,15 +38,21 @@ async function getInitialProducts(
       `&fields[3]=description` +
       `&fields[4]=purchaseType` +
       `&fields[5]=active` +
-      `&pagination[pageSize]=1000` +
+      `&pagination[pageSize]=50` +
       `&populate[images][fields][0]=url` +
       `&populate[category][fields][0]=categoryName` +
-      `&populate[category][fields][1]=slug`;
+      `&populate[category][fields][1]=slug` +
+      `&populate[programa][fields][0]=namePrograma` +
+      `&populate[programa][fields][1]=slug`;
 
-    const url =
-      categorySlug === "todos"
-        ? `${baseUrl}/api/products?${query}`
-        : `${baseUrl}/api/products?${query}&filters[category][slug][$eq]=${categorySlug}`;
+    let url = "";
+    if (categorySlug === "todos") {
+      url = `${baseUrl}/api/products?${query}`;
+    } else if (categorySlug === "la-clinica-es-nuestra") {
+      url = `${baseUrl}/api/products?${query}&filters[programa][slug][$eq]=la-clinica-es-nuestra`;
+    } else {
+      url = `${baseUrl}/api/products?${query}&filters[category][slug][$eq]=${categorySlug}`;
+    }
 
     const res = await fetch(url, {
       next: {
@@ -90,8 +97,10 @@ export async function generateMetadata({
   const categoryName =
     categorySlug === "todos"
       ? "Todos los Equipos Médicos"
-      : products?.[0]?.category?.categoryName ??
-        categorySlug.replace(/-/g, " ");
+      : categorySlug === "la-clinica-es-nuestra"
+        ? "La Clínica es Nuestra"
+        : products?.[0]?.category?.categoryName ??
+          categorySlug.replace(/-/g, " ");
 
   const canonical =
     categorySlug === "todos"
@@ -108,8 +117,13 @@ export async function generateMetadata({
       `${categoryName} México`,
       `comprar ${categoryName}`,
       `equipo médico ${categoryName}`,
+      `distribuidor ${categoryName} México`,
+      `proveedor B2B ${categoryName}`,
+      `mayoreo ${categoryName}`,
       "Salmetexmed",
       "equipo médico México",
+      "distribuidor equipo médico",
+      "proveedor B2B equipo médico",
     ],
 
     alternates: {
@@ -168,8 +182,10 @@ export default async function Page({
   const categoryName =
     categorySlug === "todos"
       ? "Todos los Equipos Médicos"
-      : initialProducts?.[0]?.category?.categoryName ??
-        categorySlug.replace(/-/g, " ");
+      : categorySlug === "la-clinica-es-nuestra"
+        ? "La Clínica es Nuestra"
+        : initialProducts?.[0]?.category?.categoryName ??
+          categorySlug.replace(/-/g, " ");
 
   /* =========================================================
      JSON LD
