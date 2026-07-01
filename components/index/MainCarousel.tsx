@@ -1,5 +1,6 @@
 // ─── MainCarousel.tsx ───────────────────────────────────────────────────────
 "use client";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import {
   ChevronLeft,
@@ -102,157 +103,175 @@ export default function MainCarousel() {
     );
   const goToSlide = (index: number) => setCurrentSlide(index);
 
-  const slide = dataCarouselTop[currentSlide];
+  const prevIndex =
+    (currentSlide - 1 + dataCarouselTop.length) % dataCarouselTop.length;
+  const nextIndex = (currentSlide + 1) % dataCarouselTop.length;
+  const visibleSlides = [prevIndex, currentSlide, nextIndex];
 
   return (
-    <div className="relative w-full  md:min-h-full">
-      {dataCarouselTop.map((slide, index) => (
-        <div
-          key={slide.id}
-          className={`absolute inset-0 max-w-7xl mx-auto transition-all duration-1000 ease-in-out ${
-            index === currentSlide
-              ? "opacity-100 scale-100 pointer-events-auto"
-              : "opacity-0 scale-105 pointer-events-none"
-          }`}
-        >
-          {/* Contenido principal */}
-          <div className="relative z-10 h-full flex flex-col px-2">
-            {/* Header con título */}
-            <div className="shrink-0 text-center">
-              <div className="inline-block">
-                {/* FIX 3: border-1 no es clase Tailwind válida → cambiado a border */}
-                <div className="max-w-4xl mx-auto px-4 py-2 md:px-5 md:py-3 rounded-2xl border border-blue-600 backdrop-blur-sm">
-                  <h2 className="text-base md:text-2xl lg:text-2xl font-bold text-blue-900 uppercase tracking-wide leading-tight">
-                    {slide.title}
-                  </h2>
-                  {slide.subtitle && (
-                    <p className="text-xs md:text-sm text-blue-700 mt-1 md:mt-2 font-semibold">
-                      💰 {slide.subtitle}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
+    <div className="relative w-full md:min-h-full">
+      {dataCarouselTop.map((slide, index) => {
+        const isVisible = visibleSlides.includes(index);
+        if (!isVisible) return null;
 
-            {/* Contenido central */}
-            <div className="flex-1 flex flex-col lg:flex-row items-center justify-end gap-4 md:gap-6">
-              <div className="hidden lg:flex flex-col justify-center space-y-1 md:space-y-2 w-1/4 px-2">
-                <p className="text-blue-800 font-semibold text-xs md:text-sm uppercase tracking-wide mb-3 md:mb-6">
-                  {slide.description}
-                </p>
-                {slide.features.map((feature, idx) => (
-                  <div key={idx} className="flex items-center gap-1 md:gap-2">
-                    <div className="w-4 h-4 md:w-5 md:h-5 rounded bg-green-500 flex items-center justify-center flex-shrink-0">
-                      <Check size={10} className="text-white" />
-                    </div>
-                    <span className="text-blue-800 text-xs md:text-sm font-medium">
-                      {feature}
-                    </span>
+        return (
+          <div
+            key={slide.id}
+            className={`absolute inset-0 max-w-7xl mx-auto transition-all duration-1000 ease-in-out ${
+              index === currentSlide
+                ? "opacity-100 scale-100 pointer-events-auto z-10"
+                : index === prevIndex || index === nextIndex
+                ? "opacity-0 scale-105 pointer-events-none z-0"
+                : "hidden"
+            }`}
+          >
+            {/* Contenido principal */}
+            <div className="relative z-10 h-full flex flex-col px-2">
+              {/* Header con título */}
+              <div className="shrink-0 text-center">
+                <div className="inline-block">
+                  <div className="max-w-4xl mx-auto px-4 py-2 md:px-5 md:py-3 rounded-2xl border border-blue-600 backdrop-blur-sm">
+                    <h2 className="text-base md:text-2xl lg:text-2xl font-bold text-blue-900 uppercase tracking-wide leading-tight">
+                      {slide.title}
+                    </h2>
+                    {slide.subtitle && (
+                      <p className="text-xs md:text-sm text-blue-700 mt-1 md:mt-2 font-semibold">
+                        💰 {slide.subtitle}
+                      </p>
+                    )}
                   </div>
-                ))}
-              </div>
-
-              <div className="flex-1 flex items-center justify-center relative min-h-0 px-2">
-                <div className="relative z-10 w-full flex items-center justify-center">
-                  {/* Imagen */}
-                  <img
-                    src={slide.image}
-                    alt={slide.title}
-                    className="w-full object-contain max-h-[220px] md:max-h-[300px]"
-                  />
                 </div>
               </div>
 
-              {/* Columna derecha - MSI + Disponibilidad */}
-              <div className="hidden lg:flex flex-col items-center justify-center w-1/4 px-2 space-y-3">
-                <div className="group perspective-1000 w-full max-w-[160px]">
-                  <div className="relative transform-gpu transition-all duration-700 transform-style-preserve-3d group-hover:rotate-y-12 group-hover:rotate-x-6">
-                    <div className="text-blue-900 font-bold text-xs md:text-sm mb-1">
-                      MESES
-                    </div>
-                    <div className="text-blue-700 font-bold text-sm md:text-lg mb-2">
-                      SIN INTERESES
-                    </div>
-                    <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 rounded-lg md:rounded-xl p-2 md:p-3 text-center text-white shadow-lg">
-                      <div className="flex items-center">
-                        <CreditCard
-                          size={24}
-                          className="mx-auto mb-1 md:mb-2"
-                        />
-                        <div className="text-[10px] md:text-sm uppercase tracking-wider mb-0 md:mb-1">
-                          Credit Card
-                        </div>
+              {/* Contenido central */}
+              <div className="flex-1 flex flex-col lg:flex-row items-center justify-end gap-4 md:gap-6">
+                <div className="hidden lg:flex flex-col justify-center space-y-1 md:space-y-2 w-1/4 px-2">
+                  <p className="text-blue-800 font-semibold text-xs md:text-sm uppercase tracking-wide mb-3 md:mb-6">
+                    {slide.description}
+                  </p>
+                  {slide.features.map((feature, idx) => (
+                    <div key={idx} className="flex items-center gap-1 md:gap-2">
+                      <div className="w-4 h-4 md:w-5 md:h-5 rounded bg-green-500 flex items-center justify-center flex-shrink-0">
+                        <Check size={10} className="text-white" />
                       </div>
-                      <div className="text-xl md:text-2xl font-bold">MSI</div>
-                      <span className="text-[10px]">0000 0000 0000 0000</span>
+                      <span className="text-blue-800 text-xs md:text-sm font-medium">
+                        {feature}
+                      </span>
                     </div>
-                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 blur-xl -z-10 rounded-2xl transform translate-y-2" />
+                  ))}
+                </div>
+
+                <div className="flex-1 flex items-center justify-center relative min-h-0 px-2">
+                  <div className="relative z-10 w-full h-[220px] md:h-[300px] flex items-center justify-center">
+                    {/* Imagen */}
+                    <Image
+                      src={`/${slide.image}`}
+                      alt={slide.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-contain"
+                      priority={index === 0}
+                    />
                   </div>
                 </div>
 
-                <div className="p-1 text-center w-full max-w-[160px] flex gap-1 items-center">
-                  <div className="flex items-center justify-center gap-1 md:gap-2 text-orange-600">
-                    <Zap size={16} className="md:w-5 md:h-5 fill-orange-500" />
-                    <span className="text-xs md:text-sm font-bold uppercase tracking-wide">
-                      Disponibilidad
+                {/* Columna derecha - MSI + Disponibilidad */}
+                <div className="hidden lg:flex flex-col items-center justify-center w-1/4 px-2 space-y-3">
+                  <div className="group perspective-1000 w-full max-w-[160px]">
+                    <div className="relative transform-gpu transition-all duration-700 transform-style-preserve-3d group-hover:rotate-y-12 group-hover:rotate-x-6">
+                      <div className="text-blue-900 font-bold text-xs md:text-sm mb-1">
+                        MESES
+                      </div>
+                      <div className="text-blue-700 font-bold text-sm md:text-lg mb-2">
+                        SIN INTERESES
+                      </div>
+                      <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 rounded-lg md:rounded-xl p-2 md:p-3 text-center text-white shadow-lg">
+                        <div className="flex items-center">
+                          <CreditCard
+                            size={24}
+                            className="mx-auto mb-1 md:mb-2"
+                          />
+                          <div className="text-[10px] md:text-sm uppercase tracking-wider mb-0 md:mb-1">
+                            Credit Card
+                          </div>
+                        </div>
+                        <div className="text-xl md:text-2xl font-bold">
+                          MSI
+                        </div>
+                        <span className="text-[10px]">
+                          0000 0000 0000 0000
+                        </span>
+                      </div>
+                      <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 blur-xl -z-10 rounded-2xl transform translate-y-2" />
+                    </div>
+                  </div>
+
+                  <div className="p-1 text-center w-full max-w-[160px] flex gap-1 items-center">
+                    <div className="flex items-center justify-center gap-1 md:gap-2 text-orange-600">
+                      <Zap
+                        size={16}
+                        className="md:w-5 md:h-5 fill-orange-500"
+                      />
+                      <span className="text-xs md:text-sm font-bold uppercase tracking-wide">
+                        Disponibilidad
+                      </span>
+                    </div>
+                    <span className="text-orange-700 font-bold text-sm md:text-base">
+                      INMEDIATA
                     </span>
                   </div>
-                  <span className="text-orange-700 font-bold text-sm md:text-base">
-                    INMEDIATA
-                  </span>
                 </div>
               </div>
-            </div>
-            <div className="flex-shrink-0 mt-2 md:mt-4 mb-8 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4 px-2">
-              <a
-                href={`https://wa.me/${slide.phone.replace(/\s/g, "")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                <MessageCircle size={16} className="md:w-5 md:h-5" />
-                <div className="flex flex-col">
-                  <span className="text-[10px] md:text-xs uppercase font-semibold leading-tight">
-                    Cotiza por WhatsApp
-                  </span>
-                  <span className="text-xs md:text-sm font-bold leading-tight">
-                    {slide.phone}
-                  </span>
-                </div>
-              </a>
+
+              <div className="flex-shrink-0 mt-2 md:mt-4 mb-8 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4 px-2">
+                <a
+                  href={`https://wa.me/${slide.phone.replace(/\s/g, "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300"
+                >
+                  <MessageCircle size={16} className="md:w-5 md:h-5" />
+                  <div className="flex flex-col">
+                    <span className="text-[10px] md:text-xs uppercase font-semibold leading-tight">
+                      Cotiza por WhatsApp
+                    </span>
+                    <span className="text-xs md:text-sm font-bold leading-tight">
+                      {slide.phone}
+                    </span>
+                  </div>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
-      {/* Flechas */}
+      {/* Controles de navegación (fuera del map) */}
       <div className="hidden md:block">
-
-      <button
-        onClick={prevSlide}
-        className="absolute cursor-pointer left-2 md:left-30 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm text-blue-900 transition-all duration-300 hover:scale-110 shadow-lg"
-        aria-label="Anterior"
-      >
-        <ChevronLeft size={20} className="md:w-6 md:h-6" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute cursor-pointer right-2 md:right-20 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm text-blue-900 transition-all duration-300 hover:scale-110 shadow-lg"
-        aria-label="Siguiente"
-      >
-        <ChevronRight size={20} className="md:w-6 md:h-6" />
-      </button>
-      <button
-        onClick={() => setIsPlaying(!isPlaying)}
-        className="absolute top-2 right-2 md:top-4 md:right-4 z-20 p-1.5 md:p-2 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm text-blue-900 transition-all duration-300 hover:scale-110 shadow-lg"
-        aria-label={isPlaying ? "Pausar" : "Reproducir"}
+        <button
+          onClick={prevSlide}
+          className="absolute cursor-pointer left-2 md:left-30 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm text-blue-900 transition-all duration-300 hover:scale-110 shadow-lg"
+          aria-label="Anterior"
         >
-        {isPlaying ? <Pause size={14} /> : <Play size={14} />}
-      </button>
-        </div>
+          <ChevronLeft size={20} className="md:w-6 md:h-6" />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute cursor-pointer right-2 md:right-20 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm text-blue-900 transition-all duration-300 hover:scale-110 shadow-lg"
+          aria-label="Siguiente"
+        >
+          <ChevronRight size={20} className="md:w-6 md:h-6" />
+        </button>
+        <button
+          onClick={() => setIsPlaying(!isPlaying)}
+          className="absolute top-2 right-2 md:top-4 md:right-4 z-20 p-1.5 md:p-2 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm text-blue-900 transition-all duration-300 hover:scale-110 shadow-lg"
+          aria-label={isPlaying ? "Pausar" : "Reproducir"}
+        >
+          {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+        </button>
+      </div>
 
       {/* Dots */}
-      {/* FIX 8: bottom-3 en lugar de bottom-16/20 para que queden al fondo */}
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 md:flex items-center space-x-2 hidden">
         {dataCarouselTop.map((_, index) => (
           <button

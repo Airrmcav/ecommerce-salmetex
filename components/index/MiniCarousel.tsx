@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 
@@ -146,10 +147,12 @@ export default function MiniCarousel() {
                         width: "100%",
                       }}
                     >
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.title}
-                        className="w-full h-full object-cover transition-transform duration-500"
+                        fill
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        className="object-cover transition-transform duration-500"
                         style={{
                           transform:
                             hoveredId === item.id ? "scale(1.12)" : "scale(1)",

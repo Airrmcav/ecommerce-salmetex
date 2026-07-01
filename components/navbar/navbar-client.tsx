@@ -45,7 +45,6 @@ const ALLOWED_CATEGORIES = [
   "equipo-medico",
   "mobiliario-medico",
   "la-clinica-es-nuestra",
-  "imss-bienestar",
 ];
 
 const NavbarClient = ({ categories }: Props) => {
@@ -241,11 +240,6 @@ const NavbarClient = ({ categories }: Props) => {
                                   id: 4,
                                   name: "La Clínica es Nuestra",
                                   slug: "la-clinica-es-nuestra",
-                                },
-                                {
-                                  id: 5,
-                                  name: "IMSS Bienestar",
-                                  slug: "imss-bienestar",
                                 },
                               ].map((category) => (
                                 <NavigationMenuLink key={category.id} asChild>

@@ -2,21 +2,23 @@
 
 import { Separator } from "@/components/ui/separator";
 import Breadcrumb from "@/components/BreadCrumbs";
-import SkeletonSchema from "@/components/skeletonSchema";
-
-import ProductCard from "./product.card";
+import { ProductCard } from "@/components/ui/product-card";
 import FilterCategory from "./filter-category";
 import FilterArea from "./filter-area";
-
+import { B2BValueProps, B2BTrustBlock } from "@/components/ui/b2b-blocks";
+import { B2BFAQ } from "@/components/ui/b2b-faq";
+import { DecisionGuide } from "@/components/ui/decision-guide";
+import { WhatsAppLink } from "@/components/ui/whatsapp-link";
+import ProductGrid from "./product-grid";
+import PaginationControls from "./pagination-controls";
 import { ProductType } from "@/types/product";
 
 import {
   Filter,
-  Grid3X3,
-  List,
   Package,
   Stethoscope,
   SlidersHorizontal,
+  MessageSquare,
 } from "lucide-react";
 
 import {
@@ -187,7 +189,18 @@ export default function CategoryClient({
 
         let url = "";
 
-        if (area && category) {
+        if (categorySlug === "la-clinica-es-nuestra") {
+          if (area) {
+            url =
+              `${baseUrl}/api/products?${query}` +
+              `&filters[area][$eq]=${area}` +
+              `&filters[programa][slug][$eq]=la-clinica-es-nuestra`;
+          } else {
+            url =
+              `${baseUrl}/api/products?${query}` +
+              `&filters[programa][slug][$eq]=la-clinica-es-nuestra`;
+          }
+        } else if (area && category) {
           url =
             `${baseUrl}/api/products?${query}` +
             `&filters[area][$eq]=${area}` +
@@ -435,15 +448,9 @@ export default function CategoryClient({
                     Todos los Equipos Médicos
                   </span>
                 ) : (
-                  <>
-                    <span className="block text-gray-900">
-                      Equipos Médicos de
-                    </span>
-
-                    <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                      {categoryName}
-                    </span>
-                  </>
+                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    {categoryName}
+                  </span>
                 )}
               </h1>
 
@@ -486,6 +493,8 @@ export default function CategoryClient({
 
           <div className="w-28 h-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 mt-6" />
         </header>
+
+        <B2BValueProps categoryName={categoryName} className="mb-6" />
 
         <Separator className="mb-6" />
 
@@ -613,188 +622,84 @@ export default function CategoryClient({
             )}
 
             {/* =========================================================
-                RESULTS HEADER
+                PRODUCT GRID
             ========================================================= */}
 
-            {!loading && (
-              <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <Filter className="w-5 h-5 text-blue-600" />
-
-                  <div>
-                    <p className="font-semibold text-gray-900">
-                      Resultados
-                    </p>
-
-                    <p className="text-sm text-gray-600">
-                      {totalItems} producto
-                      {totalItems !== 1
-                        ? "s"
-                        : ""}{" "}
-                      encontrados
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() =>
-                      setViewMode("grid")
-                    }
-                    className={`p-2 rounded-lg transition-colors ${
-                      viewMode === "grid"
-                        ? "bg-blue-100 text-blue-600"
-                        : "text-gray-400 hover:text-gray-700"
-                    }`}
-                  >
-                    <Grid3X3 className="w-4 h-4" />
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setViewMode("list")
-                    }
-                    className={`p-2 rounded-lg transition-colors ${
-                      viewMode === "list"
-                        ? "bg-blue-100 text-blue-600"
-                        : "text-gray-400 hover:text-gray-700"
-                    }`}
-                  >
-                    <List className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* =========================================================
-                PRODUCTS
-            ========================================================= */}
-
-            <div
-              className={
-                viewMode === "grid"
-                  ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3"
-                  : "flex flex-col gap-4"
-              }
-            >
-              {loading && (
-                <div className="col-span-full">
-                  <SkeletonSchema grid={6} />
-                </div>
-              )}
-
-              {!loading &&
-                displayedProducts.map(
-                  (
-                    product: ProductType,
-                  ) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      viewMode={
-                        viewMode
-                      }
-                    />
-                  ),
-                )}
-
-              {!loading &&
-                displayedProducts.length ===
-                  0 && (
-                  <div className="col-span-full py-16 text-center">
-                    <div className="mx-auto mb-5 flex w-24 h-24 items-center justify-center rounded-2xl bg-gray-100">
-                      <Package className="w-10 h-10 text-gray-400" />
-                    </div>
-
-                    <h2 className="text-xl font-semibold text-gray-700">
-                      No se encontraron productos
-                    </h2>
-
-                    <p className="mt-2 text-gray-500">
-                      Intenta modificar
-                      los filtros o
-                      explora otras
-                      categorías.
-                    </p>
-                  </div>
-                )}
-            </div>
+            <ProductGrid
+              displayedProducts={displayedProducts}
+              loading={loading}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+              totalItems={totalItems}
+            />
 
             {/* =========================================================
                 PAGINATION
             ========================================================= */}
 
-            {!loading &&
-              totalPages > 1 && (
-                <nav className="mt-10 flex flex-wrap items-center justify-center gap-2">
-                  <button
-                    onClick={() =>
-                      setCurrentPage(
-                        (p) =>
-                          Math.max(
-                            1,
-                            p - 1,
-                          ),
-                      )
-                    }
-                    disabled={
-                      currentPage === 1
-                    }
-                    className="rounded-lg cursor-pointer border border-blue-200 bg-white px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 disabled:opacity-40"
-                  >
-                    Anterior
-                  </button>
+            {!loading && totalPages > 1 && (
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                compactPages={compactPages}
+                setCurrentPage={setCurrentPage}
+              />
+            )}
 
-                  {compactPages.map(
-                    (item, idx) =>
-                      typeof item ===
-                      "number" ? (
-                        <button
-                          key={`p-${item}`}
-                          onClick={() =>
-                            setCurrentPage(
-                              item,
-                            )
-                          }
-                          className={`rounded-lg border px-4 py-2 text-sm cursor-pointer ${
-                            currentPage ===
-                            item
-                              ? "border-blue-600 bg-blue-600 text-white"
-                              : "border-blue-200 bg-white text-blue-700 hover:bg-blue-50"
-                          }`}
-                        >
-                          {item}
-                        </button>
-                      ) : (
-                        <span
-                          key={`e-${idx}`}
-                          className="px-2 text-gray-500"
-                        >
-                          …
-                        </span>
-                      ),
-                  )}
+            {/* =========================================================
+                B2B TRUST BLOCK
+            ========================================================= */}
 
-                  <button
-                    onClick={() =>
-                      setCurrentPage(
-                        (p) =>
-                          Math.min(
-                            totalPages,
-                            p + 1,
-                          ),
-                      )
-                    }
-                    disabled={
-                      currentPage ===
-                      totalPages
-                    }
-                    className="rounded-lg border cursor-pointer border-blue-200 bg-white px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 disabled:opacity-40"
-                  >
-                    Siguiente
-                  </button>
-                </nav>
-              )}
+            {!loading && productCount > 0 && (
+              <div className="mt-12">
+                <B2BTrustBlock />
+              </div>
+            )}
+
+            {/* =========================================================
+                B2B FAQ
+            ========================================================= */}
+
+            <div className="mt-12">
+              <B2BFAQ categoryName={categoryName} />
+            </div>
+
+            {/* =========================================================
+                DECISION GUIDE
+            ========================================================= */}
+
+            <div className="mt-12">
+              <DecisionGuide categorySlug={categorySlug} categoryName={categoryName} />
+            </div>
+
+            {/* =========================================================
+                BOTTOM CTA
+            ========================================================= */}
+
+            <div className="mt-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-center">
+              <MessageSquare className="w-10 h-10 text-white/80 mx-auto mb-3" />
+              <h3 className="text-2xl font-bold text-white mb-2">
+                ¿No encontraste lo que necesitas?
+              </h3>
+              <p className="text-blue-100 mb-6 max-w-xl mx-auto">
+                Contáctanos directamente por WhatsApp. Nuestro equipo de especialistas te ayuda a encontrar el equipo exacto para tu clínica u hospital.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <WhatsAppLink
+                  productName={categoryName}
+                  type="quote"
+                  size="lg"
+                  className="!bg-green-500 hover:!bg-green-600 !text-white"
+                  ariaLabel={`Cotizar ${categoryName} por WhatsApp`}
+                />
+                <a
+                  href="/contacto"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium transition-colors"
+                >
+                  Formulario de contacto
+                </a>
+              </div>
+            </div>
           </main>
         </div>
       </div>

@@ -12,23 +12,28 @@ export function useGetTopProducts() {
         `&populate[images][fields][0]=url` +
         `&populate[category][fields][0]=categoryName` +
         `&pagination[pageSize]=12`;
-    
+
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
     useEffect(() => {
+        const controller = new AbortController();
+
         (async () => {
             try {
-                const res = await fetch(url);
+                const res = await fetch(url, { signal: controller.signal });
                 const json = await res.json();
                 setResult(json.data);
                 setLoading(false);
             } catch (error: any) {
-                setError(error);
+                if (error?.name === 'AbortError') return;
+                setError(error.message || 'Error fetching top products');
                 setLoading(false);
             }
         })();
+
+        return () => controller.abort();
     }, [url]);
 
     return {

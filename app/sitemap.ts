@@ -13,7 +13,7 @@ const API_URL =
 async function getProducts() {
   try {
     const res = await fetch(
-      `${API_URL}/api/products?fields[0]=slug&pagination[pageSize]=1000`,
+      `${API_URL}/api/products?fields[0]=slug&fields[1]=updatedAt&populate[images][fields][0]=url&pagination[pageSize]=1000`,
       {
         next: {
           revalidate: 86400,
@@ -29,8 +29,11 @@ async function getProducts() {
 
     return (
       json?.data?.map(
-        (product: any) =>
-          product.slug,
+        (product: any) => ({
+          slug: product.slug,
+          updatedAt: product.updatedAt,
+          image: product.images?.[0]?.url,
+        }),
       ) || []
     );
   } catch (error) {
@@ -94,9 +97,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPages = [
     "",
+    "/nosotros",
+    "/contacto",
+    "/carrito",
+    "/productos-favoritos",
     "/productos-destacados",
     "/blog",
-    "/imss-bienestar",
     "/la-clinica-es-nuestra",
   ];
 
@@ -134,10 +140,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     =========================================
     */
     ...products.map(
-      (slug: string) => ({
-        url: `${BASE_URL}/${slug}`,
-        lastModified,
+      (product: { slug: string; updatedAt?: string; image?: string }) => ({
+        url: `${BASE_URL}/${product.slug}`,
+        lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
         priority: 0.7,
+        ...(product.image && {
+          images: [{ url: product.image, title: "Imagen del producto" }],
+        }),
       }),
     ),
   ];

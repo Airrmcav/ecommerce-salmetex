@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Mail,
@@ -11,6 +12,7 @@ import {
   Linkedin,
   MapPinIcon,
 } from "lucide-react";
+import FooterCategories from "./footer/footer-categories";
 
 const TikTokIcon = ({ className = "" }) => (
   <svg
@@ -43,10 +45,12 @@ const Footer = () => {
           {/* Company Info */}
           <div className="lg:col-span-1">
             <div className="mb-6 flex flex-col items-center">
-              <img
+              <Image
                 src="/logo/logo-letras.webp"
-                alt="SALMETEXMED"
-                className="h-22 w-auto object-contain mb-4"
+                alt="SALMETEXMED - Logo de la empresa"
+                width={120}
+                height={48}
+                className="object-contain mb-4"
                 loading="lazy"
               />
               <p className="text-gray-500 text-sm leading-relaxed">
@@ -151,69 +155,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6 text-gray-900">
               Categorías
             </h3>
-            <ul
-              className="space-y-3"
-              role="list"
-              aria-label="Categorías de productos"
-            >
-              <li role="listitem">
-                <Link
-                  href="/categoria/autoclaves"
-                  className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
-                >
-                  Autoclaves
-                </Link>
-              </li>
-              <li role="listitem">
-                <Link
-                  href="/categoria/mesas-quirurgicas"
-                  className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
-                >
-                  Mesas de Cirugía
-                </Link>
-              </li>
-              <li role="listitem">
-                <Link
-                  href="/categoria/equipos-de-signos-vitales"
-                  className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
-                >
-                  Equipos de Signos Vitales
-                </Link>
-              </li>
-              <li role="listitem">
-                <Link
-                  href="/categoria/lamparas-de-cirugia"
-                  className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
-                >
-                  Lámparas de Cirugía
-                </Link>
-              </li>
-              <li role="listitem">
-                <Link
-                  href="/categoria/incubadoras"
-                  className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
-                >
-                  Incubadoras
-                </Link>
-              </li>
-              <li role="listitem">
-                <Link
-                  href="/categoria/camillas-portatiles"
-                  className="text-gray-800 hover:text-blue-400 transition-colors duration-200 text-sm hover:underline underline-offset-4"
-                >
-                  Camillas Portátiles
-                </Link>
-              </li>
-              <li role="listitem" className="flex justify-center mt-2">
-                <Link
-                  href="/categoria/todos"
-                  className="text-white p-2 inline w-100 bg-blue-600 rounded-2xl transition-colors duration-200 text-sm hover:underline underline-offset-4 text-center"
-                  aria-label="Ver más categorías de productos"
-                >
-                  Más Productos
-                </Link>
-              </li>
-            </ul>
+            <FooterCategories />
           </div>
 
           {/* Contact Info */}

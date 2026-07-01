@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { cache } from "react";
 
 import ProductClient from "./components/product-client";
+import RelatedProducts from "./components/related-products";
 
 import { ProductType } from "@/types/product";
 
@@ -44,7 +45,7 @@ const getProduct = cache(
         return null;
       }
 
-   const query =
+    const query =
   `populate[images][fields][0]=url` +
   `&populate[images][fields][1]=alternativeText` +
   `&populate[category][fields][0]=categoryName` +
@@ -87,14 +88,50 @@ const getProduct = cache(
   },
 );
 
+const getRelatedProducts = cache(
+  async (
+    categorySlug: string,
+    excludeSlug: string,
+  ): Promise<ProductType[]> => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+      if (!baseUrl) return [];
+
+      const query =
+        `populate[images][fields][0]=url` +
+        `&populate[images][fields][1]=alternativeText` +
+        `&populate[category][fields][0]=categoryName` +
+        `&populate[category][fields][1]=slug` +
+        `&filters[category][slug][$eq]=${categorySlug}` +
+        `&filters[slug][$ne]=${excludeSlug}` +
+        `&filters[active][$eq]=true` +
+        `&pagination[limit]=5` +
+        `&sort=updatedAt:desc`;
+
+      const url = `${baseUrl}/api/products?${query}`;
+      const res = await fetch(url, { next: { revalidate: 3600 } });
+
+      if (!res.ok) return [];
+
+      const json = await res.json();
+      return json?.data ?? [];
+    } catch (error) {
+      console.error("Error getRelatedProducts:", error);
+      return [];
+    }
+  },
+);
+
 /* =========================================================
    SEO METADATA
 ========================================================= */
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: Props): Promise<Metadata> {
   const { productSlug } = await params;
+  const resolvedSearchParams = await searchParams;
 
   const product =
     await getProduct(productSlug);
@@ -113,6 +150,9 @@ export async function generateMetadata({
       },
     };
   }
+
+  const hasQueryParams = resolvedSearchParams && Object.keys(resolvedSearchParams).length > 0;
+  const baseCanonical = `https://salmetexmed.com.mx/${productSlug}`;
 
   const fallbackDescription = `Compra ${product.productName} en Salmetexmed México. Equipo médico certificado con envío nacional.`;
 
@@ -136,8 +176,7 @@ export async function generateMetadata({
     product.images?.[0]?.url ||
     "https://salmetexmed.com.mx/og-image.jpg";
 
-  const canonical =
-    `https://salmetexmed.com.mx/${productSlug}`;
+  const canonical = hasQueryParams ? baseCanonical : `https://salmetexmed.com.mx/${productSlug}`;
 
   return {
     title: `${product.productName} | Salmetexmed México`,
@@ -157,7 +196,7 @@ export async function generateMetadata({
     ].filter(Boolean) as string[],
 
     robots: {
-      index: product.active,
+      index: hasQueryParams ? false : product.active,
       follow: true,
     },
 
@@ -226,9 +265,9 @@ export default async function Page({
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+          <p className="text-3xl font-bold text-gray-900 mb-3">
             Producto no encontrado
-          </h1>
+          </p>
 
           <p className="text-gray-600">
             El producto que buscas no existe o fue eliminado.
@@ -237,6 +276,10 @@ export default async function Page({
       </div>
     );
   }
+
+  const relatedProducts = product.category?.slug
+    ? await getRelatedProducts(product.category.slug, productSlug)
+    : [];
 
   /* =========================================================
      PRODUCT JSON LD
@@ -289,7 +332,67 @@ export default async function Page({
       },
 
       url: `https://salmetexmed.com.mx/${productSlug}`,
+
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        "priceCurrency": "MXN",
+        "price": product.price ?? "0",
+        "unitText": "MXN",
+        "description": "MSI 12 meses sin intereses en tarjetas participantes",
+        "valueAddedTaxIncluded": "IVA INCLUIDO"
+      },
     },
+  }
+
+  /* =========================================================
+     FAQ PAGE JSON LD
+  ========================================================= */
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "¿El equipo médico incluye garantía?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Sí, todos nuestros equipos médicos incluyen garantía oficial del fabricante. El período de garantía varía según el producto, típicamente entre 1 y 2 años para equipos principales.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "¿Realizan envío a todo México?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Sí, enviamos a cualquier estado de la República Mexicana. Contamos con logística especializada para equipo médico sensible.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "¿Ofrecen precios para compras en mayoreo?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Sí, manejamos precios especiales para distribuidores, hospitales y compras en volumen. Contáctenos por WhatsApp para una cotización personalizada.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "¿Los equipos cumplen con COFEPRIS?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Todos nuestros equipos médicos cuentan con registro COFEPRIS y certificaciones internacionales de calidad.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "¿Puedo cotizar por WhatsApp?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Sí, puede contactarnos directamente por WhatsApp al 844 595 4660 para solicitar cotización, especificaciones técnicas o asesoría.",
+        },
+      },
+    ],
   };
 
   /* =========================================================
@@ -361,6 +464,15 @@ export default async function Page({
         }}
       />
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            faqJsonLd,
+          ),
+        }}
+      />
+
       {/* =========================================================
           CLIENT COMPONENT
       ========================================================= */}
@@ -368,6 +480,15 @@ export default async function Page({
       <ProductClient
         product={product}
       />
+
+      {relatedProducts.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 pb-16">
+          <RelatedProducts
+            products={relatedProducts}
+            currentProductSlug={productSlug}
+          />
+        </div>
+      )}
     </>
   );
 }

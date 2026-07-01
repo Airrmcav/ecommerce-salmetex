@@ -1,5 +1,7 @@
 'use client'
 
+import Image from "next/image";
+
 import { ResponseType } from "@/types/response";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
 import SkeletonSchema from "./skeletonSchema";
@@ -93,12 +95,14 @@ const TopProducts = () => {
                           {/* Image Container */}
                           <div className="relative overflow-hidden bg-white h-48 flex items-center justify-center">
                             {imageUrl ? (
-                              <img
+                              <Image
                                 src={imageUrl}
-                                alt={`${productName} - Equipo médico profesional más vendido`}
-                                className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                                itemProp="image"
+                                alt={`${productName} - ${category?.categoryName || "Equipo médico"}`}
+                                fill
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                                className="object-contain group-hover:scale-105 transition-transform duration-300"
                                 loading={index < 4 ? "eager" : "lazy"}
+                                itemProp="image"
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-gray-100">

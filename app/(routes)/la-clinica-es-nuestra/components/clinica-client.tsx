@@ -29,7 +29,7 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import ProductCard from "../../categoria/[categorySlug]/components/product.card";
+import { ProductCard } from "@/components/ui/product-card";
 
 interface ClinicaClientProps {
   initialProducts: ProductType[];

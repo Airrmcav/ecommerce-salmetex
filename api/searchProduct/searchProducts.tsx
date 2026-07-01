@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ProductType } from '@/types/product';
 import { CategoryType } from '@/types/category';
 
@@ -14,41 +14,28 @@ export function useSearchProducts(searchTerm: string) {
   });
 
   const [loading, setLoading] = useState(false);
-
   const [error, setError] = useState('');
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
     const term = searchTerm.trim();
 
-    // Evita consultas innecesarias
     if (term.length < 2) {
-      setResult({
-        products: [],
-        categories: [],
-      });
-
+      setResult({ products: [], categories: [] });
       setLoading(false);
-
       return;
     }
 
     const controller = new AbortController();
+    const currentRequestId = ++requestIdRef.current;
 
     const fetchData = async () => {
       try {
         setLoading(true);
-
         setError('');
 
-        const baseUrl =
-          process.env.NEXT_PUBLIC_BACKEND_URL;
-
-        const encoded =
-          encodeURIComponent(term);
-
-        /* =========================================================
-           PRODUCTS
-        ========================================================= */
+        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+        const encoded = encodeURIComponent(term);
 
         const productsUrl =
           `${baseUrl}/api/products?` +
@@ -59,10 +46,6 @@ export function useSearchProducts(searchTerm: string) {
           `&fields[2]=description` +
           `&populate[images][fields][0]=url` +
           `&pagination[pageSize]=5`;
-
-        /* =========================================================
-           CATEGORIES
-        ========================================================= */
 
         const categoriesUrl =
           `${baseUrl}/api/categories?` +
@@ -77,22 +60,14 @@ export function useSearchProducts(searchTerm: string) {
 
         const [productsRes, categoriesRes] =
           await Promise.all([
-            fetch(productsUrl, {
-              signal: controller.signal,
-            }),
-
-            fetch(categoriesUrl, {
-              signal: controller.signal,
-            }),
+            fetch(productsUrl, { signal: controller.signal }),
+            fetch(categoriesUrl, { signal: controller.signal }),
           ]);
 
-        if (
-          !productsRes.ok ||
-          !categoriesRes.ok
-        ) {
-          throw new Error(
-            'Error al buscar',
-          );
+        if (currentRequestId !== requestIdRef.current) return;
+
+        if (!productsRes.ok || !categoriesRes.ok) {
+          throw new Error('Error al buscar');
         }
 
         const [productsJson, categoriesJson] =
@@ -102,47 +77,27 @@ export function useSearchProducts(searchTerm: string) {
           ]);
 
         setResult({
-          products:
-            productsJson?.data ?? [],
-
-          categories:
-            categoriesJson?.data ?? [],
+          products: productsJson?.data ?? [],
+          categories: categoriesJson?.data ?? [],
         });
       } catch (err: any) {
-        if (
-          err.name === 'AbortError'
-        ) {
-          return;
-        }
+        if (err.name === 'AbortError') return;
+        if (currentRequestId !== requestIdRef.current) return;
 
-        console.error(
-          'Search error:',
-          err,
-        );
-
-        setError(
-          err.message ||
-            'Error al buscar',
-        );
-
-        setResult({
-          products: [],
-          categories: [],
-        });
+        console.error('Search error:', err);
+        setError(err.message || 'Error al buscar');
+        setResult({ products: [], categories: [] });
       } finally {
-        setLoading(false);
+        if (currentRequestId === requestIdRef.current) {
+          setLoading(false);
+        }
       }
     };
 
-    // Debounce - Aumentado a 600ms para reducir llamadas
-    const timeout = setTimeout(
-      fetchData,
-      600,
-    );
+    const timeout = setTimeout(fetchData, 600);
 
     return () => {
       clearTimeout(timeout);
-
       controller.abort();
     };
   }, [searchTerm]);

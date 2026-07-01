@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+export const revalidate = 3600;
 import { Suspense } from "react";
 import ClinicaClient from "./components/clinica-client";
 import { ProductType } from "@/types/product";
@@ -33,7 +34,7 @@ async function getInitialProducts(): Promise<ProductType[]> {
       `&fields[4]=purchaseType` +
       `&fields[5]=active` +
       `&filters[programa][$eq]=clinica` +
-      `&pagination[pageSize]=1000` +
+      `&pagination[pageSize]=50` +
       `&populate[images][fields][0]=url` +
       `&populate[category][fields][0]=categoryName`;
 
@@ -55,11 +56,31 @@ async function getInitialProducts(): Promise<ProductType[]> {
 }
 
 export default async function ClinicaPage() {
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "La Clinica es Nuestra - Equipamiento Médico",
+    description: "Productos especializados para el programa La Clinica es Nuestra. Equipo médico certificado con envío nacional.",
+    url: "https://salmetexmed.com.mx/la-clinica-es-nuestra",
+    publisher: {
+      "@type": "Organization",
+      name: "Salmetexmed",
+      url: "https://salmetexmed.com.mx",
+    },
+  };
   const initialProducts = await getInitialProducts();
 
   return (
-    <Suspense fallback={<SkeletonSchema grid={12} />}>
-      <ClinicaClient initialProducts={initialProducts} />
-    </Suspense>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(collectionJsonLd),
+        }}
+      />
+      <Suspense fallback={<SkeletonSchema grid={12} />}>
+        <ClinicaClient initialProducts={initialProducts} />
+      </Suspense>
+    </>
   );
 }
