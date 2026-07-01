@@ -28,7 +28,7 @@ const ProductCard = ({ product, viewMode = "grid" }: ProductCardProps) => {
   const { addItem } = useCart();
   const { addLoveItems } = useLovedProducts();
 
-  const hasPrice = product.price && product.price > 0;
+  const hasPrice = !!(product.price && product.price > 0);
   const isBuyable = product.purchaseType === "buy";
 
   const handleWhatsApp = (productName: string, type: "quote" | "info") => {
