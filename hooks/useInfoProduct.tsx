@@ -15,7 +15,7 @@ export function useInfoProduct(product: ProductType) {
   );
 
   const displayPrice = selectedVariant?.price ?? product.price;
-  const hasPrice = Boolean(displayPrice && displayPrice > 0);
+  const hasPrice = !!(displayPrice && displayPrice > 0);
   const isAvailable = product.active && hasPrice;
   const isBuyable = product.purchaseType === "buy";
 

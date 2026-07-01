@@ -21,7 +21,7 @@ export const ProductCard = ({ product, viewMode = "grid", className }: ProductCa
   const { addItem } = useCart();
   const { addLoveItems } = useLovedProducts();
 
-  const hasPrice = product.price && product.price > 0;
+  const hasPrice = !!(product.price && product.price > 0);
   const isBuyable = product.purchaseType === "buy";
   const imageAlt = product.images?.[0]?.alternativeText || product.productName;
 
@@ -62,13 +62,16 @@ export const ProductCard = ({ product, viewMode = "grid", className }: ProductCa
   );
 };
 
+type AddItem = ReturnType<typeof useCart> extends { addItem: infer T } ? T : (item: ProductType & { quantity: number }) => void;
+type AddLoveItems = ReturnType<typeof useLovedProducts> extends { addLoveItems: infer T } ? T : (product: ProductType) => void;
+
 type LayoutProps = {
   product: ProductType;
   hasPrice: boolean;
   isBuyable: boolean;
   imageAlt: string;
-  addItem: ReturnType<typeof useCart>["addItem"];
-  addLoveItems: ReturnType<typeof useLovedProducts>["addLoveItems"];
+  addItem: AddItem;
+  addLoveItems: AddLoveItems;
 };
 
 const GridLayout = ({ product, hasPrice, isBuyable, imageAlt, addItem, addLoveItems }: LayoutProps) => (
