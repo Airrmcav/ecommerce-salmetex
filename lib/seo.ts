@@ -64,7 +64,7 @@ export function generatePageMetadata({
       url: canonical,
       siteName: SITE_NAME,
       locale: "es_MX",
-      type: type === "product" ? "product" : "website",
+      type: "website" as const,
       images: ogImages,
     },
     twitter: {
